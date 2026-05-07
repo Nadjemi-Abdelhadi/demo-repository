@@ -3,111 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دليل المنيعة برو - ZaLo AI</title>
+    <title>دليل المنيعة برو</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Tajawal', sans-serif; transition: background 0.3s; }
-        .sidebar { transition: transform 0.3s ease-in-out; }
-        .category-card:hover { transform: translateY(-5px); transition: 0.3s; }
-        .blur-bg { backdrop-filter: blur(8px); }
+        body { font-family: 'Tajawal', sans-serif; overflow-x: hidden; }
+        .sidebar { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .animate-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .ai-glow { animation: glow 2s infinite; }
+        @keyframes glow { 0% { box-shadow: 0 0 5px #3b82f6; } 50% { box-shadow: 0 0 20px #3b82f6; } 100% { box-shadow: 0 0 5px #3b82f6; } }
     </style>
 </head>
-<body class="bg-slate-50">
+<body class="bg-slate-50 text-slate-800">
 
-    <header class="bg-white/80 blur-bg sticky top-0 z-40 border-b border-slate-200">
-        <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
-            <div class="flex items-center gap-4">
-                <button onclick="toggleSidebar()" class="p-2 hover:bg-slate-100 rounded-lg">
-                    <svg class="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                </button>
-                <div class="flex items-center gap-2">
-                    <div class="bg-blue-600 p-1.5 rounded-lg text-white font-black">ZaLo</div>
-                    <span class="font-bold text-slate-800 hidden sm:inline">دليل المنيعة</span>
-                </div>
+    <script>
+        const APP_SETTINGS = {
+            title: "دليل قطاع الغيار - ولاية المنيعة",
+            welcomeMsg: "مرحباً بك في المنيعة الذكية",
+            social: {
+                facebook: "https://facebook.com/yourpage",
+                whatsapp: "https://wa.me/213660000000"
+            },
+            niches: [
+                { id: "parts", name: "قطع غيار السيارات", icon: "🚗", shops: [{ name: "أولاد حيمودة", desc: "أصلي - المنيعة", phone: "0660000000" }] },
+                { id: "clothes", name: "الملابس والموضة", icon: "👕", shops: [] },
+                { id: "tech", name: "الهواتف والإلكترونيات", icon: "📱", shops: [] }
+            ]
+        };
+    </script>
+
+    <header class="bg-white shadow-sm sticky top-0 z-40 border-b border-slate-100">
+        <div class="max-w-xl mx-auto px-4 h-16 flex justify-between items-center">
+            <button onclick="toggleSidebar()" class="p-2 bg-slate-50 rounded-xl hover:bg-slate-100">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+            <div class="flex items-center gap-2">
+                <span class="bg-blue-600 text-white px-2 py-1 rounded-md text-[10px] font-black">ZaLo AI</span>
+                <h1 id="topTitle" class="font-bold text-sm text-slate-700"></h1>
             </div>
-            
-            <div class="flex items-center gap-3">
-                <button class="p-2 hover:bg-slate-100 rounded-full text-slate-600">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                </button>
-                <button class="bg-slate-900 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-slate-800 transition-all">تسجيل الدخول</button>
+            <div class="w-10 h-10 bg-slate-200 rounded-full overflow-hidden border-2 border-white shadow-sm">
+                <img src="https://ui-avatars.com/api/?name=User&bg=0f172a&color=fff" alt="Profile">
             </div>
         </div>
     </header>
 
-    <aside id="sidebar" class="fixed inset-y-0 right-0 z-50 w-64 bg-white shadow-2xl transform translate-x-full sidebar border-r border-slate-100">
-        <div class="p-6">
-            <div class="flex justify-between items-center mb-10">
-                <span class="font-black text-xl text-blue-600">القائمة</span>
-                <button onclick="toggleSidebar()" class="text-slate-400">✖</button>
+    <aside id="sidebar" class="fixed inset-y-0 right-0 z-50 w-72 bg-white shadow-2xl transform translate-x-full sidebar flex flex-col">
+        <div class="p-6 flex-1">
+            <div class="flex justify-between items-center mb-8">
+                <span class="font-black text-blue-600 text-xl tracking-tighter">قائمة المنيعة</span>
+                <button onclick="toggleSidebar()" class="text-slate-300 hover:text-red-500 text-2xl">&times;</button>
             </div>
-            <nav class="space-y-4">
-                <a href="#" class="flex items-center gap-3 p-3 bg-blue-50 text-blue-600 rounded-xl font-bold">🏠 الصفحة الرئيسية</a>
-                <a href="#" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-50 rounded-xl">📞 اتصل بنا</a>
-                <a href="#" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-50 rounded-xl">📍 خريطة المنيعة</a>
-                <a href="#" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-50 rounded-xl">🛒 عروض خاصة</a>
-                <hr class="border-slate-100">
-                <a href="#" class="flex items-center gap-3 p-3 text-red-500 hover:bg-red-50 rounded-xl font-medium">⚠️ بلاغ عن مشكلة</a>
-            </nav>
-        </div>
-    </aside>
-
-    <main class="max-w-7xl mx-auto p-6 mt-4">
-        <div class="text-center mb-12">
-            <h2 class="text-3xl font-black text-slate-800 mb-2">ما الذي تبحث عنه اليوم؟</h2>
-            <p class="text-slate-500">اختر التخصص الذي تريده للوصول إلى أفضل المحلات في المنيعة</p>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             
-            <div class="category-card bg-white p-6 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-white cursor-pointer group">
-                <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:bg-blue-600 group-hover:text-white transition-all">🚗</div>
-                <h3 class="font-black text-xl text-slate-800 mb-2">قطع غيار السيارات</h3>
-                <p class="text-slate-500 text-sm mb-6">أكثر من 20 محل متخصص (أولاد حيمودة، ميمي...)</p>
-                <div class="flex justify-between items-center text-blue-600 font-bold">
-                    <span>دخول القسم</span>
-                    <span>←</span>
-                </div>
-            </div>
+            <nav class="space-y-2">
+                <a href="javascript:void(0)" onclick="renderHome()" class="flex items-center gap-3 p-4 bg-blue-50 text-blue-700 rounded-2xl font-bold transition-all">
+                    <span>🏠</span> الرئيسية
+                </a>
+                <a href="#" class="flex items-center gap-3 p-4 text-slate-600 hover:bg-slate-50 rounded-2xl">
+                    <span>📍</span> خريطة الولاية
+                </a>
+                <a href="#" class="flex items-center gap-3 p-4 text-slate-600 hover:bg-slate-50 rounded-2xl">
+                    <span>⚙️</span> الإعدادات
+                </a>
+            </nav>
 
-            <div class="category-card bg-white p-6 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-white cursor-pointer group">
-                <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:bg-green-600 group-hover:text-white transition-all">👕</div>
-                <h3 class="font-black text-xl text-slate-800 mb-2">الملابس والموضة</h3>
-                <p class="text-slate-500 text-sm mb-6">أحدث الصيحات في أسواق المنيعة</p>
-                <div class="flex justify-between items-center text-green-600 font-bold">
-                    <span>دخول القسم</span>
-                    <span>←</span>
-                </div>
+            <div class="mt-8 pt-6 border-t border-slate-100">
+                <button onclick="askAI()" class="ai-glow w-full flex items-center justify-between p-4 bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-2xl font-black shadow-lg">
+                    <div class="flex items-center gap-3">
+                        <span class="text-xl">🤖</span>
+                        <div class="text-right">
+                            <p class="text-[10px] opacity-80 font-normal">اسأل مساعدنا</p>
+                            <p class="text-sm">ذكاء ZaLo الإصطناعي</p>
+                        </div>
+                    </div>
+                    <span>✨</span>
+                </button>
             </div>
-
-            <div class="category-card bg-white p-6 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-white cursor-pointer group">
-                <div class="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:bg-amber-600 group-hover:text-white transition-all">📱</div>
-                <h3 class="font-black text-xl text-slate-800 mb-2">الهواتف والإلكترونيات</h3>
-                <p class="text-slate-500 text-sm mb-6">جديد ومستعمل بضمان المحلات</p>
-                <div class="flex justify-between items-center text-amber-600 font-bold">
-                    <span>دخول القسم</span>
-                    <span>←</span>
-                </div>
-            </div>
-
         </div>
-    </main>
 
-    <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('translate-x-full');
-        }
-
-        // إغلاق الشريط الجانبي عند الضغط خارجه
-        document.addEventListener('click', (e) => {
-            const sidebar = document.getElementById('sidebar');
-            const menuBtn = e.target.closest('button');
-            if (!sidebar.contains(e.target) && !menuBtn && !sidebar.classList.contains('translate-x-full')) {
-                sidebar.classList.add('translate-x-full');
-            }
-        });
-    </script>
-</body>
-</html>
+        <div class="p-6 bg-slate-50 border-t border-slate-100">
+            <p class="text-[10px] text-slate-400 mb-3 text-center">تابعنا على مواقع التواصل</p>
+            <div class="flex justify-center gap-4">
+                <a id="fbLink" href="#" class="p-3 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-600 hover:text-white transition-all">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
+                </a>
+                <a id="waLink" href="#" class="p-3 bg-green-100 text-green-600 rounded-full hover:bg-green-600 hover:text-white transition-all">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157
