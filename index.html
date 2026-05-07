@@ -3,46 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZaLo AI - المنيعة</title>
+    <title>ZaLo AI - دليل المنيعة</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 text-gray-900 font-sans">
-    <header class="p-6 bg-white shadow-sm flex justify-between items-center text-center">
-        <h1 class="text-2xl font-black text-blue-600 w-full">ZaLo AI - المنيعة 🇩🇿</h1>
+
+    <header class="p-5 bg-blue-700 text-white shadow-lg sticky top-0 z-50 text-center">
+        <h1 class="text-xl font-bold">دليل المنيعة لقطع الغيار</h1>
     </header>
 
-    <main class="max-w-md mx-auto mt-10 p-6 bg-white rounded-2xl shadow-xl border border-gray-100">
-        <h2 class="text-xl font-bold mb-2 text-center">تطبيق تحسين صور المنتجات</h2>
-        <p class="text-gray-500 text-sm text-center mb-8">ارفع صورة منتجك الآن للحصول على خلفية احترافية</p>
-        
-        <div onclick="document.getElementById('fileUpload').click()" class="cursor-pointer border-2 border-dashed border-blue-200 bg-blue-50 rounded-xl p-12 text-center transition-all hover:bg-blue-100">
-            <div class="text-4xl mb-4">📸</div>
-            <p id="fileName" class="text-blue-600 font-medium">اضغط هنا لرفع الصورة</p>
-            <input type="file" class="hidden" id="fileUpload" accept="image/*">
-        </div>
-
-        <button onclick="startAction()" class="w-full mt-8 bg-blue-600 text-white py-4 rounded-xl font-bold shadow-lg active:scale-95 transition-transform">
-            بدء التحسين التلقائي
-        </button>
-    </main>
+    <main id="app" class="max-w-md mx-auto p-4">
+        </main>
 
     <script>
-        // كود لتغيير النص عند اختيار صورة
-        document.getElementById('fileUpload').onchange = function() {
-            if(this.files.length > 0) {
-                document.getElementById('fileName').innerText = "تم اختيار: " + this.files[0].name;
-                document.getElementById('fileName').classList.replace('text-blue-600', 'text-green-600');
+        // --- قسم البيانات (هنا يمكنك الإضافة والتعديل بسهولة) ---
+        const DATA = [
+            {
+                shopName: "أولاد حيمودة",
+                description: "قطع غيار السيارات الأصلية",
+                brands: [
+                    {
+                        name: "اكسنت",
+                        products: [
+                            { title: "رادياتور أصلية", price: "12000 دج", image: "https://via.placeholder.com/150", phone: "0660000000" },
+                            { title: "فار (أضواء) أمامي", price: "4500 دج", image: "https://via.placeholder.com/150", phone: "0660000000" }
+                        ]
+                    },
+                    {
+                        name: "تويوتا",
+                        products: [
+                            { title: "مصفاة زيت", price: "1500 دج", image: "https://via.placeholder.com/150", phone: "0660000000" }
+                        ]
+                    }
+                ]
+            },
+            {
+                shopName: "محل ميمي",
+                description: "دراجات نارية وسيارات",
+                brands: [
+                    {
+                        name: "دراجات C50",
+                        products: [
+                            { title: "محرك كامل", price: "35000 دج", image: "https://via.placeholder.com/150", phone: "0770000000" }
+                        ]
+                    }
+                ]
             }
-        };
+            // يمكنك إضافة محل جديد هنا بمجرد نسخ الأسطر أعلاه
+        ];
 
-        function startAction() {
-            const fileInput = document.getElementById('fileUpload');
-            if(fileInput.files.length === 0) {
-                alert("من فضلك اختر صورة أولاً يا عبد الهادي!");
-            } else {
-                alert("جاري معالجة الصورة في المنيعة... انتظر قليلاً");
-            }
+        const app = document.getElementById('app');
+
+        // وظيفة عرض المحلات
+        function showShops() {
+            let html = '<h2 class="text-lg font-bold mb-4">🏠 اختر المحل:</h2>';
+            DATA.forEach((shop, index) => {
+                html += `
+                    <div onclick="showBrands(${index})" class="bg-white p-4 rounded-2xl shadow-sm border mb-3 cursor-pointer hover:bg-blue-50">
+                        <h3 class="font-bold text-blue-800">${shop.shopName}</h3>
+                        <p class="text-sm text-gray-500">${shop.description}</p>
+                    </div>`;
+            });
+            app.innerHTML = html;
         }
+
+        // وظيفة عرض الماركات (اكسنت، تويوتا...)
+        function showBrands(shopIndex) {
+            const shop = DATA[shopIndex];
+            let html = `<button onclick="showShops()" class="text-blue-600 mb-4">🔙 العودة</button>`;
+            html += `<h2 class="text-lg font-bold mb-4">🚗 ماركات متوفرة عند ${shop.shopName}:</h2>`;
+            html += `<div class="grid grid-cols-2 gap-3">`;
+            shop.brands.forEach((brand, bIndex) => {
+                html += `
+                    <div onclick="showProducts(${shopIndex}, ${bIndex})" class="bg-white p-6 rounded-2xl shadow border text-center">
+                        <span class="font-bold">${brand.name}</span>
+                    </div>`;
+            });
+            html += `</div>`;
+            app.innerHTML = html;
+        }
+
+        // وظيفة عرض المنتجات
+        function showProducts(shopIndex, brandIndex) {
+            const brand = DATA[shopIndex].brands[brandIndex];
+            let html = `<button onclick="showBrands(${shopIndex})" class="text-blue-600 mb-4">🔙 العودة</button>`;
+            html += `<h2 class="text-lg font-bold mb-4 text-blue-700">قطع غيار ${brand.name}:</h2>`;
+            brand.products.forEach(product => {
+                html += `
+                    <div class="bg-white rounded-2xl shadow-lg border mb-4 overflow-hidden">
+                        <img src="${product.image}" class="w-full h-40 object-cover">
+                        <div class="p-4 flex justify-between items-center">
+                            <div>
+                                <h3 class="font-bold">${product.title}</h3>
+                                <p class="text-green-600 font-bold">${product.price}</p>
+                            </div>
+                            <a href="tel:${product.phone}" class="bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-bold">اتصل</a>
+                        </div>
+                    </div>`;
+            });
+            app.innerHTML = html;
+        }
+
+        // تشغيل التطبيق لأول مرة
+        showShops();
     </script>
 </body>
 </html>
