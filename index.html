@@ -3,109 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZaLo AI - دليل المنيعة</title>
+    <title id="pageTitle">دليل المنيعة</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .animate-fade-in { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .card-tap:active { scale: 0.97; transition: 0.1s; }
+    </style>
 </head>
-<body class="bg-gray-50 text-gray-900 font-sans">
-
-    <header class="p-5 bg-blue-700 text-white shadow-lg sticky top-0 z-50 text-center">
-        <h1 class="text-xl font-bold">دليل المنيعة لقطع الغيار</h1>
-    </header>
-
-    <main id="app" class="max-w-md mx-auto p-4">
-        </main>
+<body class="bg-gray-100 text-gray-900 font-sans">
 
     <script>
-        // --- قسم البيانات (هنا يمكنك الإضافة والتعديل بسهولة) ---
-        const DATA = [
-            {
-                shopName: "أولاد حيمودة",
-                description: "قطع غيار السيارات الأصلية",
-                brands: [
-                    {
-                        name: "اكسنت",
-                        products: [
-                            { title: "رادياتور أصلية", price: "12000 دج", image: "https://via.placeholder.com/150", phone: "0660000000" },
-                            { title: "فار (أضواء) أمامي", price: "4500 دج", image: "https://via.placeholder.com/150", phone: "0660000000" }
-                        ]
-                    },
-                    {
-                        name: "تويوتا",
-                        products: [
-                            { title: "مصفاة زيت", price: "1500 دج", image: "https://via.placeholder.com/150", phone: "0660000000" }
-                        ]
-                    }
-                ]
-            },
-            {
-                shopName: "محل ميمي",
-                description: "دراجات نارية وسيارات",
-                brands: [
-                    {
-                        name: "دراجات C50",
-                        products: [
-                            { title: "محرك كامل", price: "35000 دج", image: "https://via.placeholder.com/150", phone: "0770000000" }
-                        ]
-                    }
-                ]
-            }
-            // يمكنك إضافة محل جديد هنا بمجرد نسخ الأسطر أعلاه
-        ];
+        const APP_CONFIG = {
+            Commit: "دليل المنيعة لقطع الغيار", // يمكنك تغييره لأي اسم تريده
+            headerColor: "bg-blue-800", // لون الشريط العلوي
+            currency: "دج",
+            contactText: "اتصل بصاحب المحل",
+            
+            // قاعدة البيانات (أضف أو عدل المحلات هنا)
+            shops: [
+                {
+                    name: "أولاد حيمودة",
+                    subtext: "قطع غيار السيارات الأصلية - المنيعة",
+                    categories: [
+                        {
+                            brand: "اكسنت",
+                            items: [
+                                { name: "رادياتور أصلية", price: "12500", img: "https://via.placeholder.com/400x250", phone: "0660000000" },
+                                { name: "فار أمامي", price: "4800", img: "https://via.placeholder.com/400x250", phone: "0660000000" }
+                            ]
+                        },
+                        {
+                            brand: "تويوتا",
+                            items: [
+                                { name: "مصفاة زيت (Filtre)", price: "1600", img: "https://via.placeholder.com/400x250", phone: "0660000000" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: "محل ميمي",
+                    subtext: "دراجات نارية وقطع غيار متنوعة",
+                    categories: [
+                        {
+                            brand: "دراجات C50",
+                            items: [
+                                { name: "محرك كامل", price: "38000", img: "https://via.placeholder.com/400x250", phone: "0770000000" }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+    </script>
 
-        const app = document.getElementById('app');
+    <header id="mainHeader" class="p-5 text-white shadow-xl sticky top-0 z-50 text-center transition-colors">
+        <h1 id="appDisplayName" class="text-xl font-black"></h1>
+    </header>
 
-        // وظيفة عرض المحلات
-        function showShops() {
-            let html = '<h2 class="text-lg font-bold mb-4">🏠 اختر المحل:</h2>';
-            DATA.forEach((shop, index) => {
-                html += `
-                    <div onclick="showBrands(${index})" class="bg-white p-4 rounded-2xl shadow-sm border mb-3 cursor-pointer hover:bg-blue-50">
-                        <h3 class="font-bold text-blue-800">${shop.shopName}</h3>
-                        <p class="text-sm text-gray-500">${shop.description}</p>
-                    </div>`;
-            });
-            app.innerHTML = html;
+    <main id="appContent" class="max-w-md mx-auto p-4 min-h-screen">
+        </main>
+
+    <footer class="p-6 text-center text-gray-400 text-xs">
+        تطوير ZaLo AI &copy; 2026 - المنيعة
+    </footer>
+
+    <script>
+        // العقل المدبر للتطبيق (Logic Engine)
+        const contentArea = document.getElementById('appContent');
+        
+        function initApp() {
+            document.getElementById('appDisplayName').innerText = APP_CONFIG.mainTitle;
+            document.getElementById('pageTitle').innerText = APP_CONFIG.mainTitle;
+            document.getElementById('mainHeader').className = `p-5 text-white shadow-xl sticky top-0 z-50 text-center ${APP_CONFIG.headerColor}`;
+            renderShops();
         }
 
-        // وظيفة عرض الماركات (اكسنت، تويوتا...)
-        function showBrands(shopIndex) {
-            const shop = DATA[shopIndex];
-            let html = `<button onclick="showShops()" class="text-blue-600 mb-4">🔙 العودة</button>`;
-            html += `<h2 class="text-lg font-bold mb-4">🚗 ماركات متوفرة عند ${shop.shopName}:</h2>`;
-            html += `<div class="grid grid-cols-2 gap-3">`;
-            shop.brands.forEach((brand, bIndex) => {
+        function renderShops() {
+            let html = `<div class="animate-fade-in"><h2 class="text-lg font-bold mb-5 flex items-center gap-2">📂 اختر المحل:</h2>`;
+            APP_CONFIG.shops.forEach((shop, index) => {
                 html += `
-                    <div onclick="showProducts(${shopIndex}, ${bIndex})" class="bg-white p-6 rounded-2xl shadow border text-center">
-                        <span class="font-bold">${brand.name}</span>
+                    <div onclick="renderBrands(${index})" class="card-tap bg-white p-5 rounded-2xl shadow-md border-r-4 border-blue-600 mb-4 cursor-pointer">
+                        <h3 class="font-bold text-lg text-gray-800">${shop.name}</h3>
+                        <p class="text-sm text-gray-500 mt-1">${shop.subtext}</p>
                     </div>`;
             });
             html += `</div>`;
-            app.innerHTML = html;
+            contentArea.innerHTML = html;
+            window.scrollTo(0,0);
         }
 
-        // وظيفة عرض المنتجات
-        function showProducts(shopIndex, brandIndex) {
-            const brand = DATA[shopIndex].brands[brandIndex];
-            let html = `<button onclick="showBrands(${shopIndex})" class="text-blue-600 mb-4">🔙 العودة</button>`;
-            html += `<h2 class="text-lg font-bold mb-4 text-blue-700">قطع غيار ${brand.name}:</h2>`;
-            brand.products.forEach(product => {
+        function renderBrands(shopIndex) {
+            const shop = APP_CONFIG.shops[shopIndex];
+            let html = `<div class="animate-fade-in">
+                <button onclick="renderShops()" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg mb-6 font-bold flex items-center gap-2">🔙 العودة للمحلات</button>
+                <h2 class="text-lg font-bold mb-4 italic text-blue-800">ماركات متوفرة عند: ${shop.name}</h2>
+                <div class="grid grid-cols-2 gap-4">`;
+            
+            shop.categories.forEach((cat, cIndex) => {
                 html += `
-                    <div class="bg-white rounded-2xl shadow-lg border mb-4 overflow-hidden">
-                        <img src="${product.image}" class="w-full h-40 object-cover">
-                        <div class="p-4 flex justify-between items-center">
-                            <div>
-                                <h3 class="font-bold">${product.title}</h3>
-                                <p class="text-green-600 font-bold">${product.price}</p>
-                            </div>
-                            <a href="tel:${product.phone}" class="bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-bold">اتصل</a>
+                    <div onclick="renderItems(${shopIndex}, ${cIndex})" class="card-tap bg-white p-8 rounded-3xl shadow-sm border-2 border-gray-50 text-center font-black text-blue-600">
+                        ${cat.brand}
+                    </div>`;
+            });
+            html += `</div></div>`;
+            contentArea.innerHTML = html;
+            window.scrollTo(0,0);
+        }
+
+        function renderItems(shopIndex, catIndex) {
+            const cat = APP_CONFIG.shops[shopIndex].categories[catIndex];
+            let html = `<div class="animate-fade-in">
+                <button onclick="renderBrands(${shopIndex})" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg mb-6 font-bold">🔙 العودة للأنواع</button>
+                <h2 class="text-lg font-bold mb-4">نتائج البحث في: ${cat.brand}</h2>`;
+            
+            cat.items.forEach(item => {
+                html += `
+                    <div class="bg-white rounded-3xl shadow-xl border border-gray-100 mb-6 overflow-hidden">
+                        <img src="${item.img}" class="w-full h-52 object-cover bg-gray-200">
+                        <div class="p-5">
+                            <h3 class="font-black text-xl mb-1">${item.name}</h3>
+                            <p class="text-blue-600 font-bold text-lg mb-4">${item.price} ${APP_CONFIG.currency}</p>
+                            <a href="tel:${item.phone}" class="flex items-center justify-center gap-2 w-full bg-green-500 text-white py-4 rounded-2xl font-bold shadow-lg hover:bg-green-600 transition-all">
+                                📞 ${APP_CONFIG.contactText}
+                            </a>
                         </div>
                     </div>`;
             });
-            app.innerHTML = html;
+            html += `</div>`;
+            contentArea.innerHTML = html;
+            window.scrollTo(0,0);
         }
 
-        // تشغيل التطبيق لأول مرة
-        showShops();
+        initApp();
     </script>
 </body>
 </html>
