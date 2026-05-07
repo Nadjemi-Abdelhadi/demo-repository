@@ -3,139 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">دليل المنيعة</title>
+    <title>دليل المنيعة برو - ZaLo AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        .animate-fade-in { animation: fadeIn 0.3s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .card-tap:active { scale: 0.97; transition: 0.1s; }
+        body { font-family: 'Tajawal', sans-serif; transition: background 0.3s; }
+        .sidebar { transition: transform 0.3s ease-in-out; }
+        .category-card:hover { transform: translateY(-5px); transition: 0.3s; }
+        .blur-bg { backdrop-filter: blur(8px); }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-900 font-sans">
+<body class="bg-slate-50">
 
-    <script>
-        const APP_CONFIG = {
-            Commit: "دليل المنيعة لقطع الغيار", // يمكنك تغييره لأي اسم تريده
-            headerColor: "bg-blue-800", // لون الشريط العلوي
-            currency: "دج",
-            contactText: "اتصل بصاحب المحل",
+    <header class="bg-white/80 blur-bg sticky top-0 z-40 border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()" class="p-2 hover:bg-slate-100 rounded-lg">
+                    <svg class="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
+                <div class="flex items-center gap-2">
+                    <div class="bg-blue-600 p-1.5 rounded-lg text-white font-black">ZaLo</div>
+                    <span class="font-bold text-slate-800 hidden sm:inline">دليل المنيعة</span>
+                </div>
+            </div>
             
-            // قاعدة البيانات (أضف أو عدل المحلات هنا)
-            shops: [
-                {
-                    name: "أولاد حيمودة",
-                    subtext: "قطع غيار السيارات الأصلية - المنيعة",
-                    categories: [
-                        {
-                            brand: "اكسنت",
-                            items: [
-                                { name: "رادياتور أصلية", price: "12500", img: "https://via.placeholder.com/400x250", phone: "0660000000" },
-                                { name: "فار أمامي", price: "4800", img: "https://via.placeholder.com/400x250", phone: "0660000000" }
-                            ]
-                        },
-                        {
-                            brand: "تويوتا",
-                            items: [
-                                { name: "مصفاة زيت (Filtre)", price: "1600", img: "https://via.placeholder.com/400x250", phone: "0660000000" }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    name: "محل ميمي",
-                    subtext: "دراجات نارية وقطع غيار متنوعة",
-                    categories: [
-                        {
-                            brand: "دراجات C50",
-                            items: [
-                                { name: "محرك كامل", price: "38000", img: "https://via.placeholder.com/400x250", phone: "0770000000" }
-                            ]
-                        }
-                    ]
-                }
-            ]
-        };
-    </script>
-
-    <header id="mainHeader" class="p-5 text-white shadow-xl sticky top-0 z-50 text-center transition-colors">
-        <h1 id="appDisplayName" class="text-xl font-black"></h1>
+            <div class="flex items-center gap-3">
+                <button class="p-2 hover:bg-slate-100 rounded-full text-slate-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                </button>
+                <button class="bg-slate-900 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-slate-800 transition-all">تسجيل الدخول</button>
+            </div>
+        </div>
     </header>
 
-    <main id="appContent" class="max-w-md mx-auto p-4 min-h-screen">
-        </main>
+    <aside id="sidebar" class="fixed inset-y-0 right-0 z-50 w-64 bg-white shadow-2xl transform translate-x-full sidebar border-r border-slate-100">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-10">
+                <span class="font-black text-xl text-blue-600">القائمة</span>
+                <button onclick="toggleSidebar()" class="text-slate-400">✖</button>
+            </div>
+            <nav class="space-y-4">
+                <a href="#" class="flex items-center gap-3 p-3 bg-blue-50 text-blue-600 rounded-xl font-bold">🏠 الصفحة الرئيسية</a>
+                <a href="#" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-50 rounded-xl">📞 اتصل بنا</a>
+                <a href="#" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-50 rounded-xl">📍 خريطة المنيعة</a>
+                <a href="#" class="flex items-center gap-3 p-3 text-slate-600 hover:bg-slate-50 rounded-xl">🛒 عروض خاصة</a>
+                <hr class="border-slate-100">
+                <a href="#" class="flex items-center gap-3 p-3 text-red-500 hover:bg-red-50 rounded-xl font-medium">⚠️ بلاغ عن مشكلة</a>
+            </nav>
+        </div>
+    </aside>
 
-    <footer class="p-6 text-center text-gray-400 text-xs">
-        تطوير ZaLo AI &copy; 2026 - المنيعة
-    </footer>
+    <main class="max-w-7xl mx-auto p-6 mt-4">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-black text-slate-800 mb-2">ما الذي تبحث عنه اليوم؟</h2>
+            <p class="text-slate-500">اختر التخصص الذي تريده للوصول إلى أفضل المحلات في المنيعة</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <div class="category-card bg-white p-6 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-white cursor-pointer group">
+                <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:bg-blue-600 group-hover:text-white transition-all">🚗</div>
+                <h3 class="font-black text-xl text-slate-800 mb-2">قطع غيار السيارات</h3>
+                <p class="text-slate-500 text-sm mb-6">أكثر من 20 محل متخصص (أولاد حيمودة، ميمي...)</p>
+                <div class="flex justify-between items-center text-blue-600 font-bold">
+                    <span>دخول القسم</span>
+                    <span>←</span>
+                </div>
+            </div>
+
+            <div class="category-card bg-white p-6 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-white cursor-pointer group">
+                <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:bg-green-600 group-hover:text-white transition-all">👕</div>
+                <h3 class="font-black text-xl text-slate-800 mb-2">الملابس والموضة</h3>
+                <p class="text-slate-500 text-sm mb-6">أحدث الصيحات في أسواق المنيعة</p>
+                <div class="flex justify-between items-center text-green-600 font-bold">
+                    <span>دخول القسم</span>
+                    <span>←</span>
+                </div>
+            </div>
+
+            <div class="category-card bg-white p-6 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-white cursor-pointer group">
+                <div class="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:bg-amber-600 group-hover:text-white transition-all">📱</div>
+                <h3 class="font-black text-xl text-slate-800 mb-2">الهواتف والإلكترونيات</h3>
+                <p class="text-slate-500 text-sm mb-6">جديد ومستعمل بضمان المحلات</p>
+                <div class="flex justify-between items-center text-amber-600 font-bold">
+                    <span>دخول القسم</span>
+                    <span>←</span>
+                </div>
+            </div>
+
+        </div>
+    </main>
 
     <script>
-        // العقل المدبر للتطبيق (Logic Engine)
-        const contentArea = document.getElementById('appContent');
-        
-        function initApp() {
-            document.getElementById('appDisplayName').innerText = APP_CONFIG.mainTitle;
-            document.getElementById('pageTitle').innerText = APP_CONFIG.mainTitle;
-            document.getElementById('mainHeader').className = `p-5 text-white shadow-xl sticky top-0 z-50 text-center ${APP_CONFIG.headerColor}`;
-            renderShops();
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('translate-x-full');
         }
 
-        function renderShops() {
-            let html = `<div class="animate-fade-in"><h2 class="text-lg font-bold mb-5 flex items-center gap-2">📂 اختر المحل:</h2>`;
-            APP_CONFIG.shops.forEach((shop, index) => {
-                html += `
-                    <div onclick="renderBrands(${index})" class="card-tap bg-white p-5 rounded-2xl shadow-md border-r-4 border-blue-600 mb-4 cursor-pointer">
-                        <h3 class="font-bold text-lg text-gray-800">${shop.name}</h3>
-                        <p class="text-sm text-gray-500 mt-1">${shop.subtext}</p>
-                    </div>`;
-            });
-            html += `</div>`;
-            contentArea.innerHTML = html;
-            window.scrollTo(0,0);
-        }
-
-        function renderBrands(shopIndex) {
-            const shop = APP_CONFIG.shops[shopIndex];
-            let html = `<div class="animate-fade-in">
-                <button onclick="renderShops()" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg mb-6 font-bold flex items-center gap-2">🔙 العودة للمحلات</button>
-                <h2 class="text-lg font-bold mb-4 italic text-blue-800">ماركات متوفرة عند: ${shop.name}</h2>
-                <div class="grid grid-cols-2 gap-4">`;
-            
-            shop.categories.forEach((cat, cIndex) => {
-                html += `
-                    <div onclick="renderItems(${shopIndex}, ${cIndex})" class="card-tap bg-white p-8 rounded-3xl shadow-sm border-2 border-gray-50 text-center font-black text-blue-600">
-                        ${cat.brand}
-                    </div>`;
-            });
-            html += `</div></div>`;
-            contentArea.innerHTML = html;
-            window.scrollTo(0,0);
-        }
-
-        function renderItems(shopIndex, catIndex) {
-            const cat = APP_CONFIG.shops[shopIndex].categories[catIndex];
-            let html = `<div class="animate-fade-in">
-                <button onclick="renderBrands(${shopIndex})" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg mb-6 font-bold">🔙 العودة للأنواع</button>
-                <h2 class="text-lg font-bold mb-4">نتائج البحث في: ${cat.brand}</h2>`;
-            
-            cat.items.forEach(item => {
-                html += `
-                    <div class="bg-white rounded-3xl shadow-xl border border-gray-100 mb-6 overflow-hidden">
-                        <img src="${item.img}" class="w-full h-52 object-cover bg-gray-200">
-                        <div class="p-5">
-                            <h3 class="font-black text-xl mb-1">${item.name}</h3>
-                            <p class="text-blue-600 font-bold text-lg mb-4">${item.price} ${APP_CONFIG.currency}</p>
-                            <a href="tel:${item.phone}" class="flex items-center justify-center gap-2 w-full bg-green-500 text-white py-4 rounded-2xl font-bold shadow-lg hover:bg-green-600 transition-all">
-                                📞 ${APP_CONFIG.contactText}
-                            </a>
-                        </div>
-                    </div>`;
-            });
-            html += `</div>`;
-            contentArea.innerHTML = html;
-            window.scrollTo(0,0);
-        }
-
-        initApp();
+        // إغلاق الشريط الجانبي عند الضغط خارجه
+        document.addEventListener('click', (e) => {
+            const sidebar = document.getElementById('sidebar');
+            const menuBtn = e.target.closest('button');
+            if (!sidebar.contains(e.target) && !menuBtn && !sidebar.classList.contains('translate-x-full')) {
+                sidebar.classList.add('translate-x-full');
+            }
+        });
     </script>
 </body>
 </html>
