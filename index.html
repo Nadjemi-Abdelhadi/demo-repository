@@ -8,65 +8,61 @@
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: 'Tajawal', sans-serif; background-color: #ffffff; color: #1e293b; }
-        .animate-fade { animation: slideUp 0.5s ease-out forwards; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .pulse-green { animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { transform: scale(0.95); opacity: 0.5; } 70% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(0.95); opacity: 0.5; } }
-        .shop-card:active { transform: scale(0.97); transition: 0.2s; }
+        body { font-family: 'Tajawal', sans-serif; background-color: #ffffff; color: #0f172a; }
+        .glass-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .animate-up { animation: fadeInUp 0.5s ease-out forwards; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .pulse { animation: pulse-animation 2s infinite; }
+        @keyframes pulse-animation { 0% { box-shadow: 0 0 0 0px rgba(34, 197, 94, 0.4); } 100% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); } }
     </style>
 </head>
-<body class="antialiased">
+<body class="antialiased select-none">
 
-    <header class="bg-white sticky top-0 z-[100] border-b border-slate-50 p-4 flex items-center justify-between h-18 shadow-sm">
+    <header class="glass-nav sticky top-0 z-[100] border-b border-slate-100 p-4 flex items-center justify-between h-18">
         <div class="flex items-center gap-3">
-            <button onclick="goBack()" id="backBtn" class="hidden w-10 h-10 flex items-center justify-center rounded-full bg-slate-50 text-slate-600"><i class="fas fa-arrow-right"></i></button>
-            <div id="logoBlock" class="flex items-center gap-2">
+            <button onclick="goBack()" id="backBtn" class="hidden w-10 h-10 flex items-center justify-center rounded-full bg-slate-50 text-slate-600 transition-all"><i class="fas fa-arrow-right"></i></button>
+            <div id="brandLogo" class="flex items-center gap-2">
                 <img src="https://raw.githubusercontent.com/Nadjemi-Abdelhadi/demo-repository/main/1000045432.png" 
-                     class="w-11 h-11 rounded-2xl border border-slate-100 object-contain shadow-sm bg-white" alt="ZaLo">
-                <div class="leading-none">
+                     class="w-10 h-10 rounded-xl border border-slate-100 shadow-sm object-contain bg-white" alt="ZaLo">
+                <div>
                     <h1 class="font-black text-slate-900 text-sm tracking-tight">دليل المنيعة</h1>
-                    <span class="text-[7px] text-blue-600 font-bold uppercase tracking-widest mt-1 block">Zalo Digital</span>
+                    <span class="text-[7px] text-blue-600 font-bold uppercase tracking-widest mt-0.5 block">ZaLo Smart Guide</span>
                 </div>
             </div>
         </div>
-        <button class="bg-slate-950 text-white px-5 py-2 rounded-2xl text-[10px] font-bold shadow-lg shadow-slate-200">دخول</button>
+        <button class="bg-slate-900 text-white px-5 py-2 rounded-2xl text-[10px] font-bold shadow-lg active:scale-95 transition-all">دخول</button>
     </header>
 
     <main class="max-w-md mx-auto p-6 min-h-screen">
         
-        <div id="view-home" class="animate-fade">
-            <div class="mb-10 mt-4">
-                <h2 class="text-3xl font-black text-slate-900 leading-[1.2]">رؤية ذكية<br>لتجارة <span class="text-blue-600">المنيعة</span></h2>
-                <p class="text-slate-400 text-xs mt-3 leading-relaxed">دليلك الرقمي الأول للوصول إلى أفضل المنتجات والخدمات في المدينة.</p>
+        <div id="view-home" class="animate-up">
+            <div class="mb-10 mt-4 px-1">
+                <h2 class="text-3xl font-black text-slate-900 leading-[1.1]">تسوق بذكاء في <br><span class="text-blue-600">قلب المنيعة</span></h2>
+                <p class="text-slate-400 text-xs mt-3 leading-relaxed">المنصة الرقمية الأولى لربط سكان المدينة بأفضل المحلات التجارية.</p>
             </div>
             
-            <div class="grid grid-cols-2 gap-5">
-                <div onclick="showCategory('electronics')" class="bg-white p-7 rounded-[40px] border border-slate-100 shadow-xl shadow-slate-50 text-center flex flex-col items-center shop-card cursor-pointer">
-                    <div class="bg-blue-50 w-16 h-16 rounded-3xl flex items-center justify-center mb-5 text-blue-600 text-2xl shadow-inner">
-                        <i class="fas fa-mobile-alt"></i>
-                    </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div onclick="showCategory('electronics')" class="bg-white p-7 rounded-[35px] border border-slate-100 shadow-xl shadow-slate-50 text-center flex flex-col items-center cursor-pointer active:scale-95 transition-all">
+                    <div class="bg-blue-50 w-16 h-16 rounded-3xl flex items-center justify-center mb-5 text-blue-600 text-2xl shadow-inner"><i class="fas fa-mobile-screen-button"></i></div>
                     <span class="font-bold text-slate-800 text-[11px]">الهواتف والإلكترونيات</span>
                 </div>
-                <div class="bg-slate-50/30 p-7 rounded-[40px] border border-dashed border-slate-200 text-center flex flex-col items-center opacity-40">
-                    <div class="bg-white w-16 h-16 rounded-3xl flex items-center justify-center mb-5 text-slate-300 text-2xl">
-                        <i class="fas fa-utensils"></i>
-                    </div>
-                    <span class="font-bold text-slate-400 text-[11px]">المطاعم (قريباً)</span>
+                <div class="bg-slate-50/50 p-7 rounded-[35px] border border-dashed border-slate-200 text-center flex flex-col items-center opacity-40">
+                    <div class="bg-white w-16 h-16 rounded-3xl flex items-center justify-center mb-5 text-slate-300 text-2xl"><i class="fas fa-utensils"></i></div>
+                    <span class="font-bold text-slate-400 text-[11px]">قريباً.. المطاعم</span>
                 </div>
             </div>
         </div>
 
-        <div id="view-shops" class="hidden animate-fade">
-            <div class="flex items-center gap-3 mb-8">
-                <span class="w-1.5 h-7 bg-blue-600 rounded-full"></span>
-                <h2 class="text-xl font-black text-slate-900">المتاجر المعتمدة</h2>
+        <div id="view-shops" class="hidden animate-up">
+            <div class="flex items-center gap-3 mb-8 px-1">
+                <div class="w-1.5 h-6 bg-blue-600 rounded-full"></div>
+                <h2 class="text-xl font-black text-slate-900 uppercase">المتاجر المختارة</h2>
             </div>
             <div id="shopsList" class="space-y-4"></div>
         </div>
 
-        <div id="view-products" class="hidden animate-fade">
-            <div id="shopHeader" class="bg-white rounded-[40px] p-8 shadow-2xl shadow-blue-50 border border-blue-50 mb-10 text-center relative overflow-hidden">
+        <div id="view-products" class="hidden animate-up">
+            <div id="shopHeader" class="bg-white rounded-[40px] p-8 shadow-2xl shadow-blue-50/50 border border-blue-50 mb-10 text-center relative overflow-hidden">
                 </div>
             <div id="productsGrid" class="grid grid-cols-2 gap-4 pb-20"></div>
         </div>
@@ -83,30 +79,47 @@
                 const res = await fetch(SHEET_URL);
                 const text = await res.text();
                 const json = JSON.parse(text.substr(47).slice(0, -2));
-                // فلترة ذكية جداً لتنظيف البيانات من أي أخطاء سابقة
-                allData = json.table.rows.map(row => ({
-                    shop: row.c[0]?.v, item: row.c[1]?.v, price: row.c[2]?.v, desc: row.c[3]?.v || '', imgUrl: row.c[4]?.v || ''
-                })).filter(i => i.shop && isNaN(Date.parse(i.shop)));
-            } catch (e) { console.error("ZaLo Connection Failed"); }
+                
+                // منطق ذكي جداً: يبحث عن أول نص ليس تاريخاً ليكون هو اسم المحل
+                allData = json.table.rows.map(row => {
+                    let shopName = row.c[0]?.v;
+                    let itemName = row.c[1]?.v;
+                    let priceVal = row.c[2]?.v;
+                    let imgVal = row.c[4]?.v || '';
+
+                    // إذا كان العمود الأول تاريخ، نقوم بترحيل البيانات
+                    if (shopName && !isNaN(Date.parse(shopName)) && shopName.toString().includes('/')) {
+                        shopName = row.c[1]?.v;
+                        itemName = row.c[2]?.v;
+                        priceVal = row.c[3]?.v;
+                    }
+
+                    return { shop: shopName, item: itemName, price: priceVal, img: imgVal };
+                }).filter(i => i.shop && i.item && i.shop !== "اسم المحل");
+                
+                console.log("ZaLo Smart Engine: Data Synced");
+            } catch (e) { console.error("Sync Error"); }
         }
 
         function showCategory(cat) {
             document.getElementById('view-home').classList.add('hidden');
             document.getElementById('view-shops').classList.remove('hidden');
             document.getElementById('backBtn').classList.remove('hidden');
-            document.getElementById('logoBlock').classList.add('hidden');
+            document.getElementById('brandLogo').classList.add('hidden');
+            
             const list = document.getElementById('shopsList');
             const uniqueShops = [...new Set(allData.map(i => i.shop))];
+            
             list.innerHTML = uniqueShops.map(shop => `
-                <div onclick="showShopProducts('${shop}')" class="bg-white p-6 rounded-[30px] border border-slate-50 flex justify-between items-center shadow-sm shop-card cursor-pointer">
+                <div onclick="showShopProducts('${shop}')" class="bg-white p-6 rounded-[30px] border border-slate-50 flex justify-between items-center shadow-sm active:bg-slate-50 transition-all cursor-pointer">
                     <div class="flex items-center gap-5">
-                        <div class="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center text-white shadow-lg"><i class="fas fa-store"></i></div>
+                        <div class="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-slate-200"><i class="fas fa-store"></i></div>
                         <div>
                             <span class="font-black text-slate-800 text-sm block">${shop}</span>
-                            <span class="text-[9px] text-blue-500 font-bold uppercase">متجر نشط</span>
+                            <span class="text-[9px] text-blue-500 font-bold uppercase tracking-widest">متجر معتمد</span>
                         </div>
                     </div>
-                    <i class="fas fa-chevron-left text-slate-300"></i>
+                    <i class="fas fa-chevron-left text-slate-200 text-xs"></i>
                 </div>
             `).join('');
         }
@@ -114,28 +127,35 @@
         function showShopProducts(shopName) {
             document.getElementById('view-shops').classList.add('hidden');
             document.getElementById('view-products').classList.remove('hidden');
+            
             const header = document.getElementById('shopHeader');
             header.innerHTML = `
-                <div class="flex justify-center items-center gap-2 mb-3">
-                    <span class="w-2 h-2 bg-green-500 rounded-full pulse-green"></span>
-                    <span class="text-[9px] font-bold text-green-600 uppercase tracking-widest">مفتوح الآن</span>
+                <div class="flex justify-center items-center gap-2 mb-4">
+                    <span class="w-2 h-2 bg-green-500 rounded-full pulse"></span>
+                    <span class="text-[9px] font-black text-green-600 uppercase tracking-widest">مفتوح الآن - استلام فوري</span>
                 </div>
                 <h2 class="text-2xl font-black text-slate-900 mb-2">${shopName}</h2>
-                <p class="text-slate-400 text-[10px] mb-8 leading-relaxed"><i class="fas fa-map-marker-alt text-blue-500"></i> المنيعة، الجزائر • استلام فوري</p>
-                <a href="https://wa.me/213696795160" target="_blank" class="flex items-center gap-3 bg-[#25D366] text-white p-4 rounded-2xl font-black w-full justify-center shadow-xl shadow-green-100 active:scale-95 transition-all">
-                    <i class="fab fa-whatsapp text-2xl"></i> طلب سريع عبر واتساب
-                </a>
+                <p class="text-slate-400 text-[10px] mb-8 leading-relaxed"><i class="fas fa-location-dot text-blue-500 ml-1"></i> المنيعة، الجزائر • مركز المدينة</p>
+                <div class="flex gap-2">
+                    <a href="https://wa.me/213696795160" target="_blank" class="flex-grow flex items-center gap-3 bg-[#25D366] text-white p-4 rounded-2xl font-black justify-center shadow-xl shadow-green-100 active:scale-95 transition-all">
+                        <i class="fab fa-whatsapp text-2xl"></i> اطلب الآن
+                    </a>
+                </div>
             `;
+
             const grid = document.getElementById('productsGrid');
             const products = allData.filter(i => i.shop === shopName);
             grid.innerHTML = products.map(p => `
-                <div class="bg-white p-3 rounded-[35px] border border-slate-50 shadow-sm animate-fade">
-                    <div class="h-36 bg-slate-50 rounded-[28px] mb-4 overflow-hidden border border-slate-50 flex items-center justify-center shadow-inner">
-                         <img src="${p.imgUrl}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/150?text=ZaLo'">
+                <div class="bg-white p-3 rounded-[35px] border border-slate-50 shadow-sm animate-up">
+                    <div class="h-40 bg-slate-50 rounded-[28px] mb-4 overflow-hidden border border-slate-50 flex items-center justify-center shadow-inner">
+                         <img src="${p.img}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/200?text=ZaLo'">
                     </div>
-                    <div class="px-2">
-                        <h3 class="font-bold text-slate-800 text-[10px] mb-1 leading-tight h-8 overflow-hidden">${p.item}</h3>
-                        <div class="text-blue-600 font-black text-xs mt-2">${p.price}</div>
+                    <div class="px-2 pb-1">
+                        <h3 class="font-black text-slate-800 text-[10px] mb-1 leading-tight h-8 overflow-hidden">${p.item}</h3>
+                        <div class="flex items-center justify-between mt-2">
+                            <span class="text-blue-600 font-black text-xs">${p.price}</span>
+                            <div class="w-6 h-6 bg-slate-50 rounded-full flex items-center justify-center text-slate-300 text-[10px]"><i class="fas fa-plus"></i></div>
+                        </div>
                     </div>
                 </div>
             `).join('');
@@ -151,7 +171,7 @@
                 vShops.classList.add('hidden');
                 document.getElementById('view-home').classList.remove('hidden');
                 document.getElementById('backBtn').classList.add('hidden');
-                document.getElementById('logoBlock').classList.remove('hidden');
+                document.getElementById('brandLogo').classList.remove('hidden');
             }
         }
         init();
