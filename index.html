@@ -5,90 +5,97 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZaLo - دليل المنيعة</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Tajawal', sans-serif; background-color: #f8fafc; }
+        body { font-family: 'Tajawal', sans-serif; }
+        .shop-container {
+            border: 2px solid #e2e8f0; /* إطار المحل */
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 25px;
+            background-color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .animate-pop { animation: pop 0.3s ease-out; }
         @keyframes pop { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .animate-pop { animation: pop 0.3s ease-out forwards; }
     </style>
 </head>
 <body class="bg-slate-50">
 
-<header class="bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100 p-4">
-    <div class="max-w-xl mx-auto flex justify-between items-center">
-        <div class="flex items-center gap-3">
-            <img src="1778188155294.png" alt="ZaLo" class="h-10 w-10 object-contain rounded-full border border-slate-100 shadow-sm">
-            <div class="flex flex-col">
-                <span class="font-black text-slate-900 text-sm leading-none">دليل المنيعة</span>
-                <span class="text-[9px] text-slate-400 font-bold tracking-widest uppercase italic">ZaLo AI Guide</span>
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100 p-4">
+        <div class="max-w-xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="flex flex-col">
+                    <span class="font-black text-slate-900 leading-none">دليل المنيعة</span>
+                    <span class="text-[9px] text-slate-400 font-bold tracking-widest uppercase italic">ZaLo AI Guide</span>
+                </div>
             </div>
         </div>
-    </div>
-</header>
+    </header>
 
-<main id="app" class="max-w-xl mx-auto min-h-screen p-6"></main>
+    <main id="app" class="max-w-xl mx-auto min-h-screen p-6">
+        <div class="text-center py-20 text-slate-400">جاري جلب بيانات المحلات...</div>
+    </main>
 
-<script>
-    // ضع رابط الـ CSV الخاص بجدول جوجل هنا بعد نشره
-    const SHEET_URL = 'ضع_رابط_CSV_الخاص_بك_هنا';
+    <script>
+        // رابط الجدول الخاص بك (تم تحويله لـ CSV تلقائياً)
+        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1EPSEZ5DggKehKWidD8Q52jTEsfPWf7RD5xqyWN2Gt4Q/export?format=csv';
 
-    let allProducts = [];
+        let allProducts = [];
 
-    async function loadData() {
-        document.getElementById('app').innerHTML = '<p class="text-center py-20 font-bold text-slate-400">جاري جلب المنتجات...</p>';
-        try {
-            const response = await fetch(SHEET_URL);
-            const data = await response.text();
-            const rows = data.split('\n').slice(1); // تجاهل السطر الأول (العناوين)
-            
-            allProducts = rows.map(row => {
-                const cols = row.split(',');
-                return {
-                    shop: cols[0],
-                    name: cols[1],
-                    price: cols[2],
-                    desc: cols[3],
-                    img: cols[4]
-                };
-            }).filter(p => p.name); // تصفية الأسطر الفارغة
+        async function loadData() {
+            try {
+                const response = await fetch(SHEET_URL);
+                const data = await response.text();
+                const rows = data.split('\n').slice(1); // تجاهل العنوان
 
-            renderHome();
-        } catch (error) {
-            document.getElementById('app').innerHTML = '<p class="text-center py-20 text-red-500">حدث خطأ في جلب البيانات. تأكد من رابط الجدول.</p>';
+                allProducts = rows.map(row => {
+                    const cols = row.split(',');
+                    return {
+                        shop: cols[0]?.trim(),
+                        name: cols[1]?.trim(),
+                        price: cols[2]?.trim(),
+                        desc: cols[3]?.trim(),
+                        img: cols[4]?.trim()
+                    };
+                }).filter(p => p.name);
+
+                renderHome();
+            } catch (error) {
+                document.getElementById('app').innerHTML = '<p class="text-center py-20 text-red-500">حدث خطأ في جلب البيانات، تأكد من إعدادات المشاركة في الجدول.</p>';
+            }
         }
-    }
 
-    function renderHome() {
-        // تجميع المحلات الفريدة
-        const shops = [...new Set(allProducts.map(p => p.shop))];
-        
-        let html = `<h1 class="text-2xl font-black text-slate-900 mb-6">المحلات المتوفرة</h1><div class="space-y-4">`;
-        
-        shops.forEach(shopName => {
-            const shopProducts = allProducts.filter(p => p.shop === shopName);
-            html += `
-                <div class="bg-white p-5 rounded-[2.5rem] border border-slate-100 shadow-sm animate-pop">
-                    <h2 class="font-black text-xl text-slate-800 mb-4">${shopName}</h2>
-                    <div class="flex gap-3 overflow-x-auto pb-4 no-scrollbar">
-                        ${shopProducts.map(prod => `
-                            <div class="flex-shrink-0 w-40 bg-slate-50 rounded-3xl p-3 border border-slate-100 text-right">
-                                <img src="${prod.img}" class="w-full h-32 object-cover rounded-2xl mb-2 shadow-sm">
-                                <h5 class="text-[11px] font-black text-slate-800 truncate">${prod.name}</h5>
-                                <p class="text-[9px] text-slate-500 mb-2 h-6 overflow-hidden">${prod.desc}</p>
-                                <div class="text-blue-600 font-black text-sm">${prod.price}</div>
-                            </div>
-                        `).join('')}
-                    </div>
-                    <div class="mt-2 text-center text-[10px] text-slate-400 font-bold tracking-tighter">اسحب لليسار لرؤية المزيد ←</div>
-                </div>`;
-        });
+        function renderHome() {
+            const shops = [...new Set(allProducts.map(p => p.shop))];
+            
+            let html = '<h1 class="text-2xl font-black text-slate-900 mb-6">المحلات المتوفرة</h1><div class="space-y-4">';
 
-        html += `</div>`;
-        document.getElementById('app').innerHTML = html;
-    }
+            shops.forEach(shopName => {
+                const shopProducts = allProducts.filter(p => p.shop === shopName);
+                html += `
+                    <div class="shop-container animate-pop">
+                        <h2 class="text-xl font-black text-blue-600 mb-4 border-b pb-2">${shopName}</h2>
+                        <div class="flex gap-3 overflow-x-auto pb-4 no-scrollbar">
+                            ${shopProducts.map(prod => `
+                                <div class="flex-shrink-0 w-40 bg-slate-50 rounded-2xl p-3 border border-slate-100 text-right">
+                                    ${prod.img ? `<img src="${prod.img}" class="w-full h-24 object-cover rounded-xl mb-2 shadow-sm">` : `<div class="w-full h-24 bg-slate-200 rounded-xl mb-2 flex items-center justify-center text-[10px] text-slate-400">بدون صورة</div>`}
+                                    <h3 class="text-[12px] font-black text-slate-800 truncate">${prod.name}</h3>
+                                    <p class="text-[9px] text-slate-500 my-1 h-6 overflow-hidden">${prod.desc || ''}</p>
+                                    <div class="text-blue-600 font-black text-sm">${prod.price}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="mt-2 text-center text-[10px] text-slate-400 font-bold tracking-tighter italic">اسحب لليسار لرؤية المزيد ←</div>
+                    </div>`;
+            });
 
-    loadData();
-</script>
+            html += '</div>';
+            document.getElementById('app').innerHTML = html;
+        }
+
+        loadData();
+    </script>
 </body>
 </html>
