@@ -3,113 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZaLo - دليل المنيعة الرقمي</title>
+    <title>ZaLo AI Guide - المنيعة</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: 'Tajawal', sans-serif; scroll-behavior: smooth; }
-        .shop-card { border: 1.5px solid #f1f5f9; border-radius: 24px; padding: 20px; margin-bottom: 24px; background: white; shadow: 0 4px 15px rgba(0,0,0,0.03); }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        body { font-family: 'Tajawal', sans-serif; background-color: #f8fafc; }
+        .category-card { transition: all 0.3s ease; cursor: pointer; }
+        .category-card:active { transform: scale(0.95); }
+        .animate-in { animation: fadeIn 0.4s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade { animation: fadeIn 0.4s ease-out forwards; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="bg-[#f8fafc] text-slate-900">
+<body>
 
-    <header class="bg-white/95 backdrop-blur-md sticky top-0 z-[100] border-b border-slate-100 px-4 h-16 shadow-sm">
-        <div class="max-w-5xl mx-auto h-full flex items-center justify-between relative">
-            <div class="flex items-center gap-2 z-10">
-                <img src="https://raw.githubusercontent.com/Nadjemi-Abdelhadi/demo-repository/main/1000045432.png" 
-                     class="w-10 h-10 object-contain rounded-xl" alt="ZaLo Logo">
-            </div>
-            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div class="text-center">
-                    <h1 class="font-black text-base text-slate-900 tracking-tight leading-tight">دليل المنيعة</h1>
-                    <span class="text-[7px] text-blue-500 font-bold tracking-[0.3em] uppercase block">ZaLo Digital Guide</span>
-                </div>
-            </div>
-            <div class="flex items-center gap-2 z-10">
-                <button class="w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:bg-slate-50"><i class="fa-solid fa-gear text-sm"></i></button>
-                <button class="flex items-center gap-1.5 bg-slate-900 text-white px-3 py-1.5 rounded-full text-[10px] font-bold">
-                    <i class="fa-solid fa-circle-user text-xs"></i>
-                    <span>دخول</span>
-                </button>
-            </div>
+    <header class="bg-white sticky top-0 z-50 border-b p-4 shadow-sm flex justify-between items-center h-16">
+        <button onclick="goBack()" id="backBtn" class="hidden text-slate-600 w-10"><i class="fas fa-arrow-right text-xl"></i></button>
+        <div class="flex flex-col items-center flex-grow text-center">
+            <h1 class="font-black text-slate-800 text-base leading-none">دليل المنيعة</h1>
+            <span class="text-[8px] text-blue-500 font-bold uppercase tracking-widest mt-1">Zalo AI Guide</span>
         </div>
+        <img src="https://raw.githubusercontent.com/Nadjemi-Abdelhadi/demo-repository/main/1000045432.png" class="w-10 h-10 rounded-xl bg-slate-50 p-1">
     </header>
 
-    <main class="max-w-xl mx-auto p-5 min-h-screen">
-        <div class="relative mb-8 animate-fade">
-            <i class="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-            <input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="ابحث في المنيعة..." 
-                class="w-full bg-white border border-slate-200 rounded-2xl py-4 pr-12 pl-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 shadow-sm">
+    <main class="max-w-md mx-auto p-5 min-h-screen">
+        
+        <div id="view-home" class="animate-in">
+            <h2 class="text-2xl font-black text-slate-800 mb-8 mt-4 leading-tight">كل ما تحتاجه في <br><span class="text-blue-600">مدينة المنيعة</span></h2>
+            <div class="grid grid-cols-2 gap-4">
+                <div onclick="showCategory('electronics')" class="category-card bg-white p-6 rounded-[35px] shadow-sm border border-slate-100 text-center flex flex-col items-center">
+                    <div class="bg-blue-50 w-16 h-16 rounded-3xl flex items-center justify-center mb-4 text-blue-600 text-2xl">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <span class="font-bold text-slate-700 text-xs">الهواتف والإلكترونيات</span>
+                </div>
+                <div class="category-card bg-slate-50 p-6 rounded-[35px] border border-dashed border-slate-200 text-center flex flex-col items-center opacity-50">
+                    <div class="bg-white w-16 h-16 rounded-3xl flex items-center justify-center mb-4 text-slate-300 text-2xl">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <span class="font-bold text-slate-400 text-xs">قريباً.. المطاعم</span>
+                </div>
+            </div>
         </div>
-        <div id="app"></div>
+
+        <div id="view-shops" class="hidden animate-in">
+            <h2 class="text-xl font-black text-slate-800 mb-6 flex items-center gap-2 px-2">
+                <i class="fas fa-store text-blue-600"></i> محلات الإلكترونيات
+            </h2>
+            <div id="shopsList" class="space-y-4 px-1"></div>
+        </div>
+
+        <div id="view-products" class="hidden animate-in">
+            <div id="shopHeader" class="bg-white rounded-[30px] p-6 shadow-md border border-blue-50 mb-8">
+                </div>
+            <div id="productsGrid" class="grid grid-cols-2 gap-4 pb-20"></div>
+        </div>
+
     </main>
 
     <script>
-        // تم تحديث الرابط هنا للرابط الجديد الخاص بك
-        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1FACOjgPytWOtrT_24rHGn-GfFQy93JABIXpIFR5y6bE/export?format=csv';
+        // رابط البيانات من Google Sheets
+        const SHEET_ID = '1EPSEZ5DggKehKWidD8Q52jTEsfPWf7RD5xqyWN2Gt4Q';
+        const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+        
+        let allData = [];
 
-        let allProducts = [];
-
-        async function loadData() {
+        async function init() {
             try {
-                const response = await fetch(SHEET_URL);
-                if (!response.ok) throw new Error('Private');
-                const data = await response.text();
-                const rows = data.split('\n').slice(1);
-                allProducts = rows.map(row => {
-                    const cols = row.split(',');
-                    return { shop: cols[0]?.trim(), name: cols[1]?.trim(), price: cols[2]?.trim(), desc: cols[3]?.trim(), img: cols[4]?.trim() };
-                }).filter(p => p.name);
-                render(allProducts);
+                const res = await fetch(SHEET_URL);
+                const text = await res.text();
+                const json = JSON.parse(text.substr(47).slice(0, -2));
+                allData = json.table.rows.map(row => ({
+                    shop: row.c[0]?.v,
+                    item: row.c[1]?.v,
+                    price: row.c[2]?.v,
+                    desc: row.c[3]?.v || '',
+                    imgUrl: row.c[4]?.v || '' // رابط الصورة من العمود E
+                })).filter(i => i.shop && i.item);
             } catch (e) {
-                document.getElementById('app').innerHTML = `
-                    <div class="text-center py-20 bg-amber-50 rounded-3xl border border-amber-100 p-8">
-                        <i class="fa-solid fa-lock text-amber-500 text-3xl mb-4"></i>
-                        <h3 class="font-black text-slate-800 text-sm mb-2">مشكلة وصول</h3>
-                        <p class="text-[11px] text-slate-500">تأكد من اختيار "أي شخص لديه الرابط" في الجدول الجديد.</p>
-                    </div>`;
+                console.error("Data fetch error");
             }
         }
 
-        function searchFunction() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = allProducts.filter(p => p.name.toLowerCase().includes(query) || p.shop.toLowerCase().includes(query));
-            render(filtered);
+        function showCategory(cat) {
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('view-shops').classList.remove('hidden');
+            document.getElementById('backBtn').classList.remove('hidden');
+            
+            const list = document.getElementById('shopsList');
+            const uniqueShops = [...new Set(allData.map(i => i.shop))];
+            
+            list.innerHTML = uniqueShops.map(shopName => `
+                <div onclick="showShopProducts('${shopName}')" class="bg-white p-5 rounded-[28px] border border-slate-100 flex justify-between items-center shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white text-xl">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <span class="font-bold text-slate-800">${shopName}</span>
+                    </div>
+                    <i class="fas fa-chevron-left text-slate-300"></i>
+                </div>
+            `).join('');
         }
 
-        function render(data) {
-            const app = document.getElementById('app');
-            if (data.length === 0) { app.innerHTML = '<p class="text-center py-10 text-slate-400">لا توجد نتائج</p>'; return; }
-            const shops = [...new Set(data.map(p => p.shop))];
-            let html = '';
-            shops.forEach(shop => {
-                const shopProds = data.filter(p => p.shop === shop);
-                html += `
-                    <div class="shop-card animate-fade">
-                        <h2 class="text-lg font-black text-slate-800 mb-5 flex items-center gap-2"><span class="w-1.5 h-5 bg-blue-600 rounded-full"></span> ${shop}</h2>
-                        <div class="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
-                            ${shopProds.map(p => `
-                                <div class="flex-shrink-0 w-40 bg-[#fdfdfd] border border-slate-100 rounded-2xl p-3 shadow-sm">
-                                    <div class="w-full h-24 bg-slate-100 rounded-xl mb-3 flex items-center justify-center overflow-hidden">
-                                        ${p.img && p.img.startsWith('http') ? `<img src="${p.img}" class="w-full h-full object-cover">` : '<i class="fa-solid fa-camera text-slate-300 text-xl"></i>'}
-                                    </div>
-                                    <h3 class="text-xs font-black text-slate-900 truncate">${p.name}</h3>
-                                    <div class="flex justify-between items-center mt-3">
-                                        <span class="text-blue-600 font-black text-xs">${p.price}</span>
-                                        <div class="w-6 h-6 bg-white border border-slate-100 rounded-lg flex items-center justify-center shadow-sm"><i class="fa-solid fa-plus text-[8px] text-slate-400"></i></div>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>`;
-            });
-            app.innerHTML = html;
+        function showShopProducts(shopName) {
+            document.getElementById('view-shops').classList.add('hidden');
+            document.getElementById('view-products').classList.remove('hidden');
+            
+            // رقم واتساب عبد العالي عرفة المعتمد
+            const whatsappNumber = "213696795160";
+            
+            const header = document.getElementById('shopHeader');
+            header.innerHTML = `
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-2 h-8 bg-blue-600 rounded-full"></div>
+                    <h2 class="text-2xl font-black text-slate-900">${shopName}</h2>
+                </div>
+                <p class="text-slate-500 text-xs mb-6 px-1"><i class="fas fa-map-marker-alt text-blue-500 ml-1"></i> المنيعة، الجزائر • متوفر الآن</p>
+                <a href="https://wa.me/${whatsappNumber}" target="_blank" class="flex items-center gap-3 bg-green-500 text-white p-4 rounded-2xl font-bold w-full justify-center shadow-lg shadow-green-100 active:scale-95 transition-transform">
+                    <i class="fab fa-whatsapp text-2xl"></i>
+                    تواصل واطلب الآن
+                </a>
+            `;
+
+            const grid = document.getElementById('productsGrid');
+            const products = allData.filter(i => i.shop === shopName);
+            
+            grid.innerHTML = products.map(p => `
+                <div class="bg-white p-3 rounded-[30px] border border-slate-50 shadow-sm animate-in">
+                    <div class="h-32 bg-slate-50 rounded-[22px] mb-3 overflow-hidden flex items-center justify-center border border-slate-50">
+                         ${p.imgUrl ? `<img src="${p.imgUrl}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/150?text=ZaLo'">` : `<i class="fas fa-camera text-slate-200 text-2xl"></i>`}
+                    </div>
+                    <div class="px-1">
+                        <h3 class="font-bold text-slate-800 text-[11px] mb-1 leading-tight h-8 overflow-hidden">${p.item}</h3>
+                        <div class="text-blue-600 font-black text-xs mt-1">${p.price}</div>
+                        <p class="text-[9px] text-slate-400 mt-1 truncate">${p.desc}</p>
+                    </div>
+                </div>
+            `).join('');
         }
-        loadData();
+
+        function goBack() {
+            const vShops = document.getElementById('view-shops');
+            const vProducts = document.getElementById('view-products');
+            
+            if (!vProducts.classList.contains('hidden')) {
+                vProducts.classList.add('hidden');
+                vShops.classList.remove('hidden');
+            } else {
+                vShops.classList.add('hidden');
+                document.getElementById('view-home').classList.remove('hidden');
+                document.getElementById('backBtn').classList.add('hidden');
+            }
+        }
+
+        init();
     </script>
 </body>
 </html>
