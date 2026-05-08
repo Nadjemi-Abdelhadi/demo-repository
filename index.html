@@ -24,21 +24,57 @@
                 facebook: "https://facebook.com/nadjemi",
                 whatsapp: "https://wa.me/213660000000"
             },
-            // قائمة الأقسام والمحلات
-            categories: [
-                { 
-                    id: "parts", 
-                    name: "قطع غيار السيارات", 
-                    icon: "🚗", 
-                    shops: [
-                        { name: "أولاد حيمودة", desc: "قطع غيار أصلية - المنيعة", phone: "0660000000" },
-                        { name: "محل ميمي", desc: "دراجات نارية واكسسوارات", phone: "0770000000" }
-                    ]
-                },
-                { id: "clothes", name: "الملابس والموضة", icon: "👕", shops: [] },
-                { id: "tech", name: "الهواتف والإلكترونيات", icon: "📱", shops: [] }
-            ]
-        };
+            // قائمة الأقسام والمحلات        categories: [
+            { 
+                id: "parts", 
+                name: "قطع غيار السيارات والدراجات", 
+                image: "https://cdn-icons-png.flaticon.com/512/3062/3062331.png",
+                shops: [{ name: "المثالي لقطع الغيار", desc: "سيارات ودراجات نارية - المنيعة", phone: "0660000000" }]
+            },
+            { 
+                id: "tech", 
+                name: "الهواتف والإلكترونيات", 
+                image: "https://cdn-icons-png.flaticon.com/512/2950/2950657.png",
+                shops: [] 
+            },
+            { 
+                id: "clothes", 
+                name: "الملابس (رجالي، نسائي، أطفال)", 
+                image: "https://cdn-icons-png.flaticon.com/512/3050/3050212.png",
+                shops: [{ name: "أناقة المنيعة", desc: "كلاسيكي، رياضي، أطفال", phone: "0660000000" }] 
+            },
+            { 
+                id: "food", 
+                name: "مواد غذائية (سوبر ماركت)", 
+                image: "https://cdn-icons-png.flaticon.com/512/3081/3081840.png",
+                shops: [] 
+            },
+            { 
+                id: "home", 
+                name: "الأثاث المنزلي", 
+                image: "https://cdn-icons-png.flaticon.com/512/2590/2590525.png",
+                shops: [] 
+            },
+            { 
+                id: "restaurants", 
+                name: "المطاعم", 
+                image: "https://cdn-icons-png.flaticon.com/512/1996/1996055.png",
+                shops: [] 
+            },
+            { 
+                id: "medical", 
+                name: "الصيدليات", 
+                image: "https://cdn-icons-png.flaticon.com/512/2966/2966327.png",
+                shops: [] 
+            },
+            { 
+                id: "others", 
+                name: "خدمات أخرى", 
+                image: "https://cdn-icons-png.flaticon.com/512/1067/1067561.png",
+                shops: [] 
+            }
+        ],
+};
     </script>
     <header class="bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100 p-4">
         <div class="max-w-xl mx-auto flex justify-between items-center">
@@ -49,20 +85,24 @@
                     <span class="text-[9px] text-slate-400 font-bold tracking-widest uppercase">Shopping Guide</span>
                 </div>
             </div>
-            <button onclick="toggleSidebar()" class="p-2 bg-slate-50 rounded-xl text-slate-600">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-            </button>
-        </div>
-    </header>
+                        let html = `
+                <div class="text-center py-6 animate-pop">
+                    <h2 class="text-2xl font-black text-slate-900 mb-1">${CONFIG.welcomeTitle}</h2>
+                    <p class="text-slate-400 text-[10px] font-bold tracking-widest uppercase">دليل المنيعة الذكي</p>
+                </div>
+                <div class="grid grid-cols-2 gap-3 px-2 pb-10">`;
 
-    <section class="max-w-xl mx-auto p-6 bg-white">
-        <h1 class="text-2xl font-black text-slate-900 mb-1 tracking-tight">أفضل العروض في المنيعة</h1>
-        <p class="text-slate-400 text-xs mb-6">ابحث عن المنتجات والمحلات بكل سهولة</p>
-        
-        <div class="relative">
-            <input type="text" placeholder="ابحث عن قطع غيار، ملابس، أو هواتف..." 
-                   class="w-full p-4 pr-12 bg-slate-100 border-none rounded-2xl text-sm outline-none focus:ring-2 focus:ring-slate-200 transition-all">
-            <div class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">
+            CONFIG.categories.forEach(cat => {
+                html += `
+                    <div onclick="renderShops('${cat.id}')" class="bg-white p-5 rounded-[2rem] shadow-sm border border-slate-50 flex flex-col items-center gap-3 cursor-pointer hover:shadow-md transition-all active:scale-95">
+                        <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center p-3 border border-slate-100">
+                            <img src="${cat.image}" class="w-full h-full object-contain">
+                        </div>
+                        <h3 class="font-black text-[11px] text-slate-800 text-center leading-tight">${cat.name}</h3>
+                    </div>`;
+            });
+            html += `</div>`;
+            
                 🔍
             </div>
         </div>
