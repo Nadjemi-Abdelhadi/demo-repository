@@ -5,16 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZaLo - دليل المنيعة</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { font-family: 'Tajawal', sans-serif; }
         .shop-container {
-            border: 2px solid #e2e8f0; /* إطار المحل */
-            border-radius: 15px;
-            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 18px;
             margin-bottom: 25px;
             background-color: white;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05);
         }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         @keyframes pop { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
@@ -23,23 +24,41 @@
 </head>
 <body class="bg-slate-50">
 
-    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100 p-4">
-        <div class="max-w-xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="flex flex-col">
-                    <span class="font-black text-slate-900 leading-none">دليل المنيعة</span>
-                    <span class="text-[9px] text-slate-400 font-bold tracking-widest uppercase italic">ZaLo AI Guide</span>
+    <header class="bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100 px-4 py-3">
+        <div class="max-w-4xl mx-auto flex justify-between items-center relative">
+            
+            <div class="flex items-center gap-2 z-10">
+                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black shadow-lg shadow-blue-200">
+                    Z
+                </div>
+                <span class="hidden sm:block font-black text-slate-800">ZaLo</span>
+            </div>
+
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div class="text-center pointer-events-auto">
+                    <h1 class="font-black text-lg text-slate-900 leading-none">دليل المنيعة</h1>
+                    <p class="text-[8px] text-blue-500 font-bold tracking-[0.2em] uppercase mt-1">Digital Directory</p>
                 </div>
             </div>
+
+            <div class="flex items-center gap-3 z-10">
+                <button class="w-9 h-9 flex items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">
+                    <i class="fa-solid fa-gear"></i>
+                </button>
+                <button class="flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-full text-xs font-bold hover:bg-slate-800 transition-all shadow-md">
+                    <i class="fa-solid fa-user-circle"></i>
+                    <span class="hidden xs:block">دخول</span>
+                </button>
+            </div>
+
         </div>
     </header>
 
     <main id="app" class="max-w-xl mx-auto min-h-screen p-6">
-        <div class="text-center py-20 text-slate-400">جاري جلب بيانات المحلات...</div>
+        <div class="text-center py-20 text-slate-400 font-bold">جاري تحميل البيانات من الجدول...</div>
     </main>
 
     <script>
-        // رابط الجدول الخاص بك (تم تحويله لـ CSV تلقائياً)
         const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1EPSEZ5DggKehKWidD8Q52jTEsfPWf7RD5xqyWN2Gt4Q/export?format=csv';
 
         let allProducts = [];
@@ -48,7 +67,7 @@
             try {
                 const response = await fetch(SHEET_URL);
                 const data = await response.text();
-                const rows = data.split('\n').slice(1); // تجاهل العنوان
+                const rows = data.split('\n').slice(1);
 
                 allProducts = rows.map(row => {
                     const cols = row.split(',');
@@ -63,31 +82,47 @@
 
                 renderHome();
             } catch (error) {
-                document.getElementById('app').innerHTML = '<p class="text-center py-20 text-red-500">حدث خطأ في جلب البيانات، تأكد من إعدادات المشاركة في الجدول.</p>';
+                document.getElementById('app').innerHTML = `
+                    <div class="text-center py-20">
+                        <p class="text-red-500 font-bold">فشل الاتصال بالبيانات</p>
+                        <p class="text-xs text-slate-400 mt-2">تأكد من تفعيل "أي شخص لديه الرابط يمكنه العرض" في جوجل شيت</p>
+                    </div>`;
             }
         }
 
         function renderHome() {
             const shops = [...new Set(allProducts.map(p => p.shop))];
-            
-            let html = '<h1 class="text-2xl font-black text-slate-900 mb-6">المحلات المتوفرة</h1><div class="space-y-4">';
+            let html = '<h1 class="text-xl font-black text-slate-800 mb-6 flex items-center gap-2"><span class="w-2 h-6 bg-blue-600 rounded-full"></span> المحلات النشطة</h1><div class="space-y-2">';
 
             shops.forEach(shopName => {
                 const shopProducts = allProducts.filter(p => p.shop === shopName);
                 html += `
                     <div class="shop-container animate-pop">
-                        <h2 class="text-xl font-black text-blue-600 mb-4 border-b pb-2">${shopName}</h2>
-                        <div class="flex gap-3 overflow-x-auto pb-4 no-scrollbar">
+                        <div class="flex justify-between items-center mb-4 border-b border-slate-50 pb-2">
+                            <h2 class="text-lg font-black text-blue-700">${shopName}</h2>
+                            <span class="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded-lg font-bold">${shopProducts.length} منتجات</span>
+                        </div>
+                        <div class="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
                             ${shopProducts.map(prod => `
-                                <div class="flex-shrink-0 w-40 bg-slate-50 rounded-2xl p-3 border border-slate-100 text-right">
-                                    ${prod.img ? `<img src="${prod.img}" class="w-full h-24 object-cover rounded-xl mb-2 shadow-sm">` : `<div class="w-full h-24 bg-slate-200 rounded-xl mb-2 flex items-center justify-center text-[10px] text-slate-400">بدون صورة</div>`}
-                                    <h3 class="text-[12px] font-black text-slate-800 truncate">${prod.name}</h3>
-                                    <p class="text-[9px] text-slate-500 my-1 h-6 overflow-hidden">${prod.desc || ''}</p>
-                                    <div class="text-blue-600 font-black text-sm">${prod.price}</div>
+                                <div class="flex-shrink-0 w-44 bg-slate-50 rounded-2xl p-4 border border-slate-100 shadow-sm transition-transform active:scale-95">
+                                    ${prod.img && prod.img !== "" ? 
+                                        `<img src="${prod.img}" class="w-full h-28 object-cover rounded-xl mb-3 shadow-inner">` : 
+                                        `<div class="w-full h-28 bg-slate-200 rounded-xl mb-3 flex flex-col items-center justify-center text-slate-400">
+                                            <i class="fa-solid fa-image text-xl mb-1"></i>
+                                            <span class="text-[9px] font-bold">قيد التصوير</span>
+                                        </div>`
+                                    }
+                                    <h3 class="text-sm font-black text-slate-800 truncate mb-1">${prod.name}</h3>
+                                    <p class="text-[10px] text-slate-500 leading-tight h-7 overflow-hidden mb-2">${prod.desc || ''}</p>
+                                    <div class="flex justify-between items-center mt-2">
+                                        <span class="text-blue-600 font-black text-sm">${prod.price}</span>
+                                        <button class="bg-white border border-slate-200 p-1.5 rounded-lg shadow-sm">
+                                            <i class="fa-solid fa-cart-plus text-xs text-slate-400"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             `).join('')}
                         </div>
-                        <div class="mt-2 text-center text-[10px] text-slate-400 font-bold tracking-tighter italic">اسحب لليسار لرؤية المزيد ←</div>
                     </div>`;
             });
 
