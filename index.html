@@ -9,14 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { font-family: 'Tajawal', sans-serif; scroll-behavior: smooth; }
-        .shop-card {
-            border: 1.5px solid #f1f5f9;
-            border-radius: 24px;
-            padding: 20px;
-            margin-bottom: 24px;
-            background: white;
-            transition: all 0.3s ease;
-        }
+        .shop-card { border: 1.5px solid #f1f5f9; border-radius: 24px; padding: 20px; margin-bottom: 24px; background: white; shadow: 0 4px 15px rgba(0,0,0,0.03); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade { animation: fadeIn 0.4s ease-out forwards; }
@@ -24,25 +17,23 @@
 </head>
 <body class="bg-[#f8fafc] text-slate-900">
 
-    <header class="bg-white/95 backdrop-blur-md sticky top-0 z-[100] border-b border-slate-100 px-4 h-16 shadow-sm">
+    <header class="bg-white/95 backdrop-blur-md sticky top-0 z-[100] border-b border-slate-100 px-4 h-16">
         <div class="max-w-5xl mx-auto h-full flex items-center justify-between relative">
-            
             <div class="flex items-center gap-2 z-10">
-                <div class="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black shadow-lg shadow-blue-200">Z</div>
+                <img src="https://raw.githubusercontent.com/Nadjemi-Abdelhadi/demo-repository/main/1000045432.png" 
+                     class="w-10 h-10 object-contain rounded-xl" alt="ZaLo Logo">
             </div>
 
             <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div class="text-center">
-                    <h1 class="font-black text-base text-slate-900 tracking-tight leading-tight">دليل المنيعة</h1>
-                    <span class="text-[7px] text-blue-500 font-bold tracking-[0.3em] uppercase block">ZaLo Digital Guide</span>
+                    <h1 class="font-black text-base text-slate-900 tracking-tight">دليل المنيعة</h1>
+                    <span class="text-[7px] text-blue-500 font-bold tracking-[0.3em] uppercase block leading-none mt-1">ZaLo Digital Guide</span>
                 </div>
             </div>
 
             <div class="flex items-center gap-2 z-10">
-                <button class="w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:bg-slate-50">
-                    <i class="fa-solid fa-gear text-sm"></i>
-                </button>
-                <button class="flex items-center gap-1.5 bg-slate-900 text-white px-3 py-1.5 rounded-full text-[10px] font-bold shadow-sm active:scale-95 transition-transform">
+                <button class="w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:bg-slate-50"><i class="fa-solid fa-gear text-sm"></i></button>
+                <button class="flex items-center gap-1.5 bg-slate-900 text-white px-3 py-1.5 rounded-full text-[10px] font-bold shadow-sm">
                     <i class="fa-solid fa-circle-user text-xs"></i>
                     <span>دخول</span>
                 </button>
@@ -50,76 +41,75 @@
         </div>
     </header>
 
-    <main id="app" class="max-w-xl mx-auto p-5 min-h-screen">
-        <div class="flex flex-col items-center justify-center py-32 space-y-4">
-            <div class="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-            <p class="text-slate-400 font-medium text-sm">جاري جلب بيانات سوق المنيعة...</p>
+    <main class="max-w-xl mx-auto p-5 min-h-screen">
+        <div class="relative mb-8 animate-fade">
+            <i class="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+            <input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="ابحث عن محل أو منتج في المنيعة..." 
+                class="w-full bg-white border border-slate-200 rounded-2xl py-4 pr-12 pl-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 shadow-sm transition-all">
         </div>
+
+        <div id="app"></div>
     </main>
 
     <script>
         const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1EPSEZ5DggKehKWidD8Q52jTEsfPWf7RD5xqyWN2Gt4Q/export?format=csv';
+        let allProducts = [];
 
         async function loadData() {
             try {
                 const response = await fetch(SHEET_URL);
+                if (!response.ok) throw new Error('Private');
                 const data = await response.text();
                 const rows = data.split('\n').slice(1);
-
-                const products = rows.map(row => {
+                allProducts = rows.map(row => {
                     const cols = row.split(',');
-                    return {
-                        shop: cols[0]?.trim(),
-                        name: cols[1]?.trim(),
-                        price: cols[2]?.trim(),
-                        desc: cols[3]?.trim(),
-                        img: cols[4]?.trim()
-                    };
+                    return { shop: cols[0]?.trim(), name: cols[1]?.trim(), price: cols[2]?.trim(), desc: cols[3]?.trim(), img: cols[4]?.trim() };
                 }).filter(p => p.name);
-
-                render(products);
+                render(allProducts);
             } catch (e) {
-                document.getElementById('app').innerHTML = '<div class="text-center py-20 text-red-400 font-bold">عذراً، تعذر جلب البيانات. تأكد من إعدادات مشاركة الجدول.</div>';
+                document.getElementById('app').innerHTML = `
+                    <div class="text-center py-16 bg-amber-50 rounded-3xl border border-amber-100 p-8 animate-fade">
+                        <i class="fa-solid fa-lock text-amber-500 text-3xl mb-4"></i>
+                        <h3 class="font-black text-slate-800 text-sm mb-2">تأكد من إعدادات مشاركة الجدول</h3>
+                        <p class="text-[11px] text-slate-500">يجب اختيار "أي شخص لديه الرابط" في Google Sheets ليعمل التطبيق.</p>
+                    </div>`;
             }
         }
 
-        function render(data) {
-            const shops = [...new Set(data.map(p => p.shop))];
-            let html = '<div class="space-y-6">';
+        function searchFunction() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allProducts.filter(p => p.name.toLowerCase().includes(query) || p.shop.toLowerCase().includes(query));
+            render(filtered);
+        }
 
+        function render(data) {
+            const app = document.getElementById('app');
+            if (data.length === 0) { app.innerHTML = '<p class="text-center py-10 text-slate-400 text-xs">لا توجد نتائج</p>'; return; }
+            const shops = [...new Set(data.map(p => p.shop))];
+            let html = '';
             shops.forEach(shop => {
                 const shopProds = data.filter(p => p.shop === shop);
                 html += `
                     <div class="shop-card animate-fade">
-                        <div class="flex justify-between items-center mb-5">
-                            <h2 class="text-lg font-black text-slate-800 flex items-center gap-2">
-                                <span class="w-1.5 h-5 bg-blue-600 rounded-full"></span> ${shop}
-                            </h2>
-                            <span class="text-[9px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-md uppercase">نشط الآن</span>
-                        </div>
-                        <div class="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
+                        <h2 class="text-lg font-black text-slate-800 mb-5 flex items-center gap-2"><span class="w-1.5 h-5 bg-blue-600 rounded-full"></span> ${shop}</h2>
+                        <div class="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
                             ${shopProds.map(p => `
                                 <div class="flex-shrink-0 w-40 bg-[#fdfdfd] border border-slate-100 rounded-2xl p-3 shadow-sm">
                                     <div class="w-full h-24 bg-slate-100 rounded-xl mb-3 flex items-center justify-center overflow-hidden">
-                                        ${p.img && p.img.startsWith('http') ? `<img src="${p.img}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-camera text-slate-300 text-xl"></i>`}
+                                        ${p.img && p.img.startsWith('http') ? `<img src="${p.img}" class="w-full h-full object-cover">` : '<i class="fa-solid fa-camera text-slate-300 text-xl"></i>'}
                                     </div>
                                     <h3 class="text-xs font-black text-slate-900 truncate">${p.name}</h3>
-                                    <p class="text-[9px] text-slate-400 mt-1 h-6 overflow-hidden">${p.desc || ''}</p>
                                     <div class="flex justify-between items-center mt-3">
                                         <span class="text-blue-600 font-black text-xs">${p.price}</span>
-                                        <div class="w-6 h-6 bg-white border border-slate-100 rounded-lg flex items-center justify-center shadow-sm">
-                                            <i class="fa-solid fa-plus text-[8px] text-slate-400"></i>
-                                        </div>
+                                        <div class="w-6 h-6 bg-white border border-slate-100 rounded-lg flex items-center justify-center shadow-sm"><i class="fa-solid fa-plus text-[8px] text-slate-400"></i></div>
                                     </div>
                                 </div>
                             `).join('')}
                         </div>
                     </div>`;
             });
-
-            document.getElementById('app').innerHTML = html + '</div>';
+            app.innerHTML = html;
         }
-
         loadData();
     </script>
 </body>
