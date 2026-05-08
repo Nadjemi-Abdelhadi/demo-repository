@@ -17,23 +17,21 @@
 </head>
 <body class="bg-[#f8fafc] text-slate-900">
 
-    <header class="bg-white/95 backdrop-blur-md sticky top-0 z-[100] border-b border-slate-100 px-4 h-16">
+    <header class="bg-white/95 backdrop-blur-md sticky top-0 z-[100] border-b border-slate-100 px-4 h-16 shadow-sm">
         <div class="max-w-5xl mx-auto h-full flex items-center justify-between relative">
             <div class="flex items-center gap-2 z-10">
                 <img src="https://raw.githubusercontent.com/Nadjemi-Abdelhadi/demo-repository/main/1000045432.png" 
                      class="w-10 h-10 object-contain rounded-xl" alt="ZaLo Logo">
             </div>
-
             <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div class="text-center">
-                    <h1 class="font-black text-base text-slate-900 tracking-tight">دليل المنيعة</h1>
-                    <span class="text-[7px] text-blue-500 font-bold tracking-[0.3em] uppercase block leading-none mt-1">ZaLo Digital Guide</span>
+                    <h1 class="font-black text-base text-slate-900 tracking-tight leading-tight">دليل المنيعة</h1>
+                    <span class="text-[7px] text-blue-500 font-bold tracking-[0.3em] uppercase block">ZaLo Digital Guide</span>
                 </div>
             </div>
-
             <div class="flex items-center gap-2 z-10">
                 <button class="w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:bg-slate-50"><i class="fa-solid fa-gear text-sm"></i></button>
-                <button class="flex items-center gap-1.5 bg-slate-900 text-white px-3 py-1.5 rounded-full text-[10px] font-bold shadow-sm">
+                <button class="flex items-center gap-1.5 bg-slate-900 text-white px-3 py-1.5 rounded-full text-[10px] font-bold">
                     <i class="fa-solid fa-circle-user text-xs"></i>
                     <span>دخول</span>
                 </button>
@@ -44,15 +42,16 @@
     <main class="max-w-xl mx-auto p-5 min-h-screen">
         <div class="relative mb-8 animate-fade">
             <i class="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-            <input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="ابحث عن محل أو منتج في المنيعة..." 
-                class="w-full bg-white border border-slate-200 rounded-2xl py-4 pr-12 pl-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 shadow-sm transition-all">
+            <input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="ابحث في المنيعة..." 
+                class="w-full bg-white border border-slate-200 rounded-2xl py-4 pr-12 pl-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 shadow-sm">
         </div>
-
         <div id="app"></div>
     </main>
 
     <script>
-        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1EPSEZ5DggKehKWidD8Q52jTEsfPWf7RD5xqyWN2Gt4Q/export?format=csv';
+        // تم تحديث الرابط هنا للرابط الجديد الخاص بك
+        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1FACOjgPytWOtrT_24rHGn-GfFQy93JABIXpIFR5y6bE/export?format=csv';
+
         let allProducts = [];
 
         async function loadData() {
@@ -68,10 +67,10 @@
                 render(allProducts);
             } catch (e) {
                 document.getElementById('app').innerHTML = `
-                    <div class="text-center py-16 bg-amber-50 rounded-3xl border border-amber-100 p-8 animate-fade">
+                    <div class="text-center py-20 bg-amber-50 rounded-3xl border border-amber-100 p-8">
                         <i class="fa-solid fa-lock text-amber-500 text-3xl mb-4"></i>
-                        <h3 class="font-black text-slate-800 text-sm mb-2">تأكد من إعدادات مشاركة الجدول</h3>
-                        <p class="text-[11px] text-slate-500">يجب اختيار "أي شخص لديه الرابط" في Google Sheets ليعمل التطبيق.</p>
+                        <h3 class="font-black text-slate-800 text-sm mb-2">مشكلة وصول</h3>
+                        <p class="text-[11px] text-slate-500">تأكد من اختيار "أي شخص لديه الرابط" في الجدول الجديد.</p>
                     </div>`;
             }
         }
@@ -84,7 +83,7 @@
 
         function render(data) {
             const app = document.getElementById('app');
-            if (data.length === 0) { app.innerHTML = '<p class="text-center py-10 text-slate-400 text-xs">لا توجد نتائج</p>'; return; }
+            if (data.length === 0) { app.innerHTML = '<p class="text-center py-10 text-slate-400">لا توجد نتائج</p>'; return; }
             const shops = [...new Set(data.map(p => p.shop))];
             let html = '';
             shops.forEach(shop => {
@@ -92,7 +91,7 @@
                 html += `
                     <div class="shop-card animate-fade">
                         <h2 class="text-lg font-black text-slate-800 mb-5 flex items-center gap-2"><span class="w-1.5 h-5 bg-blue-600 rounded-full"></span> ${shop}</h2>
-                        <div class="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
+                        <div class="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
                             ${shopProds.map(p => `
                                 <div class="flex-shrink-0 w-40 bg-[#fdfdfd] border border-slate-100 rounded-2xl p-3 shadow-sm">
                                     <div class="w-full h-24 bg-slate-100 rounded-xl mb-3 flex items-center justify-center overflow-hidden">
