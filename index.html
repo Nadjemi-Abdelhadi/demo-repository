@@ -3,134 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZaLo - دليل المنيعة الذكي</title>
+    <title>ZaLo - دليل المنيعة</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Tajawal', sans-serif; background-color: #ffffff; margin: 0; padding: 0; }
-        .sidebar { transition: transform 0.3s ease-in-out; }
-        .animate-pop { animation: pop 0.4s ease-out; }
-        @keyframes pop { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        body { font-family: 'Tajawal', sans-serif; background-color: #f8fafc; }
+        .animate-pop { animation: pop 0.3s ease-out; }
+        @keyframes pop { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
     </style>
 </head>
-<body>
-
-<script>
-    const CONFIG = {
-        appName: "دليل المنيعة",
-        welcomeTitle: "أفضل العروض في المنيعة",
-        categories: [
-            { 
-                id: "parts", 
-                name: "قطع غيار السيارات والدراجات", 
-                image: "https://cdn-icons-png.flaticon.com/512/3062/3062331.png",
-                shops: [{ name: "المثالي لقطع الغيار", desc: "سيارات ودراجات نارية - المنيعة", phone: "0660000000" }]
-            },
-            { 
-                id: "tech", 
-                name: "الهواتف والإلكترونيات", 
-                image: "https://cdn-icons-png.flaticon.com/512/2950/2950657.png",
-                shops: [] 
-            },
-            { 
-                id: "clothes", 
-                name: "الملابس (رجالي، نسائي، أطفال)", 
-                image: "https://cdn-icons-png.flaticon.com/512/3050/3050212.png",
-                shops: [{ name: "أناقة المنيعة", desc: "كلاسيكي، رياضي، أطفال", phone: "0660000000" }] 
-            },
-            { 
-                id: "food", 
-                name: "مواد غذائية (سوبر ماركت)", 
-                image: "https://cdn-icons-png.flaticon.com/512/3081/3081840.png",
-                shops: [] 
-            },
-            { 
-                id: "home", 
-                name: "الأثاث المنزلي", 
-                image: "https://cdn-icons-png.flaticon.com/512/2590/2590525.png",
-                shops: [] 
-            },
-            { 
-                id: "restaurants", 
-                name: "المطاعم", 
-                image: "https://cdn-icons-png.flaticon.com/512/1996/1996055.png",
-                shops: [] 
-            },
-            { 
-                id: "medical", 
-                name: "الصيدليات", 
-                image: "https://cdn-icons-png.flaticon.com/512/2966/2966327.png",
-                shops: [] 
-            },
-            { 
-                id: "others", 
-                name: "خدمات أخرى", 
-                image: "https://cdn-icons-png.flaticon.com/512/1067/1067561.png",
-                shops: [] 
-            }
-        ]
-    };
-
-    function renderHome() {
-        const app = document.getElementById('app');
-        let html = `
-            <section class="max-w-xl mx-auto p-6 bg-white">
-                <h1 class="text-2xl font-black text-slate-900 mb-1 tracking-tight">${CONFIG.welcomeTitle}</h1>
-                <p class="text-slate-400 text-xs mb-6">ابحث عن المنتجات والمحلات بكل سهولة</p>
-                <div class="relative mb-8">
-                    <input type="text" placeholder="ابحث عن محل أو منتج..." class="w-full p-4 pr-12 bg-slate-100 border-none rounded-2xl text-sm outline-none focus:ring-2 focus:ring-slate-200">
-                    <div class="absolute right-4 top-1/2 -translate-y-1/2">🔍</div>
-                </div>
-                <div class="grid grid-cols-2 gap-3 pb-10">`;
-
-        CONFIG.categories.forEach(cat => {
-            html += `
-                <div onclick="renderShops('${cat.id}')" class="bg-white p-5 rounded-[2rem] shadow-sm border border-slate-50 flex flex-col items-center gap-3 cursor-pointer hover:shadow-md transition-all active:scale-95 animate-pop">
-                    <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center p-3 border border-slate-100">
-                        <img src="${cat.image}" class="w-full h-full object-contain">
-                    </div>
-                    <h3 class="font-black text-[11px] text-slate-800 text-center leading-tight">${cat.name}</h3>
-                </div>`;
-        });
-        html += `</div></section>`;
-        app.innerHTML = html;
-    }
-
-    function renderShops(catId) {
-        const cat = CONFIG.categories.find(c => c.id === catId);
-        const app = document.getElementById('app');
-        let html = `
-            <div class="max-w-xl mx-auto p-6 animate-pop">
-                <button onclick="renderHome()" class="mb-6 text-slate-400 font-bold text-sm">← العودة للرئيسية</button>
-                <h2 class="text-2xl font-black text-slate-900 mb-6">${cat.name}</h2>
-                <div class="space-y-4">`;
-        
-        if (cat.shops.length === 0) {
-            html += `<p class="text-slate-400 text-center py-10">سيتم إضافة المحلات قريباً...</p>`;
-        } else {
-            cat.shops.forEach(shop => {
-                html += `
-                    <div class="bg-slate-50 p-5 rounded-3xl border border-slate-100 flex justify-between items-center">
-                        <div>
-                            <h4 class="font-bold text-slate-900">${shop.name}</h4>
-                            <p class="text-xs text-slate-500">${shop.desc}</p>
-                        </div>
-                        <a href="tel:${shop.phone}" class="bg-slate-900 text-white p-3 rounded-2xl text-xs font-bold italic">اتصل</a>
-                    </div>`;
-            });
-        }
-        html += `</div></div>`;
-        app.innerHTML = html;
-    }
-
-    function toggleSidebar() {
-        const s = document.getElementById('sidebar');
-        s.classList.toggle('translate-x-full');
-    }
-</script>
+<body class="bg-slate-50">
 
 <header class="bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100 p-4">
     <div class="max-w-xl mx-auto flex justify-between items-center">
         <div class="flex items-center gap-3">
-            <img src="1778188155294
-                
+            <img src="1778188155294.png" alt="ZaLo" class="h-10 w-10 object-contain rounded-full border border-slate-100 shadow-sm">
+            <div class="flex flex-col">
+                <span class="font-black text-slate-900 text-sm leading-none">دليل المنيعة</span>
+                <span class="text-[9px] text-slate-400 font-bold tracking-widest uppercase italic text-left">ZaLo AI Guide</span>
+            </div>
+        </div>
+        <button onclick="toggleSidebar()" class="p-2 bg-slate-50 rounded-xl">
+            <svg class="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+        </button>
+    </div>
+</header>
+
+<main id="app" class="max-w-xl mx-auto min-h-screen"></main>
+
+<aside id="sidebar" class="fixed inset-y-0 right-0 z-[60] w-72 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 p-6">
+    <div class="flex justify-between items-center mb-10">
+        <span class="font-black text-xl text-slate-900 italic">القائمة</span>
+        <button onclick="toggleSidebar()" class="text-slate-400 text-3xl">&times;</button>
+    </div>
+    <nav class="space-y-4 text-right">
+        <button onclick="renderHome(); toggleSidebar()" class="w-full text-right p-4 bg-slate-50 rounded-2xl font-bold text-slate-700">🏠 الرئيسية</button>
+        <button class="w-full text-right p-4 bg-slate-900 text-white rounded-2xl font-bold italic">🤖 اسأل ذكاء ZaLo</button>
+    </nav>
+</aside>
+
+<script>
+    const CONFIG = {
+        categories: [
+            { id: "parts", name: "قطع غيار السيارات والدراجات", img: "https://cdn-icons-png.flaticon.com/512/3062/3062331.png", shops: [] },
+            { id: "tech", name: "الهواتف والإلكترونيات", img: "https://cdn-icons-png.flaticon.com/512/2950/2950657.png", shops: [] },
+            { id: "clothes", name: "الملابس والأزياء", img: "https://cdn-icons-png.flaticon.com/512/3050/3050212.png", shops: [] },
+            { id: "food", name: "مواد غذائية (سوبر ماركت)", img: "https://cdn-icons-png.flaticon.com/512/3081/3081840.png", shops: [] },
+            { id: "home", name: "الأثاث المنزلي", img: "https://cdn-icons-png.flaticon.com/512/2590/2590525.png", shops: [] },
+            { id: "restaurants", name: "المطاعم والمأكولات", img: "https://cdn-icons-png.flaticon.com/512/1996/1996055.png", shops: [] },
+            { id: "medical", name: "الصيدليات والخدمات", img: "https://cdn-icons-png.flaticon.com/512/2966/2966327.png", shops: [] },
+            { id: "others", name: "خدمات أخرى", img: "https://cdn-icons-png.flaticon.com/512/1067/1067561.png", shops: [] }
+        ]
+    };
+
+    function renderHome() {
+        let html = `
+            <div class="p-6 text-right">
+                <h1 class="text-2xl font-black text-slate-900 mb-1">أفضل العروض في المنيعة</h1>
+                <p class="text-slate-400 text-xs mb-6 font-bold uppercase tracking-wider">دليل المنيعة الذكي</p>
+                <div class="grid grid-cols-2 gap-3 pb-20">`;
+        
+        CONFIG.categories.forEach(cat => {
+            html += `
+                <div onclick="renderShops('${cat.id}')" class="bg-white p-5 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col items-center gap-3 cursor-pointer hover:shadow-md active:scale-95 transition-all animate-pop">
+                    <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center p-3">
+                        <img src="${cat.img}" class="w-full h-full object-contain">
+                    </div>
+                    <h3 class="font-black text-[11px] text-slate-800 text-center leading-tight">${cat.name}</h3>
+                </div>`;
+        });
+        html += `</div></div>`;
+        document.getElementById('app').innerHTML = html;
+    }
+
+    function renderShops(catId) {
+        const cat = CONFIG.categories.find(c => c.id === catId);
+        let html = `
+            <div class="p-6 animate-pop text-right">
+                <button onclick="renderHome()" class="mb-6 text-blue-600 font-bold text-sm">← العودة للرئيسية</button>
+                <h2 class="text-2xl font-black text-slate-900 mb-6">${cat.name}</h2>
+                <div class="space-y-4">
+                    <p class="text-slate-400 text-center py-10">سيتم إضافة المحلات قريباً...</p>
+                </div>
+            </div>`;
+        document.getElementById('app').innerHTML = html;
+    }
+
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('translate-x-full');
+    }
+
+    renderHome();
+</script>
+</body>
+    </html>
+    
