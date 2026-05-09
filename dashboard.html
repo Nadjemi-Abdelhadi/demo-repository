@@ -13,16 +13,11 @@
         body { font-family: 'Tajawal', sans-serif; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .animate-fade { animation: fadeUp .35s ease both; }
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(16px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-white min-h-screen flex items-center justify-center">
 
-    <!-- Loading -->
+    <!-- Loading Screen -->
     <div id="loadingScreen" class="fixed inset-0 bg-slate-50 dark:bg-slate-950 flex items-center justify-center z-50">
         <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
     </div>
@@ -40,201 +35,44 @@
         <form class="space-y-4">
             <div>
                 <label for="loginEmail" class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">البريد الإلكتروني</label>
-                <input type="email" id="loginEmail" 
-                    class="w-full px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-                    placeholder="admin@zalo.com" required autocomplete="email">
+                <input type="email" id="loginEmail" class="w-full px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="admin@zalo.com" required>
             </div>
-            
             <div>
                 <label for="loginPassword" class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">كلمة المرور</label>
-                <input type="password" id="loginPassword" 
-                    class="w-full px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-                    placeholder="••••••••" required autocomplete="current-password">
+                <input type="password" id="loginPassword" class="w-full px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="••••••••" required>
             </div>
-            
-            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold text-lg hover:bg-blue-700 active:scale-[0.98] transition-all shadow-lg shadow-blue-200">
-                <i class="fa-solid fa-arrow-right-to-bracket ml-2"></i> دخول
-            </button>
+            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold text-lg hover:bg-blue-700 transition">دخول</button>
         </form>
-        
-        <p class="text-xs text-slate-400 text-center mt-6">
-            🛡️ دخول مشفر ومؤمن بواسطة Firebase
-        </p>
     </div>
 
     <!-- Dashboard View -->
     <div id="dashboardView" class="hidden w-full max-w-4xl mx-auto p-5 md:p-8">
         
-        <!-- Header -->
-        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-800 mb-6 flex items-center justify-between animate-fade">
-            <div class="flex items-center gap-4">
-                <div class="w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center text-white text-xl shadow-lg">
-                    <i class="fa-solid fa-user-gear"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-black">لوحة التحكم</h1>
-                    <p class="text-xs text-slate-500 mt-0.5">
-                        مرحباً <span id="userEmail" class="font-bold text-blue-600"></span>
-                        <span class="mx-2">|</span>
-                        الدور: <span id="userRole" class="bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300 px-2 py-0.5 rounded-md font-bold text-xs"></span>
-                    </p>
-                </div>
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-800 mb-6 flex items-center justify-between">
+            <div>
+                <h1 class="text-xl font-black">لوحة التحكم</h1>
+                <p class="text-xs text-slate-500 mt-0.5">
+                    مرحباً <span id="userEmail" class="font-bold text-blue-600"></span>
+                    <span class="mx-2">|</span>
+                    الدور: <span id="userRole" class="font-bold text-emerald-600"></span>
+                </p>
             </div>
-            <button id="logoutButton" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2.5 rounded-xl font-bold text-sm transition active:scale-95">
-                <i class="fa-solid fa-right-from-bracket ml-1"></i> خروج
-            </button>
+            <button id="logoutButton" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2.5 rounded-xl font-bold text-sm transition">تسجيل الخروج</button>
         </div>
 
-        <!-- Admin Section (Visible only to admin) -->
-        <div id="adminSection" class="space-y-6 hidden animate-fade">
-            
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-10 h-10 bg-blue-50 dark:bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-600 text-lg">
-                            <i class="fa-solid fa-store"></i>
-                        </div>
-                        <span class="text-2xl font-black" id="statShops">0</span>
-                    </div>
-                    <p class="text-xs text-slate-500 font-medium">إجمالي المتاجر</p>
-                </div>
-                
-                <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-10 h-10 bg-emerald-50 dark:bg-emerald-500/10 rounded-xl flex items-center justify-center text-emerald-600 text-lg">
-                            <i class="fa-solid fa-box"></i>
-                        </div>
-                        <span class="text-2xl font-black" id="statProducts">0</span>
-                    </div>
-                    <p class="text-xs text-slate-500 font-medium">إجمالي المنتجات</p>
-                </div>
-                
-                <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-10 h-10 bg-violet-50 dark:bg-violet-500/10 rounded-xl flex items-center justify-center text-violet-600 text-lg">
-                            <i class="fa-solid fa-users"></i>
-                        </div>
-                        <span class="text-2xl font-black" id="statUsers">0</span>
-                    </div>
-                    <p class="text-xs text-slate-500 font-medium">المستخدمين</p>
-                </div>
-                
-                <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-10 h-10 bg-orange-50 dark:bg-orange-500/10 rounded-xl flex items-center justify-center text-orange-600 text-lg">
-                            <i class="fa-solid fa-eye"></i>
-                        </div>
-                        <span class="text-2xl font-black">247</span>
-                    </div>
-                    <p class="text-xs text-slate-500 font-medium">المشاهدات اليوم</p>
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="grid grid-cols-2 gap-4">
-                <button onclick="openModal('shopModal')" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 rounded-2xl shadow-lg shadow-blue-200 active:scale-[0.98] transition text-right group">
-                    <div class="flex items-center gap-3 mb-2">
-                        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-xl">
-                            <i class="fa-solid fa-plus"></i>
-                        </div>
-                        <span class="text-lg font-black">إضافة محل جديد</span>
-                    </div>
-                    <p class="text-xs text-blue-100">أضف متجر أو خدمة للمنصة</p>
-                </button>
-                
-                <button onclick="openModal('productModal')" class="bg-white dark:bg-slate-800 border-2 border-dashed border-slate-200 dark:border-slate-600 p-6 rounded-2xl text-right hover:border-blue-400 transition group">
-                    <div class="flex items-center gap-3 mb-2">
-                        <div class="w-12 h-12 bg-slate-100 dark:bg-slate-700 rounded-xl flex items-center justify-center text-xl text-slate-600 group-hover:text-blue-600 transition">
-                            <i class="fa-solid fa-tags"></i>
-                        </div>
-                        <span class="text-lg font-black text-slate-700 dark:text-slate-200">إضافة منتج</span>
-                    </div>
-                    <p class="text-xs text-slate-400">للمتاجر المسجلين</p>
-                </button>
-            </div>
-
-            <!-- Shops List -->
-            <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden">
-                <div class="p-5 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
-                    <h2 class="text-lg font-black flex items-center gap-2">
-                        <i class="fa-solid fa-shop text-blue-600"></i> جميع المتاجر
-                    </h2>
-                    <span class="text-xs bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-300 px-3 py-1 rounded-full font-bold">
-                        <span id="shopsCount">0</span> محل
-                    </span>
-                </div>
-                <div id="adminShopsList" class="p-4 space-y-3 max-h-[500px] overflow-auto hide-scrollbar">
-                    <!-- Content loaded via JS -->
-                </div>
+        <!-- Admin Section -->
+        <div id="adminSection" class="hidden">
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700">
+                <h2 class="text-xl font-black mb-4">👑 لوحة تحكم المدير</h2>
+                <p class="text-slate-500">تم تسجيل الدخول بنجاح كمدير النظام.</p>
             </div>
         </div>
 
-        <!-- Shop Owner Section (Visible only to shop owners) -->
-        <div id="shopOwnerSection" class="space-y-6 hidden animate-fade">
-            <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm text-center">
-                <div class="w-20 h-20 bg-orange-50 dark:bg-orange-500/10 rounded-2xl mx-auto flex items-center justify-center text-orange-500 text-3xl mb-4">
-                    <i class="fa-solid fa-store"></i>
-                </div>
-                <h2 class="text-2xl font-black mb-2">مرحباً صاحب المحل!</h2>
-                <p class="text-slate-500 text-sm mb-6">من هنا يمكنك إدارة منتجاتك وعرضها للعملاء</p>
-                <div id="ownerShopsList" class="space-y-3 text-right">
-                    <!-- Content loaded via JS -->
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Toast Notification -->
-    <div id="toast" class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-[300] px-5 py-3 rounded-2xl text-sm shadow-lg font-bold animate-fade"></div>
-
-    <!-- Add Shop Modal -->
-    <div id="shopModal" class="hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm p-5 overflow-auto hide-scrollbar">
-        <div class="min-h-screen flex items-center justify-center max-w-lg mx-auto">
-            <div class="bg-white dark:bg-slate-900 w-full rounded-[32px] p-6 shadow-2xl relative">
-                <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100 dark:border-slate-700">
-                    <h3 class="text-xl font-black"><i class="fa-solid fa-store ml-2 text-blue-600"></i> إضافة محل جديد</h3>
-                    <button onclick="closeModal('shopModal')" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-                <form id="addShopForm" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">اسم المحل *</label>
-                        <input name="name" type="text" required placeholder="مثال: محل التقنية" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">صاحب المحل (Email)</label>
-                        <input name="ownerEmail" type="email" placeholder="owner@zalo.com" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">القسم</label>
-                        <select name="category" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none">
-                            <option value="electronics">هواتف وإلكترونيات</option>
-                            <option value="restaurants">مطاعم ومقاهي</option>
-                            <option value="fashion">ملابس وموضة</option>
-                            <option value="cars">قطع غيار سيارات</option>
-                            <option value="services">خدمات وصيانة</option>
-                            <option value="building">مواد بناء</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">رقم الهاتف</label>
-                        <input name="phone" type="tel" placeholder="05xxxxxxxx" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">العنوان</label>
-                        <input name="address" type="text" placeholder="شارع المنيعة، وسط المدينة" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1">رابط صورة (اختياري)</label>
-                        <input name="imgUrl" type="url" placeholder="https://..." class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none text-sm">
-                    </div>
-                    
-                    <button type="submit" class="w-full bg-blue-600 text-white py-3.5 rounded-xl font-bold mt-2 active:scale-[0.98] transition shadow-lg shadow-blue-200">
-                        <i class="fa-solid fa-plus ml-1"></i> إنشاء المحل
-                    </button>
-                </form>
+        <!-- Shop Owner Section -->
+        <div id="shopOwnerSection" class="hidden">
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700">
+                <h2 class="text-xl font-black mb-4">🏪 لوحة تحكم صاحب المحل</h2>
+                <p class="text-slate-500">تم تسجيل الدخول بنجاح.</p>
             </div>
         </div>
     </div>
@@ -242,43 +80,44 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, collection, addDoc, getDocs, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const firebaseConfig = {
-          apiKey: "AIzaSyBJ3T-jWd_nj3FYCtzewRl-d1yimGtsryc",
-          authDomain: "zalo-smart.firebaseapp.com",
-          projectId: "zalo-smart",
-          storageBucket: "zalo-smart.firebasestorage.app",
-          messagingSenderId: "430326151788",
-          appId: "1:430326151788:web:e4f94437946221429f3649"
+            apiKey: "AIzaSyBJ3T-jWd_nj3FYCtzewRl-d1yimGtsryc",
+            authDomain: "zalo-smart.firebaseapp.com",
+            projectId: "zalo-smart",
+            storageBucket: "zalo-smart.firebasestorage.app",
+            messagingSenderId: "430326151788",
+            appId: "1:430326151788:web:e4f94437946221429f3649"
         };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // DOM Elements
-        const loginForm = document.getElementById('loginForm');
-        const loginEmailInput = document.getElementById('loginEmail');
-        const loginPasswordInput = document.getElementById('loginPassword');
-        const dashboardView = document.getElementById('dashboardView');
         const loadingScreen = document.getElementById('loadingScreen');
+        const loginForm = document.getElementById('loginForm');
+        const dashboardView = document.getElementById('dashboardView');
         const userEmailSpan = document.getElementById('userEmail');
         const userRoleSpan = document.getElementById('userRole');
         const adminSection = document.getElementById('adminSection');
         const shopOwnerSection = document.getElementById('shopOwnerSection');
-        const adminShopsList = document.getElementById('adminShopsList');
         const logoutButton = document.getElementById('logoutButton');
-        const toastElement = document.getElementById('toast');
 
         let currentUser = null;
         let currentUserRole = 'guest';
 
-        // Auth State Listener
+        // ✅ هنا التعديل المهم
         onAuthStateChanged(auth, async (user) => {
+            loadingScreen.classList.add('hidden'); // إخفاء الدائرة فوراً
+
             if (user) {
                 currentUser = user;
-                await fetchUserRole(user.uid);
+                try {
+                    await fetchUserRole(user.uid);
+                } catch (e) {
+                    console.error(e);
+                }
                 showDashboard();
                 userEmailSpan.textContent = user.email || '';
                 userRoleSpan.textContent = currentUserRole === 'admin' ? '👑 مدير النظام' : '🏪 صاحب محل';
@@ -287,56 +126,50 @@
                 currentUser = null;
                 showLogin();
             }
-            loadingScreen.classList.add('hidden');
         });
-
-        function showLoading() {
-            loadingScreen.classList.remove('hidden');
-            loginForm.classList.add('hidden');
-            dashboardView.classList.add('hidden');
-        }
 
         function showLogin() {
             loginForm.classList.remove('hidden');
             dashboardView.classList.add('hidden');
-            loadingScreen.classList.add('hidden');
         }
 
         function showDashboard() {
             dashboardView.classList.remove('hidden');
             loginForm.classList.add('hidden');
-            loadingScreen.classList.add('hidden');
         }
 
-        function showToast(message, type = 'info') {
-            toastElement.textContent = message;
-            toastElement.className = `fixed bottom-5 left-1/2 -translate-x-1/2 z-[300] px-5 py-3 rounded-2xl text-sm shadow-lg font-bold animate-fade`;
-            if (type === 'success') toastElement.classList.add('bg-emerald-600', 'text-white');
-            else if (type === 'error') toastElement.classList.add('bg-red-600', 'text-white');
-            else toastElement.classList.add('bg-slate-900', 'text-white');
-            
-            toastElement.classList.remove('hidden');
-            clearTimeout(window.__toastTimer);
-            window.__toastTimer = setTimeout(() => toastElement.classList.add('hidden'), 3500);
+        async function fetchUserRole(uid) {
+            const userRef = doc(db, 'users', uid);
+            const snap = await getDoc(userRef);
+            if (snap.exists()) {
+                currentUserRole = snap.data().role || 'shop_owner';
+            } else {
+                currentUserRole = 'shop_owner';
+            }
         }
 
-        // Login Handler
+        function renderContent() {
+            if (currentUserRole === 'admin') {
+                adminSection.classList.remove('hidden');
+                shopOwnerSection.classList.add('hidden');
+            } else {
+                adminSection.classList.add('hidden');
+                shopOwnerSection.classList.remove('hidden');
+            }
+        }
+
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             try {
-                showLoading();
-                await signInWithEmailAndPassword(auth, loginEmailInput.value, loginPasswordInput.value);
-                showToast('تم تسجيل الدخول بنجاح! 🎉', 'success');
+                await signInWithEmailAndPassword(auth, document.getElementById('loginEmail').value, document.getElementById('loginPassword').value);
             } catch (error) {
-                console.error(error);
-                showToast('خطأ: ' + (error.message || 'فحص البيانات'), 'error');
-                showLogin();
+                alert('خطأ في تسجيل الدخول: ' + error.message);
             }
         });
 
-        // Logout
         logoutButton.addEventListener('click', async () => {
-            try {
-                await signOut(auth);
-                showToast('تم تسجيل الخروج 👋', 'info');
-     
+            await signOut(auth);
+        });
+    </script>
+</body>
+            </html>
