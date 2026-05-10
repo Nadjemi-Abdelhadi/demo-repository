@@ -1363,5 +1363,18 @@
         }
     </script>
 
+    <!-- ربط Firebase -->
+    <script src="./js/firebase-config.js"></script>
+    <script type="module" src="./js/firebase-sync.js"></script>
+    <script type="module">
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                if (typeof initFirebaseSync === 'function') {
+                    initFirebaseSync();
+                }
+            }, 2000);
+        });
+    </script>
+
 </body>
 </html>
