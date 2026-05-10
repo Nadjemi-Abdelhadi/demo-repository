@@ -3,84 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZaLo Smart - لوحة التحكم</title>
-
+    <title>ZaLo Smart - لوحة التحكم الفائقة</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
     <style>
         body { font-family: 'Tajawal', sans-serif; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-white min-h-screen flex items-center justify-center">
+<body class="bg-slate-50 text-slate-900 pb-20">
 
-    <!-- Loading Screen -->
-    <div id="loadingScreen" class="fixed inset-0 bg-slate-50 dark:bg-slate-950 flex items-center justify-center z-50">
-        <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
+    <div class="max-w-5xl mx-auto p-5 md:p-8">
+        <!-- Header -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-100 flex justify-between items-center mb-8 shadow-sm">
+            <div>
+                <h1 class="text-2xl font-black">👑 لوحة تحكم ZaLo Smart</h1>
+                <p class="text-xs text-slate-500 mt-1">الحساب: <span id="userEmail" class="font-bold text-blue-600"></span></p>
+            </div>
+            <button id="logoutBtn" class="bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2 rounded-xl text-xs font-bold transition">تسجيل الخروج</button>
+        </div>
+
+        <!-- زر إضافة متجر -->
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h2 class="text-xl font-black">المتاجر المسجلة</h2>
+                <p class="text-xs text-slate-400 mt-0.5">أضف المتاجر وأدر منتجاتها من هنا</p>
+            </div>
+            <button onclick="showAddShopModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition shadow-lg shadow-blue-200">
+                <i class="fa-solid fa-plus"></i> 
+                <span>إضافة متجر جديد</span>
+            </button>
+        </div>
+
+        <!-- قائمة المتاجر -->
+        <div id="shopsList" class="space-y-4">
+            <!-- المتاجر تظهر هنا -->
+        </div>
     </div>
 
-    <!-- Login Form -->
-    <div id="loginForm" class="max-w-md w-full bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-700 hidden">
-        <div class="text-center mb-6">
-            <div class="w-20 h-20 bg-blue-600 rounded-2xl mx-auto mb-4 flex items-center justify-center">
-                <i class="fa-solid fa-shield-halved text-white text-3xl"></i>
+    <!-- ================= 1. نافذة إضافة متجر ================= -->
+    <div id="addShopModal" class="hidden fixed inset-0 bg-black/50 items-center justify-center p-4 z-50">
+        <div class="bg-white w-full max-w-md rounded-3xl p-6 shadow-xl animate-fade">
+            <h3 class="text-lg font-black mb-5">➕ إضافة متجر جديد</h3>
+            <div class="space-y-4">
+                <div><label class="block text-xs font-bold text-slate-500 mb-1">اسم المتجر</label><input id="addName" type="text" class="w-full border p-3 rounded-xl text-sm outline-none"></div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">القسم</label>
+                    <select id="addCategory" class="w-full border p-3 rounded-xl text-sm outline-none">
+                        <option value="electronics">هواتف وإلكترونيات</option>
+                        <option value="restaurants">مطاعم ومقاهي</option>
+                        <option value="fashion">ملابس وموضة</option>
+                        <option value="cars">قطع غيار سيارات</option>
+                        <option value="services">خدمات وصيانة</option>
+                        <option value="building">مواد البناء</option>
+                    </select>
+                </div>
+                <div><label class="block text-xs font-bold text-slate-500 mb-1">رقم الهاتف</label><input id="addPhone" type="tel" class="w-full border p-3 rounded-xl text-sm outline-none"></div>
+                <div><label class="block text-xs font-bold text-slate-500 mb-1">العنوان</label><input id="addAddress" type="text" class="w-full border p-3 rounded-xl text-sm outline-none"></div>
             </div>
-            <h2 class="text-3xl font-black">ZaLo Smart</h2>
-            <p class="text-sm text-slate-500 mt-1">لوحة التحكم</p>
-        </div>
-        
-        <form class="space-y-4">
-            <div>
-                <label for="loginEmail" class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">البريد الإلكتروني</label>
-                <input type="email" id="loginEmail" class="w-full px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="admin@zalo.com" required>
-            </div>
-            <div>
-                <label for="loginPassword" class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">كلمة المرور</label>
-                <input type="password" id="loginPassword" class="w-full px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="••••••••" required>
-            </div>
-            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold text-lg hover:bg-blue-700 transition">دخول</button>
-        </form>
-    </div>
-
-    <!-- Dashboard View -->
-    <div id="dashboardView" class="hidden w-full max-w-4xl mx-auto p-5 md:p-8">
-        
-        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-800 mb-6 flex items-center justify-between">
-            <div>
-                <h1 class="text-xl font-black">لوحة التحكم</h1>
-                <p class="text-xs text-slate-500 mt-0.5">
-                    مرحباً <span id="userEmail" class="font-bold text-blue-600"></span>
-                    <span class="mx-2">|</span>
-                    الدور: <span id="userRole" class="font-bold text-emerald-600"></span>
-                </p>
-            </div>
-            <button id="logoutButton" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2.5 rounded-xl font-bold text-sm transition">تسجيل الخروج</button>
-        </div>
-
-        <!-- Admin Section -->
-        <div id="adminSection" class="hidden">
-            <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700">
-                <h2 class="text-xl font-black mb-4">👑 لوحة تحكم المدير</h2>
-                <p class="text-slate-500">تم تسجيل الدخول بنجاح كمدير النظام.</p>
-            </div>
-        </div>
-
-        <!-- Shop Owner Section -->
-        <div id="shopOwnerSection" class="hidden">
-            <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700">
-                <h2 class="text-xl font-black mb-4">🏪 لوحة تحكم صاحب المحل</h2>
-                <p class="text-slate-500">تم تسجيل الدخول بنجاح.</p>
+            <div class="flex gap-3 mt-6">
+                <button onclick="hideAddShopModal()" class="flex-1 bg-slate-100 py-3 rounded-xl font-bold text-xs">إلغاء</button>
+                <button onclick="addNewShop()" class="flex-1 bg-blue-600 text-white py-3 rounded-xl font-bold text-xs">إضافة الحفظ</button>
             </div>
         </div>
     </div>
 
+    <!-- ================= 2. نافذة تعديل متجر ================= -->
+    <div id="editShopModal" class="hidden fixed inset-0 bg-black/50 items-center justify-center p-4 z-50">
+        <div class="bg-white w-full max-w-md rounded-3xl p-6 shadow-xl">
+            <h3 class="text-lg font-black mb-5 text-emerald-600">✏️ تعديل بيانات المتجر</h3>
+            <input type="hidden" id="editShopId">
+            <div class="space-y-4">
+                <div><label class="block text-xs font-bold text-slate-500 mb-1">اسم المتجر</label><input id="editName" type="text" class="w-full border p-3 rounded-xl text-sm outline-none"></div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">القسم</label>
+                    <select id="editCategory" class="w-full border p-3 rounded-xl text-sm outline-none">
+                        <option value="electronics">هواتف وإلكترونيات</option>
+                        <option value="restaurants">مطاعم ومقاهي</option>
+                        <option value="fashion">ملابس وموضة</option>
+                        <option value="cars">قطع غيار سيارات</option>
+                        <option value="services">خدمات وصيانة</option>
+                        <option value="building">مواد البناء</option>
+                    </select>
+                </div>
+                <div><label class="block text-xs font-bold text-slate-500 mb-1">رقم الهاتف</label><input id="editPhone" type="tel" class="w-full border p-3 rounded-xl text-sm outline-none"></div>
+                <div><label class="block text-xs font-bold text-slate-500 mb-1">العنوان</label><input id="editAddress" type="text" class="w-full border p-3 rounded-xl text-sm outline-none"></div>
+            </div>
+            <div class="flex gap-3 mt-6">
+                <button onclick="hideEditShopModal()" class="flex-1 bg-slate-100 py-3 rounded-xl font-bold text-xs">إلغاء</button>
+                <button onclick="saveShopEdits()" class="flex-1 bg-emerald-600 text-white py-3 rounded-xl font-bold text-xs">حفظ التعديلات</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= 3. نافذة إدارة المنتجات (الجديدة) ================= -->
+    <div id="productsModal" class="hidden fixed inset-0 bg-black/60 items-center justify-center p-4 z-50">
+        <div class="bg-white w-full max-w-2xl rounded-3xl p-6 shadow-2xl max-h-[90vh] flex flex-col">
+            
+            <!-- الهيدر -->
+            <div class="flex justify-between items-center border-b pb-4 mb-4">
+                <div>
+                    <p class="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full font-bold inline-block mb-1">إدارة المنتجات</p>
+                    <h3 id="manageShopName" class="text-xl font-black text-slate-900">اسم المتجر</h3>
+                </div>
+                <button onclick="hideProductsModal()" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-red-50 hover:text-red-500 transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- نموذج إضافة منتج سريع -->
+            <div class="bg-slate-50 p-4 rounded-2xl mb-5 border border-slate-100">
+                <p class="text-xs font-bold text-slate-700 mb-3">➕ إضافة منتج / خدمة جديدة</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <input id="prodName" type="text" placeholder="اسم المنتج (مثال: ايفون 15)" class="border p-2.5 rounded-xl text-xs outline-none bg-white">
+                    <input id="prodPrice" type="text" placeholder="السعر (مثال: 3500 دج)" class="border p-2.5 rounded-xl text-xs outline-none bg-white">
+                    <input id="prodImg" type="url" placeholder="رابط الصورة (اختياري)" class="border p-2.5 rounded-xl text-xs outline-none bg-white md:col-span-1">
+                </div>
+                <button onclick="addNewProduct()" class="w-full mt-3 bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-xl text-xs font-bold transition">
+                    حفظ المنتج للمتجر
+                </button>
+            </div>
+
+            <!-- قائمة المنتجات الحية -->
+            <p class="text-xs font-bold text-slate-400 mb-2">المنتجات المتاحة حالياً:</p>
+            <div id="shopProductsList" class="flex-1 overflow-y-auto space-y-2 pr-1 hide-scrollbar">
+                <!-- المنتجات تظهر هنا -->
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Firebase & JS Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, query, doc, deleteDoc, updateDoc, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBJ3T-jWd_nj3FYCtzewRl-d1yimGtsryc",
@@ -95,81 +154,217 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        const loadingScreen = document.getElementById('loadingScreen');
-        const loginForm = document.getElementById('loginForm');
-        const dashboardView = document.getElementById('dashboardView');
-        const userEmailSpan = document.getElementById('userEmail');
-        const userRoleSpan = document.getElementById('userRole');
-        const adminSection = document.getElementById('adminSection');
-        const shopOwnerSection = document.getElementById('shopOwnerSection');
-        const logoutButton = document.getElementById('logoutButton');
-
         let currentUser = null;
-        let currentUserRole = 'guest';
+        let cachedShops = []; 
+        let currentManagingShopId = null; // حفظ ID المتجر الذي ندير منتجاته حالياً
 
-        // ✅ هنا التعديل المهم
-        onAuthStateChanged(auth, async (user) => {
-            loadingScreen.classList.add('hidden'); // إخفاء الدائرة فوراً
-
+        // التحقق من الدخول
+        onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
-                try {
-                    await fetchUserRole(user.uid);
-                } catch (e) {
-                    console.error(e);
-                }
-                showDashboard();
-                userEmailSpan.textContent = user.email || '';
-                userRoleSpan.textContent = currentUserRole === 'admin' ? '👑 مدير النظام' : '🏪 صاحب محل';
-                renderContent();
+                document.getElementById('userEmail').textContent = user.email;
+                loadShops();
             } else {
-                currentUser = null;
-                showLogin();
+                window.location.href = "dashboard.html";
             }
         });
 
-        function showLogin() {
-            loginForm.classList.remove('hidden');
-            dashboardView.classList.add('hidden');
-        }
+        // 1. تحميل المتاجر
+        async function loadShops() {
+            const container = document.getElementById('shopsList');
+            container.innerHTML = '<p class="text-center text-slate-400 my-10 animate-pulse">جاري تحميل المتاجر...</p>';
 
-        function showDashboard() {
-            dashboardView.classList.remove('hidden');
-            loginForm.classList.add('hidden');
-        }
+            const q = query(collection(db, 'shops'));
+            const snapshot = await getDocs(q);
+            cachedShops = []; 
 
-        async function fetchUserRole(uid) {
-            const userRef = doc(db, 'users', uid);
-            const snap = await getDoc(userRef);
-            if (snap.exists()) {
-                currentUserRole = snap.data().role || 'shop_owner';
-            } else {
-                currentUserRole = 'shop_owner';
+            if (snapshot.empty) {
+                container.innerHTML = `<p class="text-center text-slate-400 py-10 font-bold">لا توجد متاجر مسجلة بعد</p>`;
+                return;
             }
+
+            let html = '';
+            snapshot.forEach(docSnap => {
+                const shop = docSnap.data();
+                shop.id = docSnap.id;
+                cachedShops.push(shop);
+
+                let catLabel = getCategoryLabel(shop.category);
+                let pCount = shop.productCount || 0;
+
+                html += `
+                    <div class="bg-white p-5 rounded-3xl border border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-sm hover:shadow-md transition">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-black text-base text-slate-900">${shop.name}</h3>
+                                <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-bold">${catLabel}</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">📞 ${shop.phone}  |  📍 ${shop.address || 'بدون عنوان'}</p>
+                        </div>
+
+                        <div class="flex items-center gap-2 w-full md:w-auto justify-end border-t md:border-t-0 pt-3 md:pt-0">
+                            <!-- زر إدارة المنتجات (الجديد الذهبي) -->
+                            <button onclick="openProductsModal('${shop.id}', '${shop.name}')" class="flex-1 md:flex-none bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-box-open"></i>
+                                <span>المنتجات (${pCount})</span>
+                            </button>
+
+                            <!-- زر التعديل -->
+                            <button onclick="openEditModal('${shop.id}')" class="bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-600 w-9 h-9 rounded-xl flex items-center justify-center text-xs transition">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+
+                            <!-- زر الحذف -->
+                            <button onclick="deleteShop('${shop.id}')" class="bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-600 w-9 h-9 rounded-xl flex items-center justify-center text-xs transition">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
         }
 
-        function renderContent() {
-            if (currentUserRole === 'admin') {
-                adminSection.classList.remove('hidden');
-                shopOwnerSection.classList.add('hidden');
-            } else {
-                adminSection.classList.add('hidden');
-                shopOwnerSection.classList.remove('hidden');
+        // ==================== وظائف المنتجات (الجديدة) ====================
+
+        // فتح نافذة المنتجات وجلب منتجات هذا المتجر
+        window.openProductsModal = async function(shopId, shopName) {
+            currentManagingShopId = shopId;
+            document.getElementById('manageShopName').textContent = shopName;
+            document.getElementById('productsModal').classList.remove('hidden');
+            document.getElementById('productsModal').classList.add('flex');
+
+            await loadCurrentShopProducts();
+        };
+
+        // إغلاق نافذة المنتجات
+        window.hideProductsModal = function() {
+            document.getElementById('productsModal').classList.remove('flex');
+            document.getElementById('productsModal').classList.add('hidden');
+            currentManagingShopId = null;
+            loadShops(); // تحديث العدادات في القائمة الرئيسية
+        };
+
+        // جلب المنتجات من قاعدة البيانات
+        async function loadCurrentShopProducts() {
+            const list = document.getElementById('shopProductsList');
+            list.innerHTML = '<p class="text-center text-slate-400 text-xs py-5">جاري جلب المنتجات...</p>';
+
+            const q = query(collection(db, 'products'), where('shopId', '==', currentManagingShopId));
+            const snapshot = await getDocs(q);
+
+            if (snapshot.empty) {
+                list.innerHTML = '<p class="text-center text-slate-400 text-xs py-8 bg-slate-50 rounded-2xl">لا يوجد أي منتج في هذا المتجر. أضف أول منتج أعلاه!</p>';
+                return;
             }
+
+            let html = '';
+            snapshot.forEach(docSnap => {
+                const p = docSnap.data();
+                html += `
+                    <div class="bg-white border p-3 rounded-2xl flex justify-between items-center gap-3">
+                        <div class="flex items-center gap-3">
+                            ${p.imgUrl ? `<img src="${p.imgUrl}" class="w-10 h-10 rounded-xl object-cover">` : `<div class="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 text-xs">📦</div>`}
+                            <div>
+                                <h4 class="font-bold text-xs text-slate-900">${p.name}</h4>
+                                <p class="text-emerald-600 font-black text-xs mt-0.5">${p.price}</p>
+                            </div>
+                        </div>
+                        <button onclick="deleteProduct('${docSnap.id}')" class="text-red-500 hover:bg-red-50 p-2 rounded-lg text-xs transition">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+            });
+            list.innerHTML = html;
         }
 
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            try {
-                await signInWithEmailAndPassword(auth, document.getElementById('loginEmail').value, document.getElementById('loginPassword').value);
-            } catch (error) {
-                alert('خطأ في تسجيل الدخول: ' + error.message);
-            }
-        });
+        // إضافة منتج جديد
+        window.addNewProduct = async function() {
+            const name = document.getElementById('prodName').value.trim();
+            const price = document.getElementById('prodPrice').value.trim();
+            const imgUrl = document.getElementById('prodImg').value.trim();
 
-        logoutButton.addEventListener('click', async () => {
-            await signOut(auth);
-        });
-    </script>
-</body>
-            </html>
+            if (!name || !price) {
+                alert("اسم المنتج والسعر مطلوبان!");
+                return;
+            }
+
+            // 1. إضافة المنتج في جدول المنتجات
+            await addDoc(collection(db, 'products'), {
+                shopId: currentManagingShopId,
+                name,
+                price: price.includes('دج') ? price : price + ' دج',
+                imgUrl,
+                createdAt: serverTimestamp()
+            });
+
+            // 2. زيادة عداد المنتجات في المتجر
+            const shopRef = doc(db, 'shops', currentManagingShopId);
+            const currentShop = cachedShops.find(s => s.id === currentManagingShopId);
+            const newCount = (currentShop.productCount || 0) + 1;
+            await updateDoc(shopRef, { productCount: newCount });
+            currentShop.productCount = newCount; // تحديث الذاكرة
+
+            // تفريغ الحقول وتحديث القائمة
+            document.getElementById('prodName').value = '';
+            document.getElementById('prodPrice').value = '';
+            document.getElementById('prodImg').value = '';
+
+            await loadCurrentShopProducts();
+        };
+
+        // حذف منتج
+        window.deleteProduct = async function(prodId) {
+            if (confirm("هل تريد حذف هذا المنتج؟")) {
+                await deleteDoc(doc(db, 'products', prodId));
+
+                // إنقاص العداد
+                const shopRef = doc(db, 'shops', currentManagingShopId);
+                const currentShop = cachedShops.find(s => s.id === currentManagingShopId);
+                const newCount = Math.max(0, (currentShop.productCount || 0) - 1);
+                await updateDoc(shopRef, { productCount: newCount });
+                currentShop.productCount = newCount;
+
+                await loadCurrentShopProducts();
+            }
+        };
+
+        // ==================== وظائف المتاجر القديمة ====================
+        window.addNewShop = async function() {
+            const name = document.getElementById('addName').value.trim();
+            const category = document.getElementById('addCategory').value;
+            const phone = document.getElementById('addPhone').value.trim();
+            const address = document.getElementById('addAddress').value.trim();
+
+            if (!name || !phone) { alert("الاسم ورقم الهاتف مطلوبان!"); return; }
+
+            await addDoc(collection(db, 'shops'), {
+                name, category, phone, address,
+                productCount: 0,
+                ownerId: currentUser.uid,
+                createdAt: serverTimestamp()
+            });
+
+            document.getElementById('addName').value = '';
+            document.getElementById('addPhone').value = '';
+            document.getElementById('addAddress').value = '';
+            hideAddShopModal(); loadShops();
+        };
+
+        window.openEditModal = function(shopId) {
+            const shop = cachedShops.find(s => s.id === shopId);
+            if (!shop) return;
+            document.getElementById('editShopId').value = shop.id;
+            document.getElementById('editName').value = shop.name;
+            document.getElementById('editCategory').value = shop.category;
+            document.getElementById('editPhone').value = shop.phone;
+            document.getElementById('editAddress').value = shop.address || '';
+            document.getElementById('editShopModal').classList.remove('hidden');
+            document.getElementById('editShopModal').classList.add('flex');
+        };
+
+        window.saveShopEdits = async function() {
+            const shopId = document.getElementById('editShopId').value;
+            const name = document.getElementById('editName').value.trim();
+            const category = docume
