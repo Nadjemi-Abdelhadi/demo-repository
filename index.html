@@ -1,127 +1,313 @@
-    <!-- ========================================== -->
-    <!-- 🔗 المحرك الاحترافي لجلب البيانات (REST API) -->
-    <!-- ========================================== -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ZaLo Smart - دليل المنيعة</title>
+    <meta name="theme-color" content="#2563eb" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        body { font-family: 'Tajawal', sans-serif; }
+        .animate-fade { animation: fadeUp .35s ease both; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 pb-28">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-100 p-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <button onclick="goHome()" id="backBtn" class="hidden w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 transition">
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+            <img src="./1000045432.png" alt="ZaLo" class="w-10 h-10 object-contain rounded-xl border border-slate-100 bg-white">
+            <div>
+                <span class="text-[9px] font-bold text-blue-600 tracking-widest uppercase block">ZaLo Smart</span>
+                <h1 class="font-black text-sm text-slate-900 leading-none">دليل المنيعة</h1>
+            </div>
+        </div>
+        <div id="dataStatus" class="text-[10px] bg-slate-100 px-2.5 py-1 rounded-full flex items-center gap-1 font-bold">
+            <span class="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span>
+            <span>جاري الاتصال...</span>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-md mx-auto p-5">
+        
+        <!-- ================= 1. الصفحة الرئيسية ================= -->
+        <div id="view-home" class="animate-fade space-y-6">
+            
+            <!-- شريط البحث -->
+            <div class="bg-white border border-slate-100 rounded-2xl p-3 flex items-center gap-3 shadow-sm">
+                <i class="fa-solid fa-search text-slate-400 ml-1"></i>
+                <input type="text" oninput="searchApp(this.value)" placeholder="ابحث عن متجر، منتج، أو خدمة في المنيعة..." class="w-full bg-transparent outline-none text-xs font-medium">
+            </div>
+
+            <!-- البانر الترحيبي والإحصائيات -->
+            <div class="bg-gradient-to-br from-blue-600 to-indigo-600 rounded-3xl p-6 text-white shadow-lg shadow-blue-200">
+                <p class="text-xs text-blue-100 font-bold mb-1">الدليل الرقمي المباشر</p>
+                <h2 class="text-2xl font-black leading-tight">اكتشف أفضل المتاجر<br>والخدمات في المدينة</h2>
+                <div id="statsBox" class="grid grid-cols-3 gap-2 mt-5 border-t border-white/10 pt-4">
+                    <div class="bg-white/10 rounded-2xl p-2 text-center"><div class="text-lg font-black">-</div><div class="text-[9px] text-blue-100 font-bold">متجر</div></div>
+                    <div class="bg-white/10 rounded-2xl p-2 text-center"><div class="text-lg font-black">-</div><div class="text-[9px] text-blue-100 font-bold">منتج</div></div>
+                    <div class="bg-white/10 rounded-2xl p-2 text-center"><div class="text-lg font-black">-</div><div class="text-[9px] text-blue-100 font-bold">قسم</div></div>
+                </div>
+            </div>
+
+            <!-- الأقسام التجارية -->
+            <div>
+                <h3 class="font-black text-base text-slate-800 mb-3">الأقسام التجارية</h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="openCategory('electronics')" class="bg-white p-4 rounded-2xl border border-slate-100 text-right shadow-sm hover:border-blue-200 transition group cursor-pointer">
+                        <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-lg mb-2 group-hover:scale-110 transition"><i class="fa-solid fa-mobile-screen-button"></i></div>
+                        <span class="font-bold text-xs block text-slate-800">هواتف وإلكترونيات</span>
+                    </button>
+                    <button onclick="openCategory('restaurants')" class="bg-white p-4 rounded-2xl border border-slate-100 text-right shadow-sm hover:border-orange-200 transition group cursor-pointer">
+                        <div class="w-10 h-10 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center text-lg mb-2 group-hover:scale-110 transition"><i class="fa-solid fa-utensils"></i></div>
+                        <span class="font-bold text-xs block text-slate-800">مطاعم ومقاهي</span>
+                    </button>
+                    <button onclick="openCategory('fashion')" class="bg-white p-4 rounded-2xl border border-slate-100 text-right shadow-sm hover:border-pink-200 transition group cursor-pointer">
+                        <div class="w-10 h-10 bg-pink-50 text-pink-600 rounded-xl flex items-center justify-center text-lg mb-2 group-hover:scale-110 transition"><i class="fa-solid fa-shirt"></i></div>
+                        <span class="font-bold text-xs block text-slate-800">ملابس وموضة</span>
+                    </button>
+                    <button onclick="openCategory('cars')" class="bg-white p-4 rounded-2xl border border-slate-100 text-right shadow-sm hover:border-emerald-200 transition group cursor-pointer">
+                        <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-lg mb-2 group-hover:scale-110 transition"><i class="fa-solid fa-car"></i></div>
+                        <span class="font-bold text-xs block text-slate-800">قطع غيار سيارات</span>
+                    </button>
+                    <button onclick="openCategory('services')" class="bg-white p-4 rounded-2xl border border-slate-100 text-right shadow-sm hover:border-violet-200 transition group cursor-pointer">
+                        <div class="w-10 h-10 bg-violet-50 text-violet-600 rounded-xl flex items-center justify-center text-lg mb-2 group-hover:scale-110 transition"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+                        <span class="font-bold text-xs block text-slate-800">خدمات وصيانة</span>
+                    </button>
+                    <button onclick="openCategory('building')" class="bg-white p-4 rounded-2xl border border-slate-100 text-right shadow-sm hover:border-slate-200 transition group cursor-pointer">
+                        <div class="w-10 h-10 bg-slate-100 text-slate-600 rounded-xl flex items-center justify-center text-lg mb-2 group-hover:scale-110 transition"><i class="fa-solid fa-hammer"></i></div>
+                        <span class="font-bold text-xs block text-slate-800">مواد البناء</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- المنتجات المباشرة -->
+            <div>
+                <h3 class="font-black text-base text-slate-800 mb-3">أحدث المنتجات والعروض</h3>
+                <div id="featuredBox" class="space-y-2.5">
+                    <p class="text-center text-slate-400 text-xs py-10 bg-white rounded-2xl border border-slate-100 animate-pulse">جاري تحميل المنتجات الحية...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 2. صفحة عرض المتاجر/القسم ================= -->
+        <div id="view-list" class="hidden animate-fade space-y-4">
+            <div class="flex items-center gap-2 mb-4 border-b pb-3">
+                <span class="w-1.5 h-5 bg-blue-600 rounded-full block"></span>
+                <h2 id="listTitle" class="text-lg font-black text-slate-900">المتاجر والمنتجات</h2>
+            </div>
+            <div id="listBox" class="space-y-3"></div>
+        </div>
+
+    </main>
+
+    <!-- شريط التنقل السفلي -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 p-2 z-40 max-w-md mx-auto flex justify-around text-center shadow-lg">
+        <button onclick="goHome()" class="text-blue-600 font-bold flex flex-col items-center text-[10px] cursor-pointer"><i class="fa-solid fa-house text-base mb-0.5"></i>الرئيسية</button>
+        <button onclick="openCategory('all')" class="text-slate-400 hover:text-blue-600 font-bold flex flex-col items-center text-[10px] transition cursor-pointer"><i class="fa-solid fa-store text-base mb-0.5"></i>كل المتاجر</button>
+        <a href="./dashboard.html" class="text-slate-400 hover:text-blue-600 font-bold flex flex-col items-center text-[10px] transition"><i class="fa-solid fa-user-gear text-base mb-0.5"></i>لوحة الإدارة</a>
+    </nav>
+
+    <!-- ========================================================= -->
+    <!-- 🔗 المحرك المباشر والسريع لجلب البيانات من Firebase (REST API) -->
+    <!-- ========================================================= -->
     <script>
-        // إعدادات التطبيق الأساسية
+        let allData = [];
         const PROJECT_ID = "zalo-smart";
         const BASE_URL = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents`;
 
-        // دالة مساعدة لاستخراج القيم بأمان من سحابة Google
+        // دالة مساعدة لاستخراج النصوص
         function getVal(field, type = 'stringValue') {
             return field ? (field[type] || '') : '';
         }
 
-        // المحرك الرئيسي
+        // 1. جلب البيانات الرئيسية
         async function loadZaloCloudData() {
             const statusEl = document.getElementById('dataStatus');
-            
             try {
-                if (statusEl) {
-                    statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span><span>جاري جلب المتاجر والمنتجات...</span>';
-                }
-
-                // 1. جلب المتاجر والمنتجات معاً في نفس اللحظة (أقصى سرعة)
                 const [shopsRes, productsRes] = await Promise.all([
                     fetch(`${BASE_URL}/shops`),
                     fetch(`${BASE_URL}/products`)
                 ]);
-
+                
                 const shopsData = await shopsRes.json();
                 const productsData = await productsRes.json();
-
+                
                 const shops = shopsData.documents || [];
                 const products = productsData.documents || [];
 
                 const liveData = [];
+                
+                // خريطة المتاجر لتسهيل البحث
+                const shopsMap = {};
+                shops.forEach(s => {
+                    const sf = s.fields || {};
+                    const sId = s.name.split('/').pop();
+                    shopsMap[sId] = {
+                        name: getVal(sf.name),
+                        category: getVal(sf.category) || 'other',
+                        phone: getVal(sf.phone),
+                        address: getVal(sf.address)
+                    };
+                });
 
-                // 2. معالجة وتجهيز المتاجر التي لديها منتجات
+                // دمج المنتجات مع أصحابها
                 products.forEach(prod => {
                     const f = prod.fields || {};
                     const shopIdVal = getVal(f.shopId);
+                    const parentShop = shopsMap[shopIdVal] || {};
                     
-                    // البحث عن صاحب المنتج
-                    const parentShop = shops.find(s => s.name.endsWith(`/${shopIdVal}`));
-                    const sf = parentShop ? parentShop.fields : {};
-
                     liveData.push({
                         id: prod.name.split('/').pop(),
-                        shop: getVal(sf?.name) || 'متجر عام',
+                        shop: parentShop.name || 'متجر عام',
                         item: getVal(f.name),
                         price: getVal(f.price),
-                        category: getVal(sf?.category) || 'other',
+                        category: parentShop.category || 'other',
                         imgUrl: getVal(f.imgUrl),
-                        phone: getVal(sf?.phone),
-                        address: getVal(sf?.address)
+                        phone: parentShop.phone || '',
+                        address: parentShop.address || ''
                     });
                 });
 
-                // 3. إضافة المتاجر الجديدة التي ليس لها منتجات بعد
-                shops.forEach(shop => {
-                    const sf = shop.fields || {};
-                    const shopId = shop.name.split('/').pop();
-                    const hasProducts = liveData.some(item => item.shop === getVal(sf.name));
-
-                    if (!hasProducts) {
+                // إضافة المتاجر التي ليس لها منتجات كعناصر مستقلة
+                Object.keys(shopsMap).forEach(sId => {
+                    const s = shopsMap[sId];
+                    const hasProd = liveData.some(i => i.shop === s.name);
+                    if (!hasProd) {
                         liveData.push({
-                            id: 'shop-' + shopId,
-                            shop: getVal(sf.name),
-                            item: getVal(sf.name),
+                            id: 'shop-' + sId,
+                            shop: s.name,
+                            item: 'متجر مسجل بالمنصة',
                             price: '',
-                            category: getVal(sf.category) || 'other',
+                            category: s.category,
                             imgUrl: '',
-                            phone: getVal(sf.phone),
-                            address: getVal(sf.address)
+                            phone: s.phone,
+                            address: s.address
                         });
                     }
                 });
 
-                // 4. ضخ البيانات في التطبيق مباشرة
-                if (liveData.length > 0) {
-                    window.allData = liveData;
+                allData = liveData;
 
-                    // تحديث الإحصائيات
-                    const statsBox = document.getElementById('statsBox');
-                    if (statsBox) {
-                        const uniqueCats = new Set(liveData.map(i => i.category));
-                        statsBox.innerHTML = `
-                            <div class="bg-white/15 rounded-3xl p-3 text-center">
-                                <div class="text-xl font-black">${shops.length}</div>
-                                <div class="text-[10px] text-blue-100">متجر</div>
-                            </div>
-                            <div class="bg-white/15 rounded-3xl p-3 text-center">
-                                <div class="text-xl font-black">${products.length}</div>
-                                <div class="text-[10px] text-blue-100">منتج</div>
-                            </div>
-                            <div class="bg-white/15 rounded-3xl p-3 text-center">
-                                <div class="text-xl font-black">${uniqueCats.size || 1}</div>
-                                <div class="text-[10px] text-blue-100">قسم</div>
-                            </div>
-                        `;
-                    }
-
-                    // تحديث واجهة المستخدم
-                    if (typeof renderAll === 'function') renderAll();
-
-                    if (statusEl) {
-                        statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500"></span><span class="font-bold text-emerald-600">متصل بالشبكة الحية ✅</span>';
-                    }
-                    console.log(`🚀 [ZaLo Engine] Successfully loaded ${liveData.length} live items.`);
-                } else {
-                    if (statusEl) statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-orange-500"></span><span>لا توجد متاجر مسجلة</span>';
+                // تحديث الإحصائيات الحية
+                const statsBox = document.getElementById('statsBox');
+                if (statsBox) {
+                    const uniqueCats = new Set(liveData.map(i => i.category));
+                    statsBox.innerHTML = `
+                        <div class="bg-white/10 rounded-2xl p-2 text-center"><div class="text-lg font-black">${shops.length}</div><div class="text-[9px] text-blue-100 font-bold">متجر</div></div>
+                        <div class="bg-white/10 rounded-2xl p-2 text-center"><div class="text-lg font-black">${products.length}</div><div class="text-[9px] text-blue-100 font-bold">منتج</div></div>
+                        <div class="bg-white/10 rounded-2xl p-2 text-center"><div class="text-lg font-black">${uniqueCats.size || 1}</div><div class="text-[9px] text-blue-100 font-bold">قسم</div></div>
+                    `;
                 }
+
+                if (statusEl) {
+                    statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500"></span><span class="text-emerald-700">متصل بالشبكة ✅</span>';
+                }
+
+                renderFeaturedBox(allData);
 
             } catch (error) {
-                console.error("❌ [ZaLo Engine Failed]:", error);
-                if (statusEl) {
-                    statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-500"></span><span class="text-xs text-red-500 font-bold">خطأ في الاتصال، يعمل أوفلاين</span>';
-                }
+                console.error("❌ اتصال السحابة فشل:", error);
+                if (statusEl) statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-500"></span><span class="text-red-600">يعمل أوفلاين</span>';
             }
         }
 
-        // تشغيل المحرك فور اكتمال تحميل الصفحة بأمان
-        window.addEventListener('DOMContentLoaded', function() {
-            setTimeout(loadZaloCloudData, 500);
-        });
+        // 2. رسم المنتجات في الصفحة الرئيسية
+        function renderFeaturedBox(dataToRender) {
+            const box = document.getElementById('featuredBox');
+            if (!box) return;
+
+            if (dataToRender.length === 0) {
+                box.innerHTML = '<p class="text-center text-slate-400 text-xs py-10 bg-white rounded-2xl border border-slate-100 font-bold">لا توجد منتجات مسجلة حالياً</p>';
+                return;
+            }
+
+            box.innerHTML = dataToRender.map(item => `
+                <div class="bg-white p-3.5 rounded-2xl border border-slate-100 flex items-center justify-between gap-3 shadow-sm hover:border-blue-200 transition">
+                    <div class="flex items-center gap-3">
+                        ${item.imgUrl ? `<img src="${item.imgUrl}" class="w-14 h-14 rounded-xl object-cover border">` : `<div class="w-14 h-14 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center text-lg"><i class="fa-solid fa-store"></i></div>`}
+                        <div>
+                            <h4 class="font-black text-xs text-slate-900">${item.item}</h4>
+                            <p class="text-[10px] text-blue-600 font-bold mt-0.5"><i class="fa-solid fa-shop ml-1 text-slate-400"></i>${item.shop}</p>
+                            <p class="text-emerald-600 font-black text-xs mt-1.5">${item.price ? item.price : 'متوفر بالمتجر'}</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        ${item.phone ? `
+                            <a href="tel:${item.phone}" class="bg-blue-50 text-blue-600 w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold hover:bg-blue-600 hover:text-white transition"><i class="fa-solid fa-phone"></i></a>
+                            <a href="https://wa.me/${item.phone.replace(/^0/, '213')}" target="_blank" class="bg-emerald-50 text-emerald-600 w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold hover:bg-emerald-600 hover:text-white transition"><i class="fa-brands fa-whatsapp"></i></a>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // أسماء الأقسام للترجمة
+        const catNames = { electronics: "هواتف وإلكترونيات", restaurants: "مطاعم ومقاهي", fashion: "ملابس وموضة", cars: "قطع غيار سيارات", services: "خدمات وصيانة", building: "مواد البناء", all: "جميع المتاجر والمنتجات" };
+
+        // 3. فتح قسم معين
+        function openCategory(cat) {
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('view-list').classList.remove('hidden');
+            document.getElementById('backBtn').classList.remove('hidden');
+            document.getElementById('listTitle').textContent = catNames[cat] || "المنتجات";
+
+            const box = document.getElementById('listBox');
+            const filtered = cat === 'all' ? allData : allData.filter(i => i.category === cat);
+
+            if (filtered.length === 0) {
+                box.innerHTML = '<p class="text-center text-slate-400 text-xs py-12 bg-white rounded-2xl border border-slate-100 font-bold">لا توجد عناصر مسجلة في هذا القسم حالياً</p>';
+                return;
+            }
+
+            box.innerHTML = filtered.map(item => `
+                <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex justify-between items-center gap-3">
+                    <div class="flex items-center gap-3.5">
+                        ${item.imgUrl ? `<img src="${item.imgUrl}" class="w-16 h-16 rounded-xl object-cover border">` : `<div class="w-16 h-16 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-store"></i></div>`}
+                        <div>
+                            <h4 class="font-black text-xs text-slate-900">${item.item}</h4>
+                            <p class="text-[11px] text-blue-600 font-bold mt-0.5">${item.shop}</p>
+                            <p class="text-[10px] text-slate-400 mt-0.5">📍 ${item.address || 'بلدية المنيعة'}</p>
+                            <p class="text-emerald-600 font-black text-xs mt-1.5">${item.price ? item.price : 'متوفر'}</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-1.5">
+                        ${item.phone ? `
+                            <a href="tel:${item.phone}" class="bg-blue-600 text-white px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1 shadow-sm"><i class="fa-solid fa-phone"></i> اتصال</a>
+                            <a href="https://wa.me/${item.phone.replace(/^0/, '213')}" target="_blank" class="bg-emerald-600 text-white w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold shadow-sm"><i class="fa-brands fa-whatsapp"></i></a>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 4. البحث الفوري
+        function searchApp(val) {
+            const q = val.trim().toLowerCase();
+            if (!q) { renderFeaturedBox(allData); return; }
+            const res = allData.filter(i => i.item.toLowerCase().includes(q) || i.shop.toLowerCase().includes(q));
+            renderFeaturedBox(res);
+        }
+
+        // 5. الرجوع للرئيسية
+        function goHome() {
+            document.getElementById('view-home').classList.remove('hidden');
+            document.getElementById('view-list').classList.add('hidden');
+            document.getElementById('backBtn').classList.add('hidden');
+            renderFeaturedBox(allData);
+        }
+
+        // تشغيل الجلب فور اكتمال تحميل الصفحة
+        window.addEventListener('DOMContentLoaded', () => setTimeout(loadZaloCloudData, 200));
     </script>
 </body>
-</html>
+                                                                                                                    </html>
