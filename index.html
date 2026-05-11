@@ -1363,16 +1363,17 @@
         }
     </script>
 
-        <!-- ربط Firebase -->
+    <!-- ربط Firebase - طريقة آمنة -->
     <script src="./js/firebase-config.js"></script>
     <script src="./js/firebase-sync.js"></script>
+    
     <script>
-        window.addEventListener('load', function() {
+        document.addEventListener('DOMContentLoaded', function() {
             setTimeout(function() {
-                if (typeof initFirebaseSync === 'function') {
-                    initFirebaseSync();
+                if (window.initFirebaseSync) {
+                    window.initFirebaseSync();
                 }
-            }, 2000);
+            }, 1500);
         });
     </script>
 
