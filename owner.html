@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZaLo Smart - لوحة التاجر</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        body { font-family: 'Tajawal', sans-serif; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 pb-20">
+
+    <!-- شاشة التحميل -->
+    <div id="loadingScreen" class="fixed inset-0 bg-white flex flex-col items-center justify-center z-50">
+        <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-emerald-600 mb-4"></div>
+        <p class="text-sm font-bold text-slate-500">جاري تجهيز دكانك الرقمي...</p>
+    </div>
+
+    <!-- ================= 1. شاشة الدخول للتاجر ================= -->
+    <div id="loginView" class="hidden min-h-screen flex items-center justify-center p-4">
+        <div class="max-w-md w-full bg-white p-8 rounded-3xl shadow-xl border border-slate-100 text-center">
+            <div class="w-20 h-20 bg-emerald-600 rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-lg shadow-emerald-200">
+                <i class="fa-solid fa-store text-white text-3xl"></i>
+            </div>
+            <h2 class="text-3xl font-black text-slate-900">ZaLo Smart</h2>
+            <p class="text-sm text-emerald-600 font-bold mt-1 mb-6">بوابة دخول أصحاب المحلات</p>
+            
+            <form id="loginForm" class="space-y-4 text-right">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">البريد الإلكتروني للمحل</label>
+                    <input id="loginEmail" type="email" class="w-full px-4 py-3 rounded-xl bg-slate-50 border outline-none text-left font-sans text-sm" required placeholder="shop@zalo.com">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">كلمة المرور</label>
+                    <input id="loginPassword" type="password" class="w-full px-4 py-3 rounded-xl bg-slate-50 border outline-none text-left font-sans text-sm" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-bold transition shadow-lg shadow-emerald-200 cursor-pointer">
+                    دخول للمحل
+                </button>
+            </form>
+            <p class="text-[11px] text-slate-400 mt-5">إذا لم تكن تملك حساباً، تواصل مع إدارة التطبيق لتسجيل محلك.</p>
+        </div>
+    </div>
+
+    <!-- ================= 2. لوحة إدارة المحل ================= -->
+    <div id="dashboardView" class="hidden max-w-4xl mx-auto p-4 md:p-6 space-y-6">
+        
+        <!-- الهيدر الترحيبي -->
+        <div class="bg-white p-5 rounded-3xl border border-slate-100 flex justify-between items-center shadow-sm">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-xl font-bold">
+                    <i class="fa-solid fa-shop"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] text-slate-400 font-bold">إدارة الدكان</p>
+                    <h1 id="myShopName" class="text-lg font-black text-slate-900">جاري التحميل...</h1>
+                </div>
+            </div>
+            <button id="logoutBtn" class="bg-red-50 text-red-600 hover:bg-red-100 px-3 py-2 rounded-xl text-xs font-bold transition cursor-pointer">خروج</button>
+        </div>
+
+        <!-- رسالة الخطأ إذا لم يربط المحل بعد -->
+        <div id="noShopAlert" class="hidden bg-orange-50 border border-orange-200 p-6 rounded-3xl text-center">
+            <i class="fa-solid fa-triangle-exclamation text-orange-500 text-4xl mb-3"></i>
+            <h3 class="font-black text-slate-800 text-base mb-1">حسابك غير مربوط بمتجر بعد!</h3>
+            <p class="text-xs text-slate-500">الرجاء إبلاغ مدير النظام بربط هذا الإيميل بمتجرك لتبدأ بنشر بضاعتك.</p>
+        </div>
+
+        <!-- قسم إدارة المنتجات -->
+        <div id="shopManagerArea" class="hidden space-y-6">
+            
+            <!-- إضافة منتج سريع -->
+            <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm">
+                <h3 class="font-black text-sm text-slate-800 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-plus text-emerald-600"></i>
+                    <span>إضافة منتج أو عرض جديد</span>
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <input id="prodName" type="text" placeholder="اسم المنتج (مثال: وجبة دجاج / بطارية)" class="border p-3 rounded-xl text-xs outline-none bg-slate-50">
+                    <input id="prodPrice" type="text" placeholder="السعر (مثال: 1500 دج)" class="border p-3 rounded-xl text-xs outline-none bg-slate-50">
+                    <input id="prodImg" type="url" placeholder="رابط صورة المنتج (اختياري)" class="border p-3 rounded-xl text-xs outline-none bg-slate-50">
+                </div>
+                <button onclick="addOwnerProduct()" class="w-full mt-3 bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl text-xs font-bold transition shadow-md shadow-emerald-200 cursor-pointer">
+                    نشر المنتج فوراً في التطبيق
+                </button>
+            </div>
+
+            <!-- قائمة المنتجات الحالية -->
+            <div>
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-black text-sm text-slate-800">بضاعتك المعروضة حالياً</h3>
+                    <span id="prodCountBadge" class="text-[10px] bg-emerald-50 text-emerald-700 font-bold px-2.5 py-1 rounded-full">0 منتج</span>
+                </div>
+
+                <div id="myProductsList" class="space-y-2 max-h-[500px] overflow-y-auto pr-1 hide-scrollbar">
+                    <!-- المنتجات تظهر هنا -->
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Firebase Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, query, doc, deleteDoc, updateDoc, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBJ3T-jWd_nj3FYCtzewRl-d1yimGtsryc",
+            authDomain: "zalo-smart.firebaseapp.com",
+            projectId: "zalo-smart",
+            storageBucket: "zalo-smart.firebasestorage.app",
+            messagingSenderId: "430326151788",
+            appId: "1:430326151788:web:e4f94437946221429f3649"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let myShopDoc = null; // تخزين وثيقة متجر هذا التاجر
+
+        // حفظ الجلسة محلياً
+        setPersistence(auth, browserLocalPersistence).catch(console.error);
+
+        // مؤقت أمان
+        let authResolved = false;
+        setTimeout(() => {
+            if (!authResolved) {
+                document.getElementById('loadingScreen').classList.add('hidden');
+                document.getElementById('loginView').classList.remove('hidden');
+            }
+        }, 2500);
+
+        // مراقب الدخول
+        onAuthStateChanged(auth, async (user) => {
+            authResolved = true;
+            document.getElementById('loadingScreen').classList.add('hidden');
+            
+            if (user) {
+                currentUser = user;
+                document.getElementById('loginView').classList.add('hidden');
+                document.getElementById('dashboardView').classList.remove('hidden');
+                await loadMyShopData();
+            } else {
+                currentUser = null;
+                myShopDoc = null;
+                document.getElementById('dashboardView').classList.add('hidden');
+                document.getElementById('loginView').classList.remove('hidden');
+            }
+        });
+
+        // تسجيل الدخول
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim();
+            const pass = document.getElementById('loginPassword').value;
+            try {
+                document.getElementById('loadingScreen').classList.remove('hidden');
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch (err) {
+                document.getElementById('loadingScreen').classList.add('hidden');
+                alert("❌ بيانات الدخول غير صحيحة! تأكد من إيميل المحل وكلمة المرور.");
+            }
+        });
+
+        // الخروج
+        document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
+
+        // 1. جلب متجر هذا المستخدم الخاص
+        async function loadMyShopData() {
+            document.getElementById('myShopName').textContent = "جاري البحث عن دكانك...";
+            
+            // نبحث عن المحل الذي يملك ownerId يطابق UID المستخدم الحالي
+            const q = query(collection(db, 'shops'), where('ownerId', '==', currentUser.uid));
+            const snap = await getDocs(q);
+
+            if (snap.empty) {
+                // إذا لم نجد محله، نظهر رسالة تنبيه
+                document.getElementById('myShopName').textContent = "بدون متجر";
+                document.getElementById('noShopAlert').classList.remove('hidden');
+                document.getElementById('shopManagerArea').classList.add('hidden');
+                return;
+            }
+
+            // وجدنا المحل!
+            document.getElementById('noShopAlert').classList.add('hidden');
+            document.getElementById('shopManagerArea').classList.remove('hidden');
+
+            snap.forEach(docSnap => {
+                myShopDoc = { id: docSnap.id, ...docSnap.data() };
+            });
+
+            document.getElementById('myShopName').textContent = myShopDoc.name;
+            await loadMyProducts();
+        }
+
+        // 2. جلب منتجات هذا المحل فقط
+        async function loadMyProducts() {
+            const list = document.getElementById('myProductsList');
+            list.innerHTML = '<p class="text-center text-slate-400 text-xs py-5">جاري جلب البضاعة...</p>';
+
+            const q = query(collection(db, 'products'), where('shopId', '==', myShopDoc.id));
+            const snap = await getDocs(q);
+
+            const pCountBadge = document.getElementById('prodCountBadge');
+            pCountBadge.textContent = `${snap.size} منتج`;
+
+            if (snap.empty) {
+                list.innerHTML = '<p class="text-center text-slate-400 text-xs py-8 bg-white rounded-2xl border">دكانك فارغ حالياً! أضف بضاعتك في النموذج أعلاه لتظهر للزبائن.</p>';
+                return;
+            }
+
+            let html = '';
+            snap.forEach(docSnap => {
+                const p = docSnap.data();
+                html += `
+                    <div class="bg-white border border-slate-100 p-3 rounded-2xl flex justify-between items-center gap-3 shadow-sm">
+                        <div class="flex items-center gap-3">
+                            ${p.imgUrl ? `<img src="${p.imgUrl}" class="w-12 h-12 rounded-xl object-cover border">` : `<div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-sm font-bold">📦</div>`}
+                            <div>
+                                <h4 class="font-bold text-xs text-slate-900">${p.name}</h4>
+                                <p class="text-emerald-600 font-black text-xs mt-1">${p.price}</p>
+                            </div>
+                        </div>
+                        <button onclick="deleteOwnerProduct('${docSnap.id}')" class="text-red-500 hover:bg-red-50 p-2 rounded-xl text-xs transition cursor-pointer">
+                            <i class="fa-solid fa-trash"></i> حذف
+                        </button>
+                    </div>
+                `;
+            });
+            list.innerHTML = html;
+        }
+
+        // 3. التاجر يضيف منتجاً
+        window.addOwnerProduct = async function() {
+            if (!myShopDoc) return;
+
+            const name = document.getElementById('prodName').value.trim();
+            const price = document.getElementById('prodPrice').value.trim();
+            const imgUrl = document.getElementById('prodImg').value.trim();
+
+            if (!name || !price) {
+                alert("⚠️ الرجاء كتابة اسم المنتج والسعر!");
+                return;
+            }
+
+            // إضافة المنتج
+            await addDoc(collection(db, 'products'), {
+                shopId: myShopDoc.id,
+                name,
+                price: price.includes('دج') ? price : price + ' دج',
+                imgUrl,
+                createdAt: serverTimestamp()
+            });
+
+            // تحديث عداد المحل
+            const newCount = (myShopDoc.productCount || 0) + 1;
+            await updateDoc(doc(db, 'shops', myShopDoc.id), { productCount: newCount });
+            myShopDoc.productCount = newCount;
+
+            // تفريغ وتحديث
+            document.getElementById('prodName').value = '';
+            document.getElementById('prodPrice').value = '';
+            document.getElementById('prodImg').value = '';
+
+            await loadMyProducts();
+        };
+
+        // 4. التاجر يحذف منتجاً
+        window.deleteOwnerProduct = async function(prodId) {
+            if (confirm("⚠️ هل أنت متأكد من حذف هذا المنتج من دكانك؟")) {
+                await deleteDoc(doc(db, 'products', prodId));
+
+                const newCount = Math.max(0, (myShopDoc.productCount || 0) - 1);
+                await updateDoc(doc(db, 'shops', myShopDoc.id), { productCount: newCount });
+                myShopDoc.productCount = newCount;
+
+                await loadMyProducts();
+            }
+        };
+    </script>
+</body>
+              </html>
