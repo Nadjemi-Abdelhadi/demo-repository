@@ -3,52 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZaLo Smart - لوحة التحكم المدير</title>
+    <title>ZaLo Smart - لوحة تحكم 69 ولاية</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <style>body{font-family:'Tajawal',sans-serif}</style>
+    <style>
+        body { font-family: 'Tajawal', sans-serif; background-color: #f8fafc; }
+        .emerald-gradient { background: linear-gradient(135deg, #006233 0%, #008a47 100%); }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-900 pb-20 text-right">
+<body class="pb-20">
 
-    <div class="max-w-5xl mx-auto p-5 md:p-8">
-        <!-- Header -->
-        <div class="bg-white p-6 rounded-[32px] border border-slate-100 flex justify-between items-center mb-8 shadow-sm">
-            <div class="flex items-center gap-4">
-                <div class="w-14 h-14 bg-emerald-600 text-white rounded-2xl flex items-center justify-center text-xl"><i class="fa-solid fa-user-shield"></i></div>
-                <div><h1 class="text-xl font-black">لوحة تحكم المدير 🇩🇿</h1><p id="userEmail" class="text-xs text-emerald-600 font-bold"></p></div>
-            </div>
-            <button id="logoutBtn" class="bg-red-50 text-red-600 px-4 py-2 rounded-xl text-xs font-bold transition">خروج</button>
-        </div>
-
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-black">إدارة المتاجر الحية</h2>
-            <button onclick="showModal('addShopModal')" class="bg-emerald-600 text-white px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-100 transition active:scale-95"><i class="fa-solid fa-plus"></i> إضافة متجر</button>
-        </div>
-
-        <div id="shopsList" class="space-y-4"></div>
+    <!-- شاشة التحميل -->
+    <div id="loadingScreen" class="fixed inset-0 bg-white flex flex-col items-center justify-center z-[100]">
+        <div class="animate-spin rounded-full h-14 w-14 border-t-4 border-emerald-600 mb-4"></div>
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">ZaLo Engine 69</p>
     </div>
 
-    <!-- نافذة إضافة متجر -->
-    <div id="addShopModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-        <div class="bg-white w-full max-w-md rounded-[32px] p-8 shadow-2xl">
-            <h3 class="text-lg font-black mb-6 flex items-center gap-2 text-emerald-700"><i class="fa-solid fa-circle-plus"></i> تسجيل متجر جديد</h3>
-            <div class="space-y-4">
-                <div><label class="block text-[10px] font-black text-slate-400 mb-1 uppercase">إسم المحل التجاري</label><input id="addName" type="text" class="w-full border-slate-100 border-2 p-3 rounded-2xl text-sm outline-none focus:border-emerald-500 transition"></div>
-                <div><label class="block text-[10px] font-black text-slate-400 mb-1 uppercase">التصنيف</label><select id="addCategory" class="w-full border-slate-100 border-2 p-3 rounded-2xl text-sm outline-none bg-slate-50"><option value="electronics">هواتف وإلكترونيات</option><option value="restaurants">مطاعم ومقاهي</option><option value="fashion">ملابس وموضة</option><option value="cars">قطع غيار سيارات</option><option value="services">خدمات وصيانة</option></select></div>
-                <div><label class="block text-[10px] font-black text-slate-400 mb-1 uppercase">رقم الموبايل</label><input id="addPhone" type="tel" class="w-full border-slate-100 border-2 p-3 rounded-2xl text-sm outline-none text-left font-sans" placeholder="06XXXXXXXX"></div>
-                <div><label class="block text-[10px] font-black text-slate-400 mb-1 uppercase">عنوان المحل</label><input id="addAddress" type="text" class="w-full border-slate-100 border-2 p-3 rounded-2xl text-sm outline-none"></div>
+    <!-- واجهة تسجيل الدخول -->
+    <div id="loginView" class="hidden min-h-screen flex items-center justify-center p-6">
+        <div class="max-w-md w-full bg-white p-10 rounded-[45px] shadow-2xl border border-slate-50 text-center">
+            <div class="w-20 h-20 emerald-gradient rounded-3xl mx-auto mb-6 flex items-center justify-center shadow-lg text-white text-3xl">
+                <i class="fa-solid fa-unlock-keyhole"></i>
             </div>
-            <div class="flex gap-3 mt-8">
-                <button onclick="hideModal('addShopModal')" class="flex-1 bg-slate-50 py-4 rounded-2xl font-bold text-xs">إلغاء</button>
-                <button onclick="addNewShop()" class="flex-1 bg-emerald-600 text-white py-4 rounded-2xl font-bold text-xs shadow-lg shadow-emerald-100">تأكيد الإضافة</button>
+            <h2 class="text-3xl font-black text-slate-900 mb-2">المدير العام</h2>
+            <p class="text-sm text-emerald-600 font-bold mb-8 italic">إدارة المنصة الوطنية - 69 ولاية</p>
+            <form id="loginForm" class="space-y-4">
+                <input id="loginEmail" type="email" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-none outline-none text-right font-bold text-sm focus:ring-2 focus:ring-emerald-500 transition" placeholder="البريد الإلكتروني">
+                <input id="loginPassword" type="password" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-none outline-none text-right font-bold text-sm focus:ring-2 focus:ring-emerald-500 transition" placeholder="كلمة المرور">
+                <button type="submit" class="w-full emerald-gradient text-white py-4 rounded-2xl font-black shadow-lg shadow-emerald-200 mt-4 cursor-pointer hover:scale-[1.02] active:scale-95 transition-all">دخول آمن</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- لوحة الإدارة الرئيسية -->
+    <div id="dashboardView" class="hidden max-w-5xl mx-auto p-4 md:p-8 animate-fade">
+        <!-- Header -->
+        <header class="bg-white p-6 rounded-[40px] border border-slate-100 flex justify-between items-center mb-10 shadow-sm">
+            <div class="flex items-center gap-4 text-right">
+                <div class="w-14 h-14 emerald-gradient text-white rounded-2xl flex items-center justify-center text-2xl shadow-inner"><i class="fa-solid fa-chart-line"></i></div>
+                <div>
+                    <h1 class="text-xl font-black text-slate-900">إحصائيات المنصة</h1>
+                    <p id="userEmail" class="text-[10px] text-emerald-600 font-black"></p>
+                </div>
+            </div>
+            <button id="logoutBtn" class="bg-red-50 text-red-600 px-5 py-2.5 rounded-2xl text-xs font-black transition hover:bg-red-600 hover:text-white">خروج</button>
+        </header>
+
+        <div class="flex justify-between items-center mb-8 px-2">
+            <div>
+                <h2 class="text-2xl font-black text-slate-900">المتاجر النشطة</h2>
+                <p class="text-xs text-slate-400 font-bold mt-1">تغطية وطنية شاملة عبر 69 ولاية</p>
+            </div>
+            <button onclick="showModal('addShopModal')" class="emerald-gradient text-white px-6 py-3 rounded-2xl font-black text-xs flex items-center gap-2 shadow-xl shadow-emerald-100 transition active:scale-95">
+                <i class="fa-solid fa-plus-circle text-lg"></i> إضافة متجر جديد
+            </button>
+        </div>
+
+        <div id="shopsList" class="space-y-4">
+            <!-- القائمة تظهر هنا -->
+        </div>
+    </div>
+
+    <!-- نافذة إضافة متجر (69 ولاية) -->
+    <div id="addShopModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="bg-white w-full max-w-md rounded-[50px] p-10 shadow-2xl overflow-y-auto max-h-[92vh] hide-scrollbar text-right">
+            <div class="flex justify-between items-center mb-8 border-b border-slate-50 pb-5">
+                <h3 class="text-xl font-black text-emerald-800"><i class="fa-solid fa-map-location-dot ml-2"></i> تسجيل متجر وطني</h3>
+                <button onclick="hideModal('addShopModal')" class="text-slate-300 hover:text-red-500 transition text-2xl"><i class="fa-solid fa-circle-xmark"></i></button>
+            </div>
+            
+            <div class="space-y-5">
+                <div class="space-y-1">
+                    <label class="text-[10px] font-black text-slate-400 mr-2 uppercase tracking-widest">إسم الكيان التجاري</label>
+                    <input id="addName" type="text" class="w-full bg-slate-50 p-4 rounded-2xl text-sm font-bold outline-none border-2 border-transparent focus:border-emerald-500 transition">
+                </div>
+                
+                <div class="grid grid-cols-1 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-black text-slate-400 mr-2 uppercase tracking-widest">الولاية (69 ولاية) 🇩🇿</label>
+                        <select id="addWilaya" class="w-full bg-slate-50 p-4 rounded-2xl text-xs font-black outline-none border-2 border-transparent focus:border-emerald-500 transition cursor-pointer">
+                            <!-- القائمة ستُملأ بواسطة JS -->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-[10px] font-black text-slate-400 mr-2 uppercase tracking-widest">التصنيف الرئيسي</label>
+                    <select id="addCategory" class="w-full bg-slate-50 p-4 rounded-2xl text-xs font-black outline-none border-2 border-transparent focus:border-emerald-500 transition">
+                        <option value="electronics">هواتف وإلكترونيات</option>
+                        <option value="restaurants">مطاعم ومقاهي</option>
+                        <option value="fashion">ملابس وموضة</option>
+                        <option value="cars">قطع غيار سيارات</option>
+                        <option value="services">خدمات وصيانة</option>
+                        <option value="building">مواد البناء</option>
+                        <option value="food">مواد غذائية</option>
+                        <option value="pro">حرفيين ومهن</option>
+                    </select>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-[10px] font-black text-slate-400 mr-2 uppercase tracking-widest">رقم التواصل</label>
+                    <input id="addPhone" type="tel" class="w-full bg-slate-50 p-4 rounded-2xl text-sm font-bold outline-none text-left font-sans" placeholder="06XXXXXXXX">
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-[10px] font-black text-slate-400 mr-2 uppercase tracking-widest">العنوان بالتفصيل</label>
+                    <input id="addAddress" type="text" class="w-full bg-slate-50 p-4 rounded-2xl text-sm font-bold outline-none" placeholder="البلدية، الشارع، رقم المحل">
+                </div>
+            </div>
+
+            <div class="flex gap-4 mt-10">
+                <button onclick="addNewShop()" class="flex-[2] emerald-gradient text-white py-4 rounded-2xl font-black text-sm shadow-xl shadow-emerald-100">حفظ ونشر الآن</button>
+                <button onclick="hideModal('addShopModal')" class="flex-1 bg-slate-100 text-slate-400 py-4 rounded-2xl font-black text-sm">إلغاء</button>
             </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs, query, doc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         const config = {
@@ -64,41 +139,81 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // قائمة الـ 69 ولاية الكاملة 🇩🇿
+        const wilayas69 = [
+            "01-أدرار","02-الشلف","03-الأغواط","04-أم البواقي","05-باتنة","06-بجاية","07-بسكرة","08-بشار","09-البليدة","10-البويرة",
+            "11-تمنراست","12-تبسة","13-تلمسان","14-تيارت","15-تيزي وزو","16-الجزائر","17-الجلفة","18-جيجل","19-سطيف","20-سعيدة",
+            "21-سكيكدة","22-سيدي بلعباس","23-عنابة","24-قالمة","25-قسنطينة","26-المدية","27-مستغانم","28-المسيلة","29-معسكر","30-ورقلة",
+            "31-وهران","32-البيض","33-إليزي","34-برج بوعريريج","35-بومرداس","36-الطارف","37-تندوف","38-تيسمسيلت","39-الوادي","40-خنشلة",
+            "41-سوق أهراس","42-تيبازة","43-ميلة","44-عين الدفلى","45-النعامة","46-عين تموشنت","47-غرداية","48-غليزان","49-تيميمون","50-برج باجي مختار",
+            "51-أولاد جلال","52-بني عباس","53-عين صالح","54-عين قزام","55-تقرت","56-جانت","57-المغير","58-المنيعة",
+            "59-بوسعادة","60-مسعد","61-بريكة","62-عين البيضاء","63-أفلو","64-قصر الشلالة","65-عين وسارة","66-فرجيوي","67-العلمة","68-القل","69-رأس الوادي"
+        ];
+
+        window.onload = () => {
+            const select = document.getElementById('addWilaya');
+            wilayas69.forEach(w => {
+                let opt = document.createElement('option');
+                opt.value = w; opt.innerHTML = w; select.appendChild(opt);
+            });
+        };
+
         onAuthStateChanged(auth, (user) => {
-            if (user) { document.getElementById('userEmail').textContent = user.email; loadShops(); }
-            else { window.location.href = "index.html"; }
+            document.getElementById('loadingScreen').style.opacity = '0';
+            setTimeout(() => document.getElementById('loadingScreen').classList.add('hidden'), 500);
+            if (user) { 
+                document.getElementById('userEmail').textContent = user.email; 
+                document.getElementById('dashboardView').classList.remove('hidden');
+                loadShops(); 
+            } else { 
+                document.getElementById('loginView').classList.remove('hidden'); 
+            }
         });
+
+        document.getElementById('loginForm').onsubmit = async (e) => {
+            e.preventDefault();
+            try {
+                await signInWithEmailAndPassword(auth, document.getElementById('loginEmail').value, document.getElementById('loginPassword').value);
+            } catch (err) { alert("❌ خطأ: تحقق من كلمة المرور"); }
+        };
 
         async function loadShops() {
             const box = document.getElementById('shopsList');
-            box.innerHTML = '<p class="text-center py-10 text-slate-400 animate-pulse">جاري جلب المتاجر...</p>';
+            box.innerHTML = '<div class="py-20 text-center"><div class="animate-bounce text-emerald-600 text-4xl mb-4"><i class="fa-solid fa-shop"></i></div><p class="text-slate-400 font-bold">جاري جلب بيانات 69 ولاية...</p></div>';
             const snap = await getDocs(query(collection(db, 'shops')));
-            if(snap.empty) { box.innerHTML = '<p class="text-center py-10">لا يوجد متاجر</p>'; return; }
+            if(snap.empty) { box.innerHTML = '<p class="text-center py-20 font-black text-slate-300 text-xl">لا توجد متاجر نشطة حالياً</p>'; return; }
             let h = '';
             snap.forEach(d => {
                 const s = d.data();
                 h += `
-                <div class="bg-white p-5 rounded-3xl border border-slate-100 flex justify-between items-center shadow-sm">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center font-black">${s.name[0]}</div>
-                        <div><h4 class="font-black text-sm">${s.name}</h4><p class="text-[10px] text-slate-400 mt-1">${s.category} • ${s.phone}</p></div>
+                <div class="bg-white p-6 rounded-[35px] border border-slate-100 flex justify-between items-center shadow-sm hover:shadow-xl hover:border-emerald-100 transition-all duration-300">
+                    <div class="flex items-center gap-5 text-right">
+                        <div class="w-16 h-16 emerald-gradient text-white rounded-[22px] flex items-center justify-center font-black text-2xl shadow-lg border-4 border-emerald-50/50">${s.name[0]}</div>
+                        <div>
+                            <h4 class="font-black text-slate-900 text-lg">${s.name}</h4>
+                            <p class="text-xs text-emerald-600 font-black mt-1"><i class="fa-solid fa-map-marked-alt ml-1"></i> ولاية: ${s.wilaya || '—'}</p>
+                            <p class="text-[10px] text-slate-400 font-bold mt-1 italic">${s.address || 'بلدية المركز'}</p>
+                        </div>
                     </div>
-                    <button onclick="delShop('${d.id}')" class="w-9 h-9 bg-red-50 text-red-500 rounded-xl flex items-center justify-center transition hover:bg-red-500 hover:text-white"><i class="fa-solid fa-trash"></i></button>
+                    <button onclick="delShop('${d.id}')" class="w-11 h-11 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors shadow-sm"><i class="fa-solid fa-trash-can"></i></button>
                 </div>`;
             });
             box.innerHTML = h;
         }
 
         window.addNewShop = async () => {
-            const n=document.getElementById('addName').value, c=document.getElementById('addCategory').value, p=document.getElementById('addPhone').value, a=document.getElementById('addAddress').value;
-            if(!n||!p) return alert("مطلوب!");
-            await addDoc(collection(db,'shops'), {name:n, category:c, phone:p, address:a, ownerId: auth.currentUser.uid, createdAt: serverTimestamp()});
+            const n=document.getElementById('addName').value, w=document.getElementById('addWilaya').value, c=document.getElementById('addCategory').value, p=document.getElementById('addPhone').value, a=document.getElementById('addAddress').value;
+            if(!n || !p) return alert("⚠️ الإسم والهاتف ضروريان!");
+            await addDoc(collection(db,'shops'), {
+                name: n, wilaya: w, category: c, phone: p, address: a,
+                productCount: 0, ownerId: auth.currentUser.uid, createdAt: serverTimestamp()
+            });
             hideModal('addShopModal'); loadShops();
         };
 
-        window.delShop = async (id) => { if(confirm("حذف؟")){ await deleteDoc(doc(db,'shops',id)); loadShops(); } };
-        window.showModal = (id) => document.getElementById(id).classList.remove('hidden');
-        window.hideModal = (id) => document.getElementById(id).classList.add('hidden');
+        window.delShop = async (id) => { if(confirm("⚠️ سيتم حذف المتجر نهائياً من الشبكة الوطنية، هل أنت متأكد؟")){ await deleteDoc(doc(db,'shops',id)); loadShops(); } };
+        window.showModal = (id) => { document.getElementById(id).classList.remove('hidden'); document.getElementById(id).classList.add('flex'); };
+        window.hideModal = (id) => { document.getElementById(id).classList.remove('flex'); document.getElementById(id).classList.add('hidden'); };
         document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
     </script>
 </body>
