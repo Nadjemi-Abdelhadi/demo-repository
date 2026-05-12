@@ -3,289 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZaLo Smart - لوحة التحكم</title>
+    <title>ZaLo Smart - لوحة التحكم المدير</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>body{font-family:'Tajawal',sans-serif}</style>
 </head>
-<body class="bg-slate-50 text-slate-900 pb-20">
+<body class="bg-slate-50 text-slate-900 pb-20 text-right">
 
-    <!-- تسجيل الدخول -->
-    <div id="loginView" class="min-h-screen flex items-center justify-center p-4">
-        <div class="max-w-md w-full bg-white p-8 rounded-3xl shadow-xl border text-center">
-            <div class="w-20 h-20 bg-blue-600 rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-lg shadow-blue-200">
-                <i class="fa-solid fa-shield-halved text-white text-3xl"></i>
+    <div class="max-w-5xl mx-auto p-5 md:p-8">
+        <!-- Header -->
+        <div class="bg-white p-6 rounded-[32px] border border-slate-100 flex justify-between items-center mb-8 shadow-sm">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 bg-emerald-600 text-white rounded-2xl flex items-center justify-center text-xl"><i class="fa-solid fa-user-shield"></i></div>
+                <div><h1 class="text-xl font-black">لوحة تحكم المدير 🇩🇿</h1><p id="userEmail" class="text-xs text-emerald-600 font-bold"></p></div>
             </div>
-            <h2 class="text-3xl font-black">ZaLo Smart</h2>
-            <p class="text-sm text-slate-500 mt-1 mb-6">لوحة التحكم</p>
-            <p id="loginError" class="hidden text-red-500 text-xs font-bold mb-3 bg-red-50 p-3 rounded-xl"></p>
-            <form id="loginForm" class="space-y-4 text-right">
-                <div>
-                    <label class="block text-xs font-bold mb-1">البريد الإلكتروني</label>
-                    <input id="loginEmail" type="email" class="w-full px-4 py-3 rounded-xl bg-slate-50 border outline-none" required>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold mb-1">كلمة المرور</label>
-                    <input id="loginPassword" type="password" class="w-full px-4 py-3 rounded-xl bg-slate-50 border outline-none" required>
-                </div>
-                <button id="loginBtn" type="submit" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold">دخول</button>
-            </form>
+            <button id="logoutBtn" class="bg-red-50 text-red-600 px-4 py-2 rounded-xl text-xs font-bold transition">خروج</button>
         </div>
-    </div>
 
-    <!-- لوحة التحكم -->
-    <div id="dashboardView" class="hidden max-w-5xl mx-auto p-5 md:p-8">
-        <div class="bg-white p-6 rounded-3xl border flex justify-between items-center mb-8 shadow-sm">
-            <div>
-                <h1 class="text-2xl font-black">👑 لوحة تحكم ZaLo Smart</h1>
-                <p class="text-xs text-slate-500 mt-1">الحساب: <span id="userEmail" class="font-bold text-blue-600"></span></p>
-            </div>
-            <button id="logoutBtn" class="bg-red-50 text-red-600 px-4 py-2 rounded-xl text-xs font-bold">خروج</button>
-        </div>
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-black">المتاجر</h2>
-            <button onclick="showModal('addShopModal')" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 shadow-lg shadow-blue-200">
-                <i class="fa-solid fa-plus"></i> إضافة متجر
-            </button>
+            <h2 class="text-xl font-black">إدارة المتاجر الحية</h2>
+            <button onclick="showModal('addShopModal')" class="bg-emerald-600 text-white px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-100 transition active:scale-95"><i class="fa-solid fa-plus"></i> إضافة متجر</button>
         </div>
+
         <div id="shopsList" class="space-y-4"></div>
     </div>
 
     <!-- نافذة إضافة متجر -->
     <div id="addShopModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-        <div class="bg-white w-full max-w-md rounded-3xl p-6">
-            <h3 class="text-lg font-black mb-5">➕ إضافة متجر</h3>
+        <div class="bg-white w-full max-w-md rounded-[32px] p-8 shadow-2xl">
+            <h3 class="text-lg font-black mb-6 flex items-center gap-2 text-emerald-700"><i class="fa-solid fa-circle-plus"></i> تسجيل متجر جديد</h3>
             <div class="space-y-4">
-                <input id="addName" type="text" placeholder="اسم المتجر" class="w-full border p-3 rounded-xl text-sm outline-none">
-                <select id="addCategory" class="w-full border p-3 rounded-xl text-sm outline-none">
-                    <option value="electronics">هواتف وإلكترونيات</option>
-                    <option value="restaurants">مطاعم ومقاهي</option>
-                    <option value="fashion">ملابس وموضة</option>
-                    <option value="cars">قطع غيار سيارات</option>
-                    <option value="services">خدمات وصيانة</option>
-                    <option value="building">مواد البناء</option>
-                </select>
-                <input id="addPhone" type="tel" placeholder="رقم الهاتف" class="w-full border p-3 rounded-xl text-sm outline-none">
-                <input id="addAddress" type="text" placeholder="العنوان" class="w-full border p-3 rounded-xl text-sm outline-none">
+                <div><label class="block text-[10px] font-black text-slate-400 mb-1 uppercase">إسم المحل التجاري</label><input id="addName" type="text" class="w-full border-slate-100 border-2 p-3 rounded-2xl text-sm outline-none focus:border-emerald-500 transition"></div>
+                <div><label class="block text-[10px] font-black text-slate-400 mb-1 uppercase">التصنيف</label><select id="addCategory" class="w-full border-slate-100 border-2 p-3 rounded-2xl text-sm outline-none bg-slate-50"><option value="electronics">هواتف وإلكترونيات</option><option value="restaurants">مطاعم ومقاهي</option><option value="fashion">ملابس وموضة</option><option value="cars">قطع غيار سيارات</option><option value="services">خدمات وصيانة</option></select></div>
+                <div><label class="block text-[10px] font-black text-slate-400 mb-1 uppercase">رقم الموبايل</label><input id="addPhone" type="tel" class="w-full border-slate-100 border-2 p-3 rounded-2xl text-sm outline-none text-left font-sans" placeholder="06XXXXXXXX"></div>
+                <div><label class="block text-[10px] font-black text-slate-400 mb-1 uppercase">عنوان المحل</label><input id="addAddress" type="text" class="w-full border-slate-100 border-2 p-3 rounded-2xl text-sm outline-none"></div>
             </div>
-            <div class="flex gap-3 mt-6">
-                <button onclick="hideModal('addShopModal')" class="flex-1 bg-slate-100 py-3 rounded-xl font-bold text-xs">إلغاء</button>
-                <button onclick="addNewShop()" class="flex-1 bg-blue-600 text-white py-3 rounded-xl font-bold text-xs">حفظ</button>
+            <div class="flex gap-3 mt-8">
+                <button onclick="hideModal('addShopModal')" class="flex-1 bg-slate-50 py-4 rounded-2xl font-bold text-xs">إلغاء</button>
+                <button onclick="addNewShop()" class="flex-1 bg-emerald-600 text-white py-4 rounded-2xl font-bold text-xs shadow-lg shadow-emerald-100">تأكيد الإضافة</button>
             </div>
-        </div>
-    </div>
-
-    <!-- نافذة تعديل متجر -->
-    <div id="editShopModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-        <div class="bg-white w-full max-w-md rounded-3xl p-6">
-            <h3 class="text-lg font-black mb-5 text-emerald-600">✏️ تعديل المتجر</h3>
-            <input type="hidden" id="editShopId">
-            <div class="space-y-4">
-                <input id="editName" type="text" class="w-full border p-3 rounded-xl text-sm outline-none">
-                <select id="editCategory" class="w-full border p-3 rounded-xl text-sm outline-none">
-                    <option value="electronics">هواتف وإلكترونيات</option>
-                    <option value="restaurants">مطاعم ومقاهي</option>
-                    <option value="fashion">ملابس وموضة</option>
-                    <option value="cars">قطع غيار سيارات</option>
-                    <option value="services">خدمات وصيانة</option>
-                    <option value="building">مواد البناء</option>
-                </select>
-                <input id="editPhone" type="tel" class="w-full border p-3 rounded-xl text-sm outline-none">
-                <input id="editAddress" type="text" class="w-full border p-3 rounded-xl text-sm outline-none">
-            </div>
-            <div class="flex gap-3 mt-6">
-                <button onclick="hideModal('editShopModal')" class="flex-1 bg-slate-100 py-3 rounded-xl font-bold text-xs">إلغاء</button>
-                <button onclick="saveShopEdits()" class="flex-1 bg-emerald-600 text-white py-3 rounded-xl font-bold text-xs">حفظ</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- نافذة المنتجات -->
-    <div id="productsModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
-        <div class="bg-white w-full max-w-2xl rounded-3xl p-6 max-h-[90vh] flex flex-col">
-            <div class="flex justify-between items-center border-b pb-4 mb-4">
-                <h3 id="manageShopName" class="text-xl font-black"></h3>
-                <button onclick="hideModal('productsModal')" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="bg-slate-50 p-4 rounded-2xl mb-5 border">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <input id="prodName" type="text" placeholder="اسم المنتج" class="border p-2.5 rounded-xl text-xs outline-none bg-white">
-                    <input id="prodPrice" type="text" placeholder="السعر" class="border p-2.5 rounded-xl text-xs outline-none bg-white">
-                    <input id="prodImg" type="url" placeholder="رابط الصورة (اختياري)" class="border p-2.5 rounded-xl text-xs outline-none bg-white">
-                </div>
-                <button onclick="addNewProduct()" class="w-full mt-3 bg-emerald-600 text-white py-2 rounded-xl text-xs font-bold">حفظ المنتج</button>
-            </div>
-            <div id="shopProductsList" class="flex-1 overflow-y-auto space-y-2"></div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, query, doc, deleteDoc, updateDoc, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, query, doc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        const app = initializeApp({
+        const config = {
             apiKey: "AIzaSyBJ3T-jWd_nj3FYCtzewRl-d1yimGtsryc",
             authDomain: "zalo-smart.firebaseapp.com",
             projectId: "zalo-smart",
             storageBucket: "zalo-smart.firebasestorage.app",
             messagingSenderId: "430326151788",
             appId: "1:430326151788:web:e4f94437946221429f3649"
-        });
+        };
 
+        const app = initializeApp(config);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        let currentUser = null;
-        let cachedShops = [];
-        let currentManagingShopId = null;
 
-        // ✅ ضبط Firebase ليحفظ الجلسة محلياً
-        setPersistence(auth, browserLocalPersistence).catch(console.error);
-
-        // ✅ مؤقت أمان: إذا لم يستجب Firebase خلال 3 ثوانٍ نظهر صفحة الدخول
-        let authResolved = false;
-        setTimeout(() => {
-            if (!authResolved) {
-                document.getElementById('loginView').style.display = 'flex';
-            }
-        }, 3000);
-
-        onAuthStateChanged(auth, async (user) => {
-            authResolved = true;
-            if (user) {
-                currentUser = user;
-                document.getElementById('loginView').style.display = 'none';
-                document.getElementById('dashboardView').classList.remove('hidden');
-                document.getElementById('userEmail').textContent = user.email;
-                await loadShops();
-            } else {
-                currentUser = null;
-                document.getElementById('dashboardView').classList.add('hidden');
-                document.getElementById('loginView').style.display = 'flex';
-            }
+        onAuthStateChanged(auth, (user) => {
+            if (user) { document.getElementById('userEmail').textContent = user.email; loadShops(); }
+            else { window.location.href = "index.html"; }
         });
-
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value.trim();
-            const pass = document.getElementById('loginPassword').value;
-            const errEl = document.getElementById('loginError');
-            const btn = document.getElementById('loginBtn');
-            
-            errEl.classList.add('hidden');
-            btn.textContent = 'جاري الدخول...';
-            btn.disabled = true;
-
-            try {
-                await signInWithEmailAndPassword(auth, email, pass);
-            } catch (err) {
-                errEl.textContent = '❌ البريد أو كلمة المرور غير صحيحة';
-                errEl.classList.remove('hidden');
-                btn.textContent = 'دخول';
-                btn.disabled = false;
-            }
-        });
-
-        document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
 
         async function loadShops() {
-            const container = document.getElementById('shopsList');
-            container.innerHTML = '<p class="text-center text-slate-400 my-10">جاري التحميل...</p>';
-            const snapshot = await getDocs(query(collection(db, 'shops')));
-            cachedShops = [];
-
-            if (snapshot.empty) {
-                container.innerHTML = '<p class="text-center text-slate-400 py-10 font-bold">لا توجد متاجر. اضغط الزر الأزرق لإضافة أول متجر!</p>';
-                return;
-            }
-
-            let html = '';
-            snapshot.forEach(d => {
-                const s = d.data(); s.id = d.id; cachedShops.push(s);
-                const cat = {electronics:"هواتف",restaurants:"مطاعم",fashion:"ملابس",cars:"سيارات",services:"خدمات",building:"بناء"}[s.category]||"آخر";
-                html += `
-                <div class="bg-white p-5 rounded-3xl border flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-sm">
-                    <div>
-                        <h3 class="font-black text-base">${s.name} <span class="text-[10px] bg-slate-100 px-2 py-0.5 rounded-md">${cat}</span></h3>
-                        <p class="text-xs text-slate-500 mt-1">📞 ${s.phone} | 📍 ${s.address||'—'}</p>
+            const box = document.getElementById('shopsList');
+            box.innerHTML = '<p class="text-center py-10 text-slate-400 animate-pulse">جاري جلب المتاجر...</p>';
+            const snap = await getDocs(query(collection(db, 'shops')));
+            if(snap.empty) { box.innerHTML = '<p class="text-center py-10">لا يوجد متاجر</p>'; return; }
+            let h = '';
+            snap.forEach(d => {
+                const s = d.data();
+                h += `
+                <div class="bg-white p-5 rounded-3xl border border-slate-100 flex justify-between items-center shadow-sm">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center font-black">${s.name[0]}</div>
+                        <div><h4 class="font-black text-sm">${s.name}</h4><p class="text-[10px] text-slate-400 mt-1">${s.category} • ${s.phone}</p></div>
                     </div>
-                    <div class="flex items-center gap-2 w-full md:w-auto justify-end">
-                        <button onclick="openProducts('${s.id}','${s.name}')" class="bg-emerald-50 text-emerald-700 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1"><i class="fa-solid fa-box-open"></i> منتجات (${s.productCount||0})</button>
-                        <button onclick="openEdit('${s.id}')" class="bg-slate-100 w-9 h-9 rounded-xl flex items-center justify-center text-xs"><i class="fa-solid fa-pen"></i></button>
-                        <button onclick="delShop('${s.id}')" class="bg-slate-100 w-9 h-9 rounded-xl flex items-center justify-center text-xs text-red-500"><i class="fa-solid fa-trash"></i></button>
-                    </div>
+                    <button onclick="delShop('${d.id}')" class="w-9 h-9 bg-red-50 text-red-500 rounded-xl flex items-center justify-center transition hover:bg-red-500 hover:text-white"><i class="fa-solid fa-trash"></i></button>
                 </div>`;
             });
-            container.innerHTML = html;
+            box.innerHTML = h;
         }
 
         window.addNewShop = async () => {
-            const n=document.getElementById('addName').value.trim(), c=document.getElementById('addCategory').value, p=document.getElementById('addPhone').value.trim(), a=document.getElementById('addAddress').value.trim();
-            if(!n||!p){alert("الاسم والهاتف مطلوبان!");return;}
-            await addDoc(collection(db,'shops'),{name:n,category:c,phone:p,address:a,productCount:0,ownerId:currentUser.uid,createdAt:serverTimestamp()});
-            document.getElementById('addName').value='';document.getElementById('addPhone').value='';document.getElementById('addAddress').value='';
-            hideModal('addShopModal');loadShops();
+            const n=document.getElementById('addName').value, c=document.getElementById('addCategory').value, p=document.getElementById('addPhone').value, a=document.getElementById('addAddress').value;
+            if(!n||!p) return alert("مطلوب!");
+            await addDoc(collection(db,'shops'), {name:n, category:c, phone:p, address:a, ownerId: auth.currentUser.uid, createdAt: serverTimestamp()});
+            hideModal('addShopModal'); loadShops();
         };
 
-        window.openEdit = (id) => {
-            const s=cachedShops.find(x=>x.id===id);if(!s)return;
-            document.getElementById('editShopId').value=s.id;document.getElementById('editName').value=s.name;document.getElementById('editCategory').value=s.category;document.getElementById('editPhone').value=s.phone;document.getElementById('editAddress').value=s.address||'';
-            showModal('editShopModal');
-        };
-
-        window.saveShopEdits = async () => {
-            const id=document.getElementById('editShopId').value,n=document.getElementById('editName').value.trim(),c=document.getElementById('editCategory').value,p=document.getElementById('editPhone').value.trim(),a=document.getElementById('editAddress').value.trim();
-            if(!n||!p){alert("مطلوب!");return;}
-            await updateDoc(doc(db,'shops',id),{name:n,category:c,phone:p,address:a});
-            hideModal('editShopModal');loadShops();
-        };
-
-        window.delShop = async (id) => {if(confirm("حذف؟")){await deleteDoc(doc(db,'shops',id));loadShops();}};
-
-        window.openProducts = async (id,name) => {
-            currentManagingShopId=id;document.getElementById('manageShopName').textContent=name;
-            showModal('productsModal');await loadProducts();
-        };
-
-        async function loadProducts() {
-            const list=document.getElementById('shopProductsList');
-            list.innerHTML='<p class="text-center text-slate-400 text-xs py-5">جاري التحميل...</p>';
-            const snap=await getDocs(query(collection(db,'products'),where('shopId','==',currentManagingShopId)));
-            if(snap.empty){list.innerHTML='<p class="text-center text-slate-400 text-xs py-8">لا توجد منتجات</p>';return;}
-            let h='';
-            snap.forEach(d=>{const p=d.data();h+=`
-                <div class="bg-white border p-3 rounded-2xl flex justify-between items-center">
-                    <div class="flex items-center gap-3">
-                        ${p.imgUrl?`<img src="${p.imgUrl}" class="w-10 h-10 rounded-xl object-cover">`:`<div class="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center">📦</div>`}
-                        <div><h4 class="font-bold text-xs">${p.name}</h4><p class="text-emerald-600 font-black text-xs">${p.price}</p></div>
-                    </div>
-                    <button onclick="delProd('${d.id}')" class="text-red-500 p-2 rounded-lg text-xs"><i class="fa-solid fa-trash"></i></button>
-                </div>`;});
-            list.innerHTML=h;
-        }
-
-        window.addNewProduct = async () => {
-            const n=document.getElementById('prodName').value.trim(),p=document.getElementById('prodPrice').value.trim(),img=document.getElementById('prodImg').value.trim();
-            if(!n||!p){alert("الاسم والسعر مطلوبان!");return;}
-            await addDoc(collection(db,'products'),{shopId:currentManagingShopId,name:n,price:p.includes('دج')?p:p+' دج',imgUrl:img,createdAt:serverTimestamp()});
-            const s=cachedShops.find(x=>x.id===currentManagingShopId);const nc=(s.productCount||0)+1;
-            await updateDoc(doc(db,'shops',currentManagingShopId),{productCount:nc});s.productCount=nc;
-            document.getElementById('prodName').value='';document.getElementById('prodPrice').value='';document.getElementById('prodImg').value='';
-            await loadProducts();
-        };
-
-        window.delProd = async (id) => {
-            if(confirm("حذف المنتج؟")){
-                await deleteDoc(doc(db,'products',id));
-                const s=cachedShops.find(x=>x.id===currentManagingShopId);const nc=Math.max(0,(s.productCount||0)-1);
-                await updateDoc(doc(db,'shops',currentManagingShopId),{productCount:nc});s.productCount=nc;
-                await loadProducts();
-            }
-        };
-
-        window.showModal=(id)=>{document.getElementById(id).classList.remove('hidden');};
-        window.hideModal=(id)=>{document.getElementById(id).classList.add('hidden');if(id==='productsModal'){currentManagingShopId=null;loadShops();}};
+        window.delShop = async (id) => { if(confirm("حذف؟")){ await deleteDoc(doc(db,'shops',id)); loadShops(); } };
+        window.showModal = (id) => document.getElementById(id).classList.remove('hidden');
+        window.hideModal = (id) => document.getElementById(id).classList.add('hidden');
+        document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
     </script>
 </body>
-                                                </html>
+    </html>
