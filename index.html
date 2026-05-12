@@ -4,310 +4,272 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ZaLo Smart - دليل المنيعة</title>
-    <meta name="theme-color" content="#2563eb" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
-        body { font-family: 'Tajawal', sans-serif; }
+        body { font-family: 'Tajawal', sans-serif; background-color: #f8fafc; }
+        .emerald-gradient { background: linear-gradient(135deg, #006233 0%, #008a47 100%); }
         .animate-fade { animation: fadeUp .35s ease both; }
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 pb-28">
+<body class="pb-28">
 
     <!-- Header -->
-    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-100 p-4 flex items-center justify-between">
+    <header class="sticky top-0 z-50 bg-white border-b border-slate-100 p-4 flex items-center justify-between shadow-sm">
         <div class="flex items-center gap-3">
-            <button onclick="goHome()" id="backBtn" class="hidden w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 transition">
+            <button onclick="goHome()" id="backBtn" class="hidden w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center text-emerald-700 transition">
                 <i class="fa-solid fa-arrow-right"></i>
             </button>
-            <img src="./1000045432.png" alt="ZaLo" class="w-10 h-10 object-contain rounded-xl border border-slate-100 bg-white">
+            <img src="./1000045432.png" alt="ZaLo" class="w-10 h-10 object-contain rounded-xl border border-slate-100 bg-white shadow-sm">
             <div>
-                <span class="text-[9px] font-bold text-blue-600 tracking-widest uppercase block">ZaLo Smart</span>
-                <h1 class="font-black text-sm text-slate-900 leading-none">دليل المنيعة</h1>
+                <span class="text-[9px] font-black text-emerald-700 tracking-widest uppercase block">ZaLo Smart 🇩🇿</span>
+                <h1 class="font-black text-sm text-slate-900 leading-none">دليل المنيعة الرقمي</h1>
             </div>
         </div>
-        <div id="dataStatus" class="text-[10px] bg-slate-100 px-2.5 py-1 rounded-full flex items-center gap-1 font-bold">
-            <span class="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span>
-            <span>جاري الاتصال...</span>
+        <div id="dataStatus" class="text-[9px] bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full flex items-center gap-1 font-bold border border-emerald-100">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>متصل</span>
         </div>
     </header>
 
-    <!-- Main Container -->
     <main class="max-w-md mx-auto p-5">
         
-        <!-- ================= 1. الصفحة الرئيسية ================= -->
+        <!-- 1. واجهة الرئيسية -->
         <div id="view-home" class="animate-fade space-y-6">
-            
-            <!-- شريط البحث -->
-            <div class="bg-white border border-slate-100 rounded-2xl p-3 flex items-center gap-3 shadow-sm">
-                <i class="fa-solid fa-search text-slate-400 ml-1"></i>
-                <input type="text" oninput="searchApp(this.value)" placeholder="ابحث عن متجر، منتج، أو خدمة في المنيعة..." class="w-full bg-transparent outline-none text-xs font-medium">
+            <div class="bg-white border border-slate-100 rounded-2xl p-3.5 flex items-center gap-3 shadow-sm">
+                <i class="fa-solid fa-search text-slate-300"></i>
+                <input type="text" oninput="searchApp(this.value)" placeholder="ابحث عن أي شيء في المنيعة..." class="w-full bg-transparent outline-none text-xs font-bold text-slate-600">
             </div>
 
-            <!-- البانر الترحيبي والإحصائيات -->
-            <div class="bg-gradient-to-br from-blue-600 to-indigo-600 rounded-3xl p-6 text-white shadow-lg shadow-blue-200">
-                <p class="text-xs text-blue-100 font-bold mb-1">الدليل الرقمي المباشر</p>
-                <h2 class="text-2xl font-black leading-tight">اكتشف أفضل المتاجر<br>والخدمات في المدينة</h2>
-                <div id="statsBox" class="grid grid-cols-3 gap-2 mt-5 border-t border-white/10 pt-4">
-                    <div class="bg-white/10 rounded-2xl p-2 text-center"><div class="text-lg font-black">-</div><div class="text-[9px] text-blue-100 font-bold">متجر</div></div>
-                    <div class="bg-white/10 rounded-2xl p-2 text-center"><div class="text-lg font-black">-</div><div class="text-[9px] text-blue-100 font-bold">منتج</div></div>
-                    <div class="bg-white/10 rounded-2xl p-2 text-center"><div class="text-lg font-black">-</div><div class="text-[9px] text-blue-100 font-bold">قسم</div></div>
+            <div class="emerald-gradient rounded-[32px] p-7 text-white shadow-xl shadow-emerald-100 relative overflow-hidden">
+                <div class="relative z-10">
+                    <p class="text-[10px] font-bold text-emerald-100 mb-1 uppercase tracking-wider">المنصة الأولى في المنيعة</p>
+                    <h2 class="text-2xl font-black leading-tight">كل ما تحتاجه <br> في مكان واحد</h2>
+                    <div id="statsBox" class="flex gap-4 mt-6">
+                        <!-- Stats via JS -->
+                    </div>
                 </div>
+                <i class="fa-solid fa-mosque absolute -bottom-4 -left-4 text-white/10 text-8xl"></i>
             </div>
 
-            <!-- الأقسام التجارية -->
             <div>
-                <h3 class="font-black text-base text-slate-800 mb-3">الأقسام التجارية</h3>
-                <div class="grid grid-cols-2 gap-3">
-                    <button onclick="openCategory('electronics')" class="bg-white p-4 rounded-2xl border border-slate-100 text-right shadow-sm hover:border-blue-200 transition group cursor-pointer">
-                        <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-lg mb-2 group-hover:scale-110 transition"><i class="fa-solid fa-mobile-screen-button"></i></div>
-                        <span class="font-bold text-xs block text-slate-800">هواتف وإلكترونيات</span>
+                <h3 class="font-black text-sm text-slate-800 mb-4 flex items-center gap-2">
+                    <span class="w-1 h-4 bg-emerald-600 rounded-full"></span> الأقسام التجارية
+                </h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="openCategory('electronics')" class="bg-white p-5 rounded-3xl border border-slate-100 text-right shadow-sm group">
+                        <div class="w-11 h-11 bg-emerald-50 text-emerald-700 rounded-2xl flex items-center justify-center text-xl mb-3 group-hover:bg-emerald-600 group-hover:text-white transition"><i class="fa-solid fa-mobile-alt"></i></div>
+                        <span class="font-black text-xs text-slate-800">إلكترونيات</span>
                     </button>
-                    <button onclick="openCategory('restaurants')" class="bg-white p-4 rounded-2xl border border-slate-100 text-right shadow-sm hover:border-orange-200 transition group cursor-pointer">
-                        <div class="w-10 h-10 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center text-lg mb-2 group-hover:scale-110 transition"><i class="fa-solid fa-utensils"></i></div>
-                        <span class="font-bold text-xs block text-slate-800">مطاعم ومقاهي</span>
+                    <button onclick="openCategory('restaurants')" class="bg-white p-5 rounded-3xl border border-slate-100 text-right shadow-sm group">
+                        <div class="w-11 h-11 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center text-xl mb-3 group-hover:bg-orange-600 group-hover:text-white transition"><i class="fa-solid fa-utensils"></i></div>
+                        <span class="font-black text-xs text-slate-800">مطاعم</span>
                     </button>
-                    <button onclick="openCategory('fashion')" class="bg-white p-4 rounded-2xl border border-slate-100 text-right shadow-sm hover:border-pink-200 transition group cursor-pointer">
-                        <div class="w-10 h-10 bg-pink-50 text-pink-600 rounded-xl flex items-center justify-center text-lg mb-2 group-hover:scale-110 transition"><i class="fa-solid fa-shirt"></i></div>
-                        <span class="font-bold text-xs block text-slate-800">ملابس وموضة</span>
+                    <button onclick="openCategory('cars')" class="bg-white p-5 rounded-3xl border border-slate-100 text-right shadow-sm group">
+                        <div class="w-11 h-11 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl mb-3 group-hover:bg-blue-600 group-hover:text-white transition"><i class="fa-solid fa-car"></i></div>
+                        <span class="font-black text-xs text-slate-800">قطع غيار</span>
                     </button>
-                    <button onclick="openCategory('cars')" class="bg-white p-4 rounded-2xl border border-slate-100 text-right shadow-sm hover:border-emerald-200 transition group cursor-pointer">
-                        <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-lg mb-2 group-hover:scale-110 transition"><i class="fa-solid fa-car"></i></div>
-                        <span class="font-bold text-xs block text-slate-800">قطع غيار سيارات</span>
-                    </button>
-                    <button onclick="openCategory('services')" class="bg-white p-4 rounded-2xl border border-slate-100 text-right shadow-sm hover:border-violet-200 transition group cursor-pointer">
-                        <div class="w-10 h-10 bg-violet-50 text-violet-600 rounded-xl flex items-center justify-center text-lg mb-2 group-hover:scale-110 transition"><i class="fa-solid fa-screwdriver-wrench"></i></div>
-                        <span class="font-bold text-xs block text-slate-800">خدمات وصيانة</span>
-                    </button>
-                    <button onclick="openCategory('building')" class="bg-white p-4 rounded-2xl border border-slate-100 text-right shadow-sm hover:border-slate-200 transition group cursor-pointer">
-                        <div class="w-10 h-10 bg-slate-100 text-slate-600 rounded-xl flex items-center justify-center text-lg mb-2 group-hover:scale-110 transition"><i class="fa-solid fa-hammer"></i></div>
-                        <span class="font-bold text-xs block text-slate-800">مواد البناء</span>
+                    <button onclick="openCategory('services')" class="bg-white p-5 rounded-3xl border border-slate-100 text-right shadow-sm group">
+                        <div class="w-11 h-11 bg-violet-50 text-violet-600 rounded-2xl flex items-center justify-center text-xl mb-3 group-hover:bg-violet-600 group-hover:text-white transition"><i class="fa-solid fa-tools"></i></div>
+                        <span class="font-black text-xs text-slate-800">خدمات</span>
                     </button>
                 </div>
             </div>
 
-            <!-- المنتجات المباشرة -->
             <div>
-                <h3 class="font-black text-base text-slate-800 mb-3">أحدث المنتجات والعروض</h3>
-                <div id="featuredBox" class="space-y-2.5">
-                    <p class="text-center text-slate-400 text-xs py-10 bg-white rounded-2xl border border-slate-100 animate-pulse">جاري تحميل المنتجات الحية...</p>
-                </div>
+                <h3 class="font-black text-sm text-slate-800 mb-4 flex items-center gap-2">
+                    <span class="w-1 h-4 bg-emerald-600 rounded-full"></span> المنتجات المعروضة
+                </h3>
+                <div id="featuredBox" class="space-y-3"></div>
             </div>
         </div>
 
-        <!-- ================= 2. صفحة عرض المتاجر/القسم ================= -->
-        <div id="view-list" class="hidden animate-fade space-y-4">
-            <div class="flex items-center gap-2 mb-4 border-b pb-3">
-                <span class="w-1.5 h-5 bg-blue-600 rounded-full block"></span>
-                <h2 id="listTitle" class="text-lg font-black text-slate-900">المتاجر والمنتجات</h2>
+        <!-- 2. واجهة صفحة المحل (صفحة الهبوط الجديدة) -->
+        <div id="view-shop-profile" class="hidden animate-fade space-y-6">
+            <div id="shopProfileHeader"></div>
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="font-black text-sm text-slate-800">قائمة السلع والخدمات</h3>
+                <span id="shopProdCount" class="text-[10px] font-bold text-slate-400 uppercase"></span>
             </div>
-            <div id="listBox" class="space-y-3"></div>
+            <div id="shopProductsGrid" class="grid grid-cols-2 gap-4"></div>
+        </div>
+
+        <!-- 3. واجهة البحث والقوائم -->
+        <div id="view-list" class="hidden animate-fade space-y-4">
+            <div id="listTitle" class="font-black text-lg text-slate-800 border-r-4 border-emerald-600 pr-3"></div>
+            <div id="listBox" class="space-y-3 pt-2"></div>
         </div>
 
     </main>
 
-    <!-- شريط التنقل السفلي -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 p-2 z-40 max-w-md mx-auto flex justify-around text-center shadow-lg">
-        <button onclick="goHome()" class="text-blue-600 font-bold flex flex-col items-center text-[10px] cursor-pointer"><i class="fa-solid fa-house text-base mb-0.5"></i>الرئيسية</button>
-        <button onclick="openCategory('all')" class="text-slate-400 hover:text-blue-600 font-bold flex flex-col items-center text-[10px] transition cursor-pointer"><i class="fa-solid fa-store text-base mb-0.5"></i>كل المتاجر</button>
-        <a href="./dashboard.html" class="text-slate-400 hover:text-blue-600 font-bold flex flex-col items-center text-[10px] transition"><i class="fa-solid fa-user-gear text-base mb-0.5"></i>لوحة الإدارة</a>
+    <!-- Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-100 p-3 z-40 max-w-md mx-auto flex justify-around shadow-2xl rounded-t-3xl">
+        <button onclick="goHome()" class="flex flex-col items-center gap-1 text-emerald-700 font-bold">
+            <i class="fa-solid fa-house text-lg"></i>
+            <span class="text-[10px]">الرئيسية</span>
+        </button>
+        <button onclick="openCategory('all')" class="flex flex-col items-center gap-1 text-slate-400 font-bold">
+            <i class="fa-solid fa-store text-lg"></i>
+            <span class="text-[10px]">المتاجر</span>
+        </button>
+        <a href="./owner.html" class="flex flex-col items-center gap-1 text-slate-400 font-bold">
+            <i class="fa-solid fa-user-tag text-lg"></i>
+            <span class="text-[10px]">دخول التاجر</span>
+        </a>
     </nav>
 
-    <!-- ========================================================= -->
-    <!-- 🔗 المحرك المباشر والسريع لجلب البيانات من Firebase (REST API) -->
-    <!-- ========================================================= -->
     <script>
         let allData = [];
-        const PROJECT_ID = "zalo-smart";
-        const BASE_URL = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents`;
+        let allShops = [];
+        const BASE_URL = `https://firestore.googleapis.com/v1/projects/zalo-smart/databases/(default)/documents`;
 
-        // دالة مساعدة لاستخراج النصوص
-        function getVal(field, type = 'stringValue') {
-            return field ? (field[type] || '') : '';
-        }
+        function getVal(f, t='stringValue'){ return f ? (f[t] || '') : ''; }
 
-        // 1. جلب البيانات الرئيسية
-        async function loadZaloCloudData() {
-            const statusEl = document.getElementById('dataStatus');
+        async function loadZaloLive() {
             try {
-                const [shopsRes, productsRes] = await Promise.all([
-                    fetch(`${BASE_URL}/shops`),
-                    fetch(`${BASE_URL}/products`)
-                ]);
-                
-                const shopsData = await shopsRes.json();
-                const productsData = await productsRes.json();
-                
-                const shops = shopsData.documents || [];
-                const products = productsData.documents || [];
+                const [sRes, pRes] = await Promise.all([fetch(`${BASE_URL}/shops`), fetch(`${BASE_URL}/products`)]);
+                const sData = await sRes.json(); const pData = await pRes.json();
+                allShops = sData.documents || [];
+                const products = pData.documents || [];
 
-                const liveData = [];
-                
-                // خريطة المتاجر لتسهيل البحث
-                const shopsMap = {};
-                shops.forEach(s => {
-                    const sf = s.fields || {};
-                    const sId = s.name.split('/').pop();
-                    shopsMap[sId] = {
-                        name: getVal(sf.name),
-                        category: getVal(sf.category) || 'other',
+                allData = products.map(p => {
+                    const f = p.fields || {};
+                    const sId = getVal(f.shopId);
+                    const shop = allShops.find(s => s.name.endsWith('/' + sId));
+                    const sf = shop ? shop.fields : {};
+                    return {
+                        id: p.name.split('/').pop(),
+                        shopId: sId,
+                        shopName: getVal(sf.name),
+                        item: getVal(f.name),
+                        price: getVal(f.price),
+                        category: getVal(sf.category),
                         phone: getVal(sf.phone),
-                        address: getVal(sf.address)
+                        address: getVal(sf.address),
+                        img: getVal(f.imgUrl)
                     };
                 });
 
-                // دمج المنتجات مع أصحابها
-                products.forEach(prod => {
-                    const f = prod.fields || {};
-                    const shopIdVal = getVal(f.shopId);
-                    const parentShop = shopsMap[shopIdVal] || {};
-                    
-                    liveData.push({
-                        id: prod.name.split('/').pop(),
-                        shop: parentShop.name || 'متجر عام',
-                        item: getVal(f.name),
-                        price: getVal(f.price),
-                        category: parentShop.category || 'other',
-                        imgUrl: getVal(f.imgUrl),
-                        phone: parentShop.phone || '',
-                        address: parentShop.address || ''
-                    });
-                });
-
-                // إضافة المتاجر التي ليس لها منتجات كعناصر مستقلة
-                Object.keys(shopsMap).forEach(sId => {
-                    const s = shopsMap[sId];
-                    const hasProd = liveData.some(i => i.shop === s.name);
-                    if (!hasProd) {
-                        liveData.push({
-                            id: 'shop-' + sId,
-                            shop: s.name,
-                            item: 'متجر مسجل بالمنصة',
-                            price: '',
-                            category: s.category,
-                            imgUrl: '',
-                            phone: s.phone,
-                            address: s.address
-                        });
-                    }
-                });
-
-                allData = liveData;
-
-                // تحديث الإحصائيات الحية
-                const statsBox = document.getElementById('statsBox');
-                if (statsBox) {
-                    const uniqueCats = new Set(liveData.map(i => i.category));
-                    statsBox.innerHTML = `
-                        <div class="bg-white/10 rounded-2xl p-2 text-center"><div class="text-lg font-black">${shops.length}</div><div class="text-[9px] text-blue-100 font-bold">متجر</div></div>
-                        <div class="bg-white/10 rounded-2xl p-2 text-center"><div class="text-lg font-black">${products.length}</div><div class="text-[9px] text-blue-100 font-bold">منتج</div></div>
-                        <div class="bg-white/10 rounded-2xl p-2 text-center"><div class="text-lg font-black">${uniqueCats.size || 1}</div><div class="text-[9px] text-blue-100 font-bold">قسم</div></div>
-                    `;
-                }
-
-                if (statusEl) {
-                    statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500"></span><span class="text-emerald-700">متصل بالشبكة ✅</span>';
-                }
-
-                renderFeaturedBox(allData);
-
-            } catch (error) {
-                console.error("❌ اتصال السحابة فشل:", error);
-                if (statusEl) statusEl.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-500"></span><span class="text-red-600">يعمل أوفلاين</span>';
+                updateStatsUI();
+                renderHome();
+                document.getElementById('dataStatus').innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span><span>متصل مباشر</span>';
+            } catch (e) { 
+                console.error(e);
+                document.getElementById('dataStatus').innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-red-500"></span><span>أوفلاين</span>';
             }
         }
 
-        // 2. رسم المنتجات في الصفحة الرئيسية
-        function renderFeaturedBox(dataToRender) {
+        function updateStatsUI() {
+            const stats = document.getElementById('statsBox');
+            const cats = new Set(allShops.map(s => getVal(s.fields?.category)));
+            stats.innerHTML = `
+                <div class="text-center flex-1"><div class="text-xl font-black">${allShops.length}</div><div class="text-[9px] text-emerald-100 font-bold uppercase">متجر</div></div>
+                <div class="text-center flex-1 border-x border-white/10"><div class="text-xl font-black">${allData.length}</div><div class="text-[9px] text-emerald-100 font-bold uppercase">منتج</div></div>
+                <div class="text-center flex-1"><div class="text-xl font-black">${cats.size}</div><div class="text-[9px] text-emerald-100 font-bold uppercase">قسم</div></div>`;
+        }
+
+        function renderHome() {
             const box = document.getElementById('featuredBox');
-            if (!box) return;
-
-            if (dataToRender.length === 0) {
-                box.innerHTML = '<p class="text-center text-slate-400 text-xs py-10 bg-white rounded-2xl border border-slate-100 font-bold">لا توجد منتجات مسجلة حالياً</p>';
-                return;
-            }
-
-            box.innerHTML = dataToRender.map(item => `
-                <div class="bg-white p-3.5 rounded-2xl border border-slate-100 flex items-center justify-between gap-3 shadow-sm hover:border-blue-200 transition">
+            box.innerHTML = allData.slice(0, 8).map(i => `
+                <div onclick="openShop('${i.shopId}')" class="bg-white p-3 rounded-2xl border border-slate-100 flex items-center justify-between shadow-sm cursor-pointer active:scale-95 transition">
                     <div class="flex items-center gap-3">
-                        ${item.imgUrl ? `<img src="${item.imgUrl}" class="w-14 h-14 rounded-xl object-cover border">` : `<div class="w-14 h-14 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center text-lg"><i class="fa-solid fa-store"></i></div>`}
+                        <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600 text-lg">
+                            ${i.img ? `<img src="${i.img}" class="w-full h-full object-cover rounded-xl border">` : '<i class="fa-solid fa-box"></i>'}
+                        </div>
                         <div>
-                            <h4 class="font-black text-xs text-slate-900">${item.item}</h4>
-                            <p class="text-[10px] text-blue-600 font-bold mt-0.5"><i class="fa-solid fa-shop ml-1 text-slate-400"></i>${item.shop}</p>
-                            <p class="text-emerald-600 font-black text-xs mt-1.5">${item.price ? item.price : 'متوفر بالمتجر'}</p>
+                            <h4 class="font-black text-xs text-slate-900">${i.item}</h4>
+                            <p class="text-[10px] text-emerald-600 font-bold">${i.shopName}</p>
+                            <p class="text-emerald-700 font-black text-[11px] mt-1">${i.price}</p>
                         </div>
                     </div>
-                    <div class="flex flex-col gap-1.5">
-                        ${item.phone ? `
-                            <a href="tel:${item.phone}" class="bg-blue-50 text-blue-600 w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold hover:bg-blue-600 hover:text-white transition"><i class="fa-solid fa-phone"></i></a>
-                            <a href="https://wa.me/${item.phone.replace(/^0/, '213')}" target="_blank" class="bg-emerald-50 text-emerald-600 w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold hover:bg-emerald-600 hover:text-white transition"><i class="fa-brands fa-whatsapp"></i></a>
-                        ` : ''}
-                    </div>
-                </div>
-            `).join('');
+                    <i class="fa-solid fa-chevron-left text-slate-200"></i>
+                </div>`).join('');
         }
 
-        // أسماء الأقسام للترجمة
-        const catNames = { electronics: "هواتف وإلكترونيات", restaurants: "مطاعم ومقاهي", fashion: "ملابس وموضة", cars: "قطع غيار سيارات", services: "خدمات وصيانة", building: "مواد البناء", all: "جميع المتاجر والمنتجات" };
+        function openShop(id) {
+            const shop = allShops.find(s => s.name.endsWith('/' + id));
+            if(!shop) return;
+            const sf = shop.fields;
+            const prods = allData.filter(p => p.shopId === id);
 
-        // 3. فتح قسم معين
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('view-list').classList.add('hidden');
+            document.getElementById('view-shop-profile').classList.remove('hidden');
+            document.getElementById('backBtn').classList.remove('hidden');
+
+            document.getElementById('shopProfileHeader').innerHTML = `
+                <div class="emerald-gradient p-8 rounded-[40px] text-white shadow-xl relative overflow-hidden">
+                    <div class="relative z-10">
+                        <h2 class="text-3xl font-black mb-2">${getVal(sf.name)}</h2>
+                        <p class="text-xs text-emerald-100 font-bold mb-6 flex items-center gap-2"><i class="fa-solid fa-location-dot"></i> ${getVal(sf.address)}</p>
+                        <div class="flex gap-3">
+                            <a href="tel:${getVal(sf.phone)}" class="bg-white text-emerald-700 flex-1 py-3 rounded-2xl text-center font-black text-xs shadow-lg"><i class="fa-solid fa-phone ml-1"></i> إتصل بالمتجر</a>
+                            <a href="https://wa.me/213${getVal(sf.phone).replace(/^0/, '')}" target="_blank" class="bg-emerald-500 text-white w-12 rounded-2xl flex items-center justify-center shadow-lg border border-emerald-400"><i class="fa-brands fa-whatsapp text-xl"></i></a>
+                        </div>
+                    </div>
+                </div>`;
+            
+            document.getElementById('shopProdCount').textContent = prods.length + " مادة متوفرة";
+            document.getElementById('shopProductsGrid').innerHTML = prods.map(p => `
+                <div class="bg-white p-3 rounded-3xl border border-slate-100 shadow-sm">
+                    <div class="w-full aspect-square bg-slate-50 rounded-2xl mb-3 flex items-center justify-center text-slate-300">
+                        ${p.img ? `<img src="${p.img}" class="w-full h-full object-cover rounded-2xl">` : '<i class="fa-solid fa-image text-3xl"></i>'}
+                    </div>
+                    <h4 class="font-black text-[11px] text-slate-800 truncate">${p.item}</h4>
+                    <p class="text-emerald-600 font-black text-xs mt-1">${p.price}</p>
+                    <a href="https://wa.me/213${p.phone.replace(/^0/,'')}?text=أريد طلب: ${p.item}" class="block w-full mt-3 bg-slate-900 text-white py-2 rounded-xl text-center text-[10px] font-bold">إطلب الآن</a>
+                </div>`).join('');
+            
+            window.scrollTo(0,0);
+        }
+
+        function searchApp(v) {
+            const q = v.trim().toLowerCase();
+            if(!q) return renderHome();
+            const filtered = allData.filter(i => i.item.toLowerCase().includes(q) || i.shopName.toLowerCase().includes(q));
+            renderFeaturedBox(filtered);
+        }
+
         function openCategory(cat) {
             document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('view-shop-profile').classList.add('hidden');
             document.getElementById('view-list').classList.remove('hidden');
             document.getElementById('backBtn').classList.remove('hidden');
-            document.getElementById('listTitle').textContent = catNames[cat] || "المنتجات";
-
+            
+            const titles = {electronics:"إلكترونيات", restaurants:"مطاعم", cars:"قطع غيار", services:"خدمات", all:"جميع المتاجر"};
+            document.getElementById('listTitle').textContent = titles[cat] || "النتائج";
+            
             const box = document.getElementById('listBox');
-            const filtered = cat === 'all' ? allData : allData.filter(i => i.category === cat);
-
-            if (filtered.length === 0) {
-                box.innerHTML = '<p class="text-center text-slate-400 text-xs py-12 bg-white rounded-2xl border border-slate-100 font-bold">لا توجد عناصر مسجلة في هذا القسم حالياً</p>';
-                return;
-            }
-
-            box.innerHTML = filtered.map(item => `
-                <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex justify-between items-center gap-3">
-                    <div class="flex items-center gap-3.5">
-                        ${item.imgUrl ? `<img src="${item.imgUrl}" class="w-16 h-16 rounded-xl object-cover border">` : `<div class="w-16 h-16 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-store"></i></div>`}
+            const filtered = cat === 'all' ? allShops : allShops.filter(s => getVal(s.fields.category) === cat);
+            
+            box.innerHTML = filtered.map(s => {
+                const sf = s.fields;
+                const sId = s.name.split('/').pop();
+                return `
+                <div onclick="openShop('${sId}')" class="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-emerald-600 text-2xl font-bold">${getVal(sf.name)[0]}</div>
                         <div>
-                            <h4 class="font-black text-xs text-slate-900">${item.item}</h4>
-                            <p class="text-[11px] text-blue-600 font-bold mt-0.5">${item.shop}</p>
-                            <p class="text-[10px] text-slate-400 mt-0.5">📍 ${item.address || 'بلدية المنيعة'}</p>
-                            <p class="text-emerald-600 font-black text-xs mt-1.5">${item.price ? item.price : 'متوفر'}</p>
+                            <h4 class="font-black text-sm text-slate-900">${getVal(sf.name)}</h4>
+                            <p class="text-[10px] text-slate-400 mt-1">📍 ${getVal(sf.address)}</p>
                         </div>
                     </div>
-                    <div class="flex gap-1.5">
-                        ${item.phone ? `
-                            <a href="tel:${item.phone}" class="bg-blue-600 text-white px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1 shadow-sm"><i class="fa-solid fa-phone"></i> اتصال</a>
-                            <a href="https://wa.me/${item.phone.replace(/^0/, '213')}" target="_blank" class="bg-emerald-600 text-white w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold shadow-sm"><i class="fa-brands fa-whatsapp"></i></a>
-                        ` : ''}
-                    </div>
-                </div>
-            `).join('');
+                    <i class="fa-solid fa-chevron-left text-slate-200"></i>
+                </div>`;
+            }).join('');
         }
 
-        // 4. البحث الفوري
-        function searchApp(val) {
-            const q = val.trim().toLowerCase();
-            if (!q) { renderFeaturedBox(allData); return; }
-            const res = allData.filter(i => i.item.toLowerCase().includes(q) || i.shop.toLowerCase().includes(q));
-            renderFeaturedBox(res);
-        }
-
-        // 5. الرجوع للرئيسية
         function goHome() {
-            document.getElementById('view-home').classList.remove('hidden');
             document.getElementById('view-list').classList.add('hidden');
+            document.getElementById('view-shop-profile').classList.add('hidden');
+            document.getElementById('view-home').classList.remove('hidden');
             document.getElementById('backBtn').classList.add('hidden');
-            renderFeaturedBox(allData);
         }
 
-        // تشغيل الجلب فور اكتمال تحميل الصفحة
-        window.addEventListener('DOMContentLoaded', () => setTimeout(loadZaloCloudData, 200));
+        window.onload = loadZaloLive;
     </script>
 </body>
-                                                                                                                    </html>
+</html>
