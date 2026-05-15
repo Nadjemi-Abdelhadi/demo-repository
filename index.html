@@ -987,6 +987,53 @@
             renderProductGrid("featuredBox", data);
         }
 
+                function paymentMethodsHtml() {
+    return `
+        <div class="mt-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <h4 class="font-black text-sm text-slate-900">طرق الدفع المتاحة</h4>
+                        <span class="text-[10px] bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full font-black">
+                            حسب اتفاق المتجر
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="bg-slate-50 border border-slate-100 rounded-2xl p-3 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="paymentMethod" value="الدفع عند الاستلام" checked class="accent-emerald-600">
+                            <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                                <i class="fa-solid fa-hand-holding-dollar"></i>
+                            </div>
+                            <span class="text-[11px] font-black text-slate-700">الدفع عند الاستلام</span>
+                        </label>
+
+                        <label class="bg-slate-50 border border-slate-100 rounded-2xl p-3 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="paymentMethod" value="CCP" class="accent-emerald-600">
+                            <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                                <i class="fa-solid fa-building-columns"></i>
+                            </div>
+                            <span class="text-[11px] font-black text-slate-700">CCP</span>
+                        </label>
+
+                        <label class="bg-slate-50 border border-slate-100 rounded-2xl p-3 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="paymentMethod" value="BaridiMob" class="accent-emerald-600">
+                            <div class="w-9 h-9 rounded-xl bg-yellow-50 text-yellow-600 flex items-center justify-center">
+                                <i class="fa-solid fa-mobile-screen"></i>
+                            </div>
+                            <span class="text-[11px] font-black text-slate-700">BaridiMob</span>
+                        </label>
+
+                        <label class="bg-slate-50 border border-slate-100 rounded-2xl p-3 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="paymentMethod" value="البطاقة الذهبية" class="accent-emerald-600">
+                            <div class="w-9 h-9 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center">
+                                <i class="fa-solid fa-credit-card"></i>
+                            </div>
+                            <span class="text-[11px] font-black text-slate-700">البطاقة الذهبية</span>
+                        </label>
+                    </div>
+                </div>
+            `;
+        }
+
         function openOrderModal(index) {
             const item = currentProducts[index];
             if (!item) return;
@@ -994,52 +1041,109 @@
             currentOrderItem = item;
             orderQty = 1;
 
+            const productName = item.item || "منتج";
+            const shopName = item.shopName || "متجر";
+            const price = item.price || "السعر عند الطلب";
+            const productImage = item.imgUrl || "";
+            const locationText = `${item.wilaya || ""}${item.baladiya ? " - " + item.baladiya : ""}`;
+
             document.getElementById("orderContent").innerHTML = `
-                <div class="flex items-start gap-4">
-                    <div class="w-28 h-28 rounded-3xl overflow-hidden bg-slate-50 shrink-0">
-                        ${imgHtml(item.imgUrl)}
+                <div class="relative overflow-hidden rounded-[30px] bg-slate-50 mb-5">
+                    <div class="w-full h-64">
+                        ${imgHtml(productImage)}
                     </div>
 
-                    <div class="flex-1">
-                        <h4 class="font-black text-lg text-slate-900 leading-relaxed">${esc(item.item)}</h4>
-                        <p class="text-xs text-slate-400 font-bold mt-1">${esc(item.shopName)}</p>
-                        <p class="text-emerald-600 font-black text-xl mt-2">${esc(item.price || "السعر عند الطلب")}</p>
+                    <div class="absolute top-3 right-3 bg-emerald-600 text-white px-3 py-1.5 rounded-full text-[10px] font-black shadow-lg">
+                        متوفر
+                    </div>
+
+                    ${item.videoUrl ? `
+                        <a href="${esc(item.videoUrl)}" target="_blank" class="absolute top-3 left-3 bg-white/90 text-red-500 w-11 h-11 rounded-2xl flex items-center justify-center shadow-lg">
+                            <i class="fa-solid fa-play"></i>
+                        </a>
+                    ` : ""}
+                </div>
+
+                <div class="space-y-3">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex-1">
+                            <h4 class="font-black text-2xl text-slate-900 leading-relaxed">${esc(productName)}</h4>
+                            <p class="text-xs text-slate-400 font-bold mt-1">
+                                <i class="fa-solid fa-store ml-1 text-emerald-600"></i>
+                                ${esc(shopName)}
+                            </p>
+                        </div>
+
+                        <div class="text-left">
+                            <p class="text-[10px] text-slate-400 font-black">السعر</p>
+                            <p class="text-emerald-600 font-black text-2xl">${esc(price)}</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="bg-slate-50 rounded-2xl p-3">
+                            <p class="text-[10px] text-slate-400 font-black mb-1">الموقع</p>
+                            <p class="text-xs text-slate-700 font-black">
+                                <i class="fa-solid fa-location-dot text-red-500 ml-1"></i>
+                                ${esc(locationText || "غير محدد")}
+                            </p>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-2xl p-3">
+                            <p class="text-[10px] text-slate-400 font-black mb-1">التقييم</p>
+                            <p class="text-xs text-slate-700 font-black">
+                                4.7
+                                <i class="fa-solid fa-star text-orange-400 mr-1"></i>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="bg-emerald-50/70 border border-emerald-100 rounded-2xl p-4">
+                        <p class="text-[10px] text-emerald-700 font-black mb-1">الوصف</p>
+                        <p class="text-xs text-slate-600 font-bold leading-relaxed">
+                            هذا المنتج متوفر لدى المتجر. يمكنك تأكيد السعر والكمية والتوصيل مباشرة عبر واتساب.
+                        </p>
                     </div>
                 </div>
+
+                ${paymentMethodsHtml()}
 
                 <div class="mt-6">
-                    <label class="block text-xs font-black text-slate-500 mb-2">الكمية</label>
+                    <label class="block text-xs font-black text-slate-500 mb-3">الكمية المطلوبة</label>
 
                     <div class="flex items-center justify-center gap-4">
-                        <button onclick="changeQty(-1)" class="w-12 h-12 bg-slate-100 rounded-2xl text-xl font-black">-</button>
-                        <span id="qtyText" class="text-2xl font-black">1</span>
-                        <button onclick="changeQty(1)" class="w-12 h-12 bg-emerald-600 text-white rounded-2xl text-xl font-black">+</button>
+                        <button onclick="changeQty(-1)" class="w-14 h-14 bg-slate-100 rounded-2xl text-2xl font-black text-slate-700">-</button>
+                        <span id="qtyText" class="text-3xl font-black text-slate-900">1</span>
+                        <button onclick="changeQty(1)" class="w-14 h-14 bg-emerald-600 text-white rounded-2xl text-2xl font-black shadow-lg shadow-emerald-100">+</button>
                     </div>
                 </div>
+
+                <label class="mt-5 bg-slate-50 rounded-2xl p-4 flex items-center gap-3 cursor-pointer">
+                    <input id="deliveryWanted" type="checkbox" class="accent-emerald-600 w-5 h-5">
+                    <span class="text-sm font-black text-slate-700">أريد التوصيل إذا كان متوفراً</span>
+                </label>
 
                 <div class="mt-5">
                     <label class="block text-xs font-black text-slate-500 mb-2">ملاحظات الطلب</label>
-                    <textarea id="orderNotes" class="w-full bg-slate-50 border border-slate-100 rounded-2xl p-4 text-sm outline-none" rows="3" placeholder="مثال: أريد التوصيل إلى وسط المدينة..."></textarea>
+                    <textarea id="orderNotes" class="w-full bg-slate-50 border border-slate-100 rounded-2xl p-4 text-sm outline-none font-bold" rows="3" placeholder="مثال: أريد التوصيل إلى وسط المدينة..."></textarea>
                 </div>
 
-                ${item.videoUrl ? `
-                    <a href="${esc(item.videoUrl)}" target="_blank" class="block mt-4 bg-blue-50 text-blue-600 py-3 rounded-2xl text-center font-black text-xs">
-                        <i class="fa-solid fa-play ml-1"></i>
-                        مشاهدة فيديو المنتج
-                    </a>
-                ` : ""}
-
-                <div class="grid grid-cols-2 gap-3 mt-5">
+                <div class="grid grid-cols-2 gap-3 mt-6">
                     <button onclick="sendWhatsAppOrder()" class="bg-emerald-600 text-white py-4 rounded-2xl font-black text-xs shadow-lg shadow-emerald-100">
                         <i class="fa-brands fa-whatsapp ml-1"></i>
-                        اطلب واتساب
+                        اطلب عبر واتساب
                     </button>
 
-                    <button onclick="openZaloStore()" class="bg-slate-900 text-white py-4 rounded-2xl font-black text-xs">
+                    <button onclick="openOrderWebsite()" class="bg-slate-900 text-white py-4 rounded-2xl font-black text-xs">
                         <i class="fa-solid fa-globe ml-1"></i>
                         المتجر الإلكتروني
                     </button>
                 </div>
+
+                <button onclick="openShopFromOrder()" class="w-full mt-3 bg-slate-100 text-slate-700 py-4 rounded-2xl font-black text-xs">
+                    <i class="fa-solid fa-store ml-1 text-emerald-600"></i>
+                    زيارة صفحة المتجر داخل ZaLo
+                </button>
             `;
 
             document.getElementById("orderModal").classList.add("open");
@@ -1049,13 +1153,21 @@
             orderQty += n;
             if (orderQty < 1) orderQty = 1;
 
-            document.getElementById("qtyText").textContent = orderQty;
+            const el = document.getElementById("qtyText");
+            if (el) el.textContent = orderQty;
+        }
+
+        function getSelectedPaymentMethod() {
+            const checked = document.querySelector('input[name="paymentMethod"]:checked');
+            return checked ? checked.value : "الدفع عند الاستلام";
         }
 
         function sendWhatsAppOrder() {
             if (!currentOrderItem) return;
 
-            const notes = document.getElementById("orderNotes").value || "";
+            const notes = document.getElementById("orderNotes")?.value || "";
+            const deliveryWanted = document.getElementById("deliveryWanted")?.checked;
+            const paymentMethod = getSelectedPaymentMethod();
 
             const msg =
 `السلام عليكم
@@ -1065,21 +1177,38 @@
 المحل: ${currentOrderItem.shopName}
 السعر: ${currentOrderItem.price || "السعر عند الطلب"}
 الكمية: ${orderQty}
+طريقة الدفع المفضلة: ${paymentMethod}
+التوصيل: ${deliveryWanted ? "نعم، أريد التوصيل إذا كان متوفراً" : "لا / حسب الاتفاق"}
 الولاية: ${currentOrderItem.wilaya || ""}
 البلدية: ${currentOrderItem.baladiya || ""}
 الملاحظات: ${notes || "لا توجد"}
 
 رابط متجر ZaLo:
-${ZALO_STORE_URL}`;
+${currentOrderItem.websiteUrl || ZALO_STORE_URL}`;
 
             const phone = normalizePhone(currentOrderItem.phone);
 
-            if (!phone) {
-                window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
+            const url = phone
+                ? `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`
+                : `https://wa.me/?text=${encodeURIComponent(msg)}`;
+
+            window.open(url, "_blank");
+        }
+
+        function openOrderWebsite() {
+            if (!currentOrderItem) {
+                openZaloStore();
                 return;
             }
 
-            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, "_blank");
+            window.open(currentOrderItem.websiteUrl || ZALO_STORE_URL, "_blank");
+        }
+
+        function openShopFromOrder() {
+            if (!currentOrderItem || !currentOrderItem.shopId) return;
+
+            closeOrderModal();
+            openShop(currentOrderItem.shopId);
         }
 
         function toggleFavorite(id) {
