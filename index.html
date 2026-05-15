@@ -19,12 +19,16 @@
 
         body {
             font-family: 'Tajawal', sans-serif;
-            background: #f8fafc;
+            background: #f7f8fa;
             color: #0f172a;
         }
 
         .emerald-gradient {
             background: linear-gradient(135deg, #006233 0%, #008a47 100%);
+        }
+
+        .gold-gradient {
+            background: linear-gradient(135deg, #facc15 0%, #f59e0b 100%);
         }
 
         .animate-fade {
@@ -73,13 +77,13 @@
             bottom: 0;
             right: 0;
             width: 84%;
-            max-width: 360px;
+            max-width: 370px;
             background: #fff;
             z-index: 100;
             transform: translateX(110%);
             transition: .25s ease;
             overflow-y: auto;
-            border-radius: 0 0 0 36px;
+            border-radius: 0 0 0 38px;
         }
 
         .drawer.open {
@@ -103,9 +107,9 @@
 
         .bottom-sheet {
             width: 100%;
-            max-width: 430px;
+            max-width: 440px;
             background: white;
-            border-radius: 34px;
+            border-radius: 36px;
             padding: 22px;
             animation: sheetUp .25s ease both;
             max-height: 90vh;
@@ -128,6 +132,10 @@
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
+        }
+
+        .soft-shadow {
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.06);
         }
     </style>
 </head>
@@ -162,6 +170,11 @@
     <section class="max-w-md mx-auto px-5 pt-4">
         <div class="bg-white border border-slate-100 rounded-3xl p-3 shadow-sm flex items-center justify-between gap-2">
 
+            <button onclick="openDrawer()" class="flex flex-col items-center gap-1 text-slate-500 font-black text-[10px]">
+                <i class="fa-solid fa-bars text-xl"></i>
+                <span>القائمة</span>
+            </button>
+
             <button onclick="openCategoriesModal()" class="flex flex-col items-center gap-1 text-emerald-700 font-black text-[10px]">
                 <i class="fa-solid fa-grip text-xl"></i>
                 <span>الفئات</span>
@@ -172,14 +185,14 @@
                 <span>بحث</span>
             </button>
 
+            <button onclick="openFavorites()" class="flex flex-col items-center gap-1 text-slate-500 font-black text-[10px]">
+                <i class="fa-regular fa-heart text-xl"></i>
+                <span>المفضلة</span>
+            </button>
+
             <button onclick="openZaloStore()" class="flex flex-col items-center gap-1 text-slate-500 font-black text-[10px]">
                 <i class="fa-solid fa-bag-shopping text-xl"></i>
                 <span>متجر ZaLo</span>
-            </button>
-
-            <button onclick="openDrawer()" class="flex flex-col items-center gap-1 text-slate-500 font-black text-[10px]">
-                <i class="fa-solid fa-bars text-xl"></i>
-                <span>القائمة</span>
             </button>
 
         </div>
@@ -198,6 +211,20 @@
                        class="w-full bg-transparent outline-none text-sm font-bold text-slate-700 placeholder:text-slate-400">
             </div>
 
+            <!-- City / Wilaya selector -->
+            <button onclick="openCityModal()" class="bg-white border border-emerald-100 rounded-3xl p-4 shadow-sm flex items-center justify-between w-full">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-location-dot"></i>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[10px] font-black text-slate-400">الموقع الحالي</p>
+                        <h3 id="selectedCityText" class="text-sm font-black text-emerald-700">كل الجزائر</h3>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-left text-slate-300"></i>
+            </button>
+
             <!-- Hero -->
             <div class="emerald-gradient rounded-[36px] p-7 text-white shadow-xl shadow-emerald-100 relative overflow-hidden">
                 <div class="relative z-10">
@@ -206,6 +233,10 @@
                         اكتشف أفضل المتاجر<br>
                         والمنتجات في مدينتك
                     </h2>
+
+                    <button onclick="openStores()" class="mt-5 bg-white text-emerald-700 px-6 py-3 rounded-2xl text-xs font-black shadow-lg">
+                        تسوق الآن
+                    </button>
 
                     <div id="statsBox" class="grid grid-cols-3 gap-3 mt-6 pt-5 border-t border-white/10">
                         <div class="text-center bg-white/10 rounded-3xl p-3">
@@ -228,22 +259,38 @@
 
             <!-- Categories -->
             <div>
-                <div class="flex items-center gap-2 mb-4">
-                    <span class="w-1.5 h-6 bg-emerald-600 rounded-full"></span>
-                    <h3 class="font-black text-xl text-slate-900">الأقسام التجارية</h3>
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-2">
+                        <span class="w-1.5 h-6 bg-emerald-600 rounded-full"></span>
+                        <h3 class="font-black text-xl text-slate-900">الأقسام الرئيسية</h3>
+                    </div>
+                    <button onclick="openCategoriesModal()" class="text-xs text-emerald-700 font-black">عرض الكل</button>
                 </div>
 
-                <div id="categoriesGrid" class="grid grid-cols-2 gap-4"></div>
+                <div id="categoriesGrid" class="grid grid-cols-3 gap-3"></div>
             </div>
 
-            <!-- Products -->
+            <!-- Featured Stores -->
             <div>
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center gap-2">
                         <span class="w-1.5 h-6 bg-emerald-600 rounded-full"></span>
-                        <h3 class="font-black text-xl text-slate-900">أحدث المنتجات</h3>
+                        <h3 class="font-black text-xl text-slate-900">المتاجر المميزة</h3>
                     </div>
-                    <button onclick="openCategory('all')" class="text-xs text-emerald-600 font-black">عرض الكل</button>
+                    <button onclick="openStores()" class="text-xs text-emerald-700 font-black">عرض الكل</button>
+                </div>
+
+                <div id="featuredStoresBox" class="grid grid-cols-2 gap-3"></div>
+            </div>
+
+            <!-- Special offers -->
+            <div>
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-2">
+                        <span class="w-1.5 h-6 bg-orange-500 rounded-full"></span>
+                        <h3 class="font-black text-xl text-slate-900">عروض ومنتجات</h3>
+                    </div>
+                    <button onclick="openCategory('all')" class="text-xs text-emerald-700 font-black">عرض الكل</button>
                 </div>
 
                 <div id="featuredBox"></div>
@@ -251,11 +298,14 @@
 
         </section>
 
-        <!-- Category/List View -->
+        <!-- List View -->
         <section id="view-list" class="hidden animate-fade space-y-5">
-            <div class="flex items-center gap-2">
-                <span class="w-1.5 h-7 bg-emerald-600 rounded-full"></span>
-                <h2 id="listTitle" class="font-black text-2xl text-slate-900">النتائج</h2>
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="w-1.5 h-7 bg-emerald-600 rounded-full"></span>
+                    <h2 id="listTitle" class="font-black text-2xl text-slate-900">النتائج</h2>
+                </div>
+                <p id="listSubtitle" class="text-xs text-slate-400 font-bold mt-2"></p>
             </div>
 
             <div id="listBox"></div>
@@ -273,11 +323,21 @@
             <div id="shopProductsGrid"></div>
         </section>
 
+        <!-- Favorites -->
+        <section id="view-favorites" class="hidden animate-fade space-y-5">
+            <div class="flex items-center gap-2">
+                <span class="w-1.5 h-7 bg-emerald-600 rounded-full"></span>
+                <h2 class="font-black text-2xl text-slate-900">المفضلة</h2>
+            </div>
+
+            <div id="favoritesBox"></div>
+        </section>
+
     </main>
 
     <!-- Bottom Nav -->
     <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-100 shadow-2xl rounded-t-[30px]">
-        <div class="max-w-md mx-auto px-5 py-3 grid grid-cols-4 gap-2 text-center">
+        <div class="max-w-md mx-auto px-5 py-3 grid grid-cols-5 gap-2 text-center">
 
             <button onclick="goHome()" class="flex flex-col items-center gap-1 text-emerald-700 font-black text-[10px]">
                 <i class="fa-solid fa-house text-xl"></i>
@@ -286,7 +346,7 @@
 
             <button onclick="openCategoriesModal()" class="flex flex-col items-center gap-1 text-slate-400 font-black text-[10px]">
                 <i class="fa-solid fa-grip text-xl"></i>
-                <span>الفئات</span>
+                <span>الأقسام</span>
             </button>
 
             <button onclick="openStores()" class="flex flex-col items-center gap-1 text-slate-400 font-black text-[10px]">
@@ -294,9 +354,14 @@
                 <span>المتاجر</span>
             </button>
 
+            <button onclick="openFavorites()" class="flex flex-col items-center gap-1 text-slate-400 font-black text-[10px]">
+                <i class="fa-regular fa-heart text-xl"></i>
+                <span>المفضلة</span>
+            </button>
+
             <button onclick="openDrawer()" class="flex flex-col items-center gap-1 text-slate-400 font-black text-[10px]">
-                <i class="fa-solid fa-bars text-xl"></i>
-                <span>القائمة</span>
+                <i class="fa-solid fa-user text-xl"></i>
+                <span>الحساب</span>
             </button>
 
         </div>
@@ -326,6 +391,11 @@
                     <i class="fa-solid fa-grip text-emerald-600"></i>
                 </button>
 
+                <button onclick="openStores(); closeDrawer();" class="w-full bg-slate-50 p-4 rounded-2xl flex items-center justify-between">
+                    <span class="font-black text-sm">كل المتاجر</span>
+                    <i class="fa-solid fa-store text-emerald-600"></i>
+                </button>
+
                 <button onclick="openZaloStore()" class="w-full bg-slate-50 p-4 rounded-2xl flex items-center justify-between">
                     <span class="font-black text-sm">زيارة متجر ZaLo</span>
                     <i class="fa-solid fa-bag-shopping text-emerald-600"></i>
@@ -336,15 +406,20 @@
                     <i class="fa-solid fa-store text-emerald-600"></i>
                 </a>
 
-                <button onclick="alert('خدمة التوصيل ستفعل قريباً إن شاء الله')" class="w-full bg-slate-50 p-4 rounded-2xl flex items-center justify-between">
+                <button onclick="showToast('خدمة التوصيل ستفعل قريباً إن شاء الله')" class="w-full bg-slate-50 p-4 rounded-2xl flex items-center justify-between">
                     <span class="font-black text-sm">التوصيل</span>
                     <i class="fa-solid fa-motorcycle text-emerald-600"></i>
                 </button>
 
-                <button onclick="alert('ZaLo Smart منصة رقمية للمتاجر والخدمات في الجزائر')" class="w-full bg-slate-50 p-4 rounded-2xl flex items-center justify-between">
+                <button onclick="showToast('ZaLo Smart منصة رقمية للمتاجر والخدمات في الجزائر')" class="w-full bg-slate-50 p-4 rounded-2xl flex items-center justify-between">
                     <span class="font-black text-sm">من نحن</span>
                     <i class="fa-solid fa-circle-info text-emerald-600"></i>
                 </button>
+
+                <a href="./dashboard.html" class="w-full bg-emerald-50 p-4 rounded-2xl flex items-center justify-between">
+                    <span class="font-black text-sm text-emerald-700">لوحة المدير</span>
+                    <i class="fa-solid fa-user-shield text-emerald-600"></i>
+                </a>
 
             </div>
 
@@ -383,6 +458,20 @@
         </div>
     </div>
 
+    <!-- City Modal -->
+    <div id="cityModal" class="modal-backdrop">
+        <div class="bottom-sheet">
+            <div class="flex items-center justify-between mb-5">
+                <h3 class="text-2xl font-black text-slate-900">اختر الولاية</h3>
+                <button onclick="closeCityModal()" class="w-11 h-11 rounded-2xl bg-slate-100 text-slate-500">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div id="cityList" class="space-y-2"></div>
+        </div>
+    </div>
+
     <!-- Order Modal -->
     <div id="orderModal" class="modal-backdrop">
         <div class="bottom-sheet">
@@ -397,6 +486,9 @@
         </div>
     </div>
 
+    <!-- Toast -->
+    <div id="toast" class="hidden fixed top-5 left-1/2 -translate-x-1/2 z-[200] bg-slate-950 text-white px-5 py-3 rounded-2xl text-sm font-bold shadow-xl"></div>
+
     <script>
         const PROJECT_ID = "zalo-smart";
         const BASE_URL = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents`;
@@ -408,6 +500,8 @@
         let currentProducts = [];
         let currentOrderItem = null;
         let orderQty = 1;
+        let selectedWilaya = localStorage.getItem("zalo_selected_wilaya") || "all";
+        let favorites = new Set(JSON.parse(localStorage.getItem("zalo_favorites") || "[]"));
 
         const CATEGORIES = [
             { id: "all", label: "جميع المنتجات", icon: "fa-boxes-stacked" },
@@ -468,6 +562,13 @@
             `;
         }
 
+        async function fetchCollection(name) {
+            const res = await fetch(`${BASE_URL}/${name}?_=${Date.now()}`);
+            if (!res.ok) return [];
+            const json = await res.json();
+            return json.documents || [];
+        }
+
         async function loadData() {
             const status = document.getElementById("dataStatus");
 
@@ -477,16 +578,10 @@
                     <span>تحديث...</span>
                 `;
 
-                const [shopsRes, productsRes] = await Promise.all([
-                    fetch(`${BASE_URL}/shops`),
-                    fetch(`${BASE_URL}/products`)
+                const [shopDocs, productDocs] = await Promise.all([
+                    fetchCollection("shops"),
+                    fetchCollection("products")
                 ]);
-
-                const shopsJson = await shopsRes.json();
-                const productsJson = await productsRes.json();
-
-                const shopDocs = shopsJson.documents || [];
-                const productDocs = productsJson.documents || [];
 
                 allShops = shopDocs.map(doc => {
                     const f = doc.fields || {};
@@ -500,8 +595,632 @@
                         category: fsVal(f.category) || "other",
                         imgUrl: fsVal(f.imgUrl),
                         websiteUrl: fsVal(f.websiteUrl) || ZALO_STORE_URL,
-                        productCount: fsVal(f.productCount)
+                        productCount: fsVal(f.productCount),
+                        verified: fsVal(f.verified) === "true",
+                        featured: fsVal(f.featured) === "true",
+                        rating: fsVal(f.rating) || "4.7"
                     };
                 });
 
-                allProd
+                allProducts = productDocs.map(doc => {
+                    const f = doc.fields || {};
+                    return {
+                        id: doc.name.split("/").pop(),
+                        name: fsVal(f.name),
+                        price: fsVal(f.price),
+                        imgUrl: fsVal(f.imgUrl),
+                        videoUrl: fsVal(f.videoUrl),
+                        shopId: fsVal(f.shopId),
+                        sponsored: fsVal(f.sponsored) === "true"
+                    };
+                });
+
+                mergedProducts = allProducts.map(p => {
+                    const shop = allShops.find(s => s.id === p.shopId) || {};
+                    return {
+                        id: p.id,
+                        item: p.name,
+                        price: p.price,
+                        imgUrl: p.imgUrl,
+                        videoUrl: p.videoUrl,
+                        shopId: p.shopId,
+                        shopName: shop.name || "متجر",
+                        phone: shop.phone || "",
+                        address: shop.address || "",
+                        wilaya: shop.wilaya || "",
+                        baladiya: shop.baladiya || "",
+                        category: shop.category || "other",
+                        websiteUrl: shop.websiteUrl || ZALO_STORE_URL,
+                        sponsored: p.sponsored || false
+                    };
+                });
+
+                updateCityText();
+                updateStats();
+                renderCategories();
+                renderCategoriesModal();
+                renderCityList();
+                renderFeaturedStores();
+                renderHomeProducts();
+
+                status.innerHTML = `
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span>متصل مباشر</span>
+                `;
+            } catch (e) {
+                console.error(e);
+
+                status.innerHTML = `
+                    <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                    <span>أوفلاين</span>
+                `;
+            }
+        }
+
+        function filteredShops() {
+            if (selectedWilaya === "all") return allShops;
+            return allShops.filter(s => s.wilaya === selectedWilaya);
+        }
+
+        function filteredProducts() {
+            if (selectedWilaya === "all") return mergedProducts;
+            return mergedProducts.filter(p => p.wilaya === selectedWilaya);
+        }
+
+        function updateCityText() {
+            const el = document.getElementById("selectedCityText");
+            if (!el) return;
+            el.textContent = selectedWilaya === "all" ? "كل الجزائر" : selectedWilaya;
+        }
+
+        function updateStats() {
+            const shops = filteredShops();
+            const products = filteredProducts();
+            const cats = new Set(shops.map(s => s.category).filter(Boolean));
+
+            document.getElementById("statsBox").innerHTML = `
+                <div class="text-center bg-white/10 rounded-3xl p-3">
+                    <div class="text-2xl font-black">${shops.length}</div>
+                    <div class="text-[10px] text-emerald-100 font-bold">متجر</div>
+                </div>
+                <div class="text-center bg-white/10 rounded-3xl p-3">
+                    <div class="text-2xl font-black">${products.length}</div>
+                    <div class="text-[10px] text-emerald-100 font-bold">منتج</div>
+                </div>
+                <div class="text-center bg-white/10 rounded-3xl p-3">
+                    <div class="text-2xl font-black">${cats.size || 0}</div>
+                    <div class="text-[10px] text-emerald-100 font-bold">قسم</div>
+                </div>
+            `;
+        }
+
+        function renderCategories() {
+            const box = document.getElementById("categoriesGrid");
+            const visible = CATEGORIES.filter(c => c.id !== "all").slice(0, 6);
+
+            box.innerHTML = visible.map(c => `
+                <button onclick="openCategory('${c.id}')" class="bg-white p-4 rounded-3xl border border-slate-100 text-center shadow-sm card-active transition">
+                    <div class="w-12 h-12 mx-auto bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-xl mb-3">
+                        <i class="fa-solid ${c.icon}"></i>
+                    </div>
+                    <span class="font-black text-xs text-slate-800">${c.label}</span>
+                </button>
+            `).join("");
+        }
+
+        function renderCategoriesModal() {
+            const box = document.getElementById("categoriesList");
+
+            box.innerHTML = CATEGORIES.map(c => `
+                <button onclick="selectCategoryFromModal('${c.id}')" class="w-full bg-slate-50 hover:bg-emerald-50 p-4 rounded-2xl flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-2xl bg-white text-emerald-600 flex items-center justify-center shadow-sm">
+                            <i class="fa-solid ${c.icon}"></i>
+                        </div>
+                        <span class="font-black text-sm text-slate-800">${c.label}</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-left text-slate-300"></i>
+                </button>
+            `).join("");
+        }
+
+        function renderCityList() {
+            const box = document.getElementById("cityList");
+            const wilayas = [...new Set(allShops.map(s => s.wilaya).filter(Boolean))];
+
+            box.innerHTML = `
+                <button onclick="selectWilaya('all')" class="w-full bg-emerald-50 text-emerald-700 p-4 rounded-2xl flex items-center justify-between">
+                    <span class="font-black text-sm">كل الجزائر</span>
+                    <i class="fa-solid fa-location-dot"></i>
+                </button>
+
+                ${wilayas.map(w => `
+                    <button onclick="selectWilaya('${esc(w)}')" class="w-full bg-slate-50 p-4 rounded-2xl flex items-center justify-between">
+                        <span class="font-black text-sm">${esc(w)}</span>
+                        <i class="fa-solid fa-chevron-left text-slate-300"></i>
+                    </button>
+                `).join("")}
+            `;
+        }
+
+        function renderFeaturedStores() {
+            const box = document.getElementById("featuredStoresBox");
+            const stores = filteredShops().slice(0, 6);
+
+            if (!stores.length) {
+                box.innerHTML = `
+                    <div class="col-span-2 bg-white border border-dashed border-slate-200 rounded-3xl p-8 text-center text-slate-400 font-bold text-sm">
+                        لا توجد متاجر في هذه الولاية بعد
+                    </div>
+                `;
+                return;
+            }
+
+            box.innerHTML = stores.map(shop => `
+                <div onclick="openShop('${shop.id}')" class="bg-white rounded-3xl border border-slate-100 p-4 shadow-sm card-active transition cursor-pointer">
+                    <div class="w-20 h-20 mx-auto rounded-3xl overflow-hidden bg-slate-50 mb-3">
+                        ${imgHtml(shop.imgUrl, "fa-store")}
+                    </div>
+
+                    <div class="flex items-center justify-center gap-1 mb-1">
+                        <h4 class="font-black text-sm text-slate-900 text-center truncate">${esc(shop.name)}</h4>
+                        <i class="fa-solid fa-circle-check text-emerald-600 text-xs"></i>
+                    </div>
+
+                    <p class="text-[10px] text-slate-400 text-center font-bold">${categoryLabel(shop.category)}</p>
+
+                    <div class="flex items-center justify-center gap-1 mt-2">
+                        <span class="text-xs font-black">${esc(shop.rating || "4.7")}</span>
+                        <i class="fa-solid fa-star text-orange-400 text-xs"></i>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2 mt-3">
+                        <button onclick="event.stopPropagation(); openWebsite('${esc(shop.websiteUrl || ZALO_STORE_URL)}')" class="bg-emerald-50 text-emerald-700 h-10 rounded-2xl">
+                            <i class="fa-solid fa-globe"></i>
+                        </button>
+                        <button onclick="event.stopPropagation(); openMap('${esc(shop.name)}', '${esc(shop.address)}')" class="bg-red-50 text-red-600 h-10 rounded-2xl">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </button>
+                        <button onclick="event.stopPropagation(); openWhatsApp('${esc(shop.phone)}', 'السلام عليكم، تواصلت معكم عبر تطبيق ZaLo Smart')" class="bg-green-50 text-green-600 h-10 rounded-2xl">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function productCard(item, index) {
+            const fav = favorites.has(item.id);
+
+            return `
+                <div class="bg-white border border-slate-100 rounded-3xl p-3 shadow-sm card-active transition">
+                    <div class="relative">
+                        <div class="aspect-square rounded-2xl overflow-hidden bg-slate-50 mb-3">
+                            ${imgHtml(item.imgUrl)}
+                        </div>
+
+                        <button onclick="toggleFavorite('${item.id}')" class="absolute top-2 left-2 w-10 h-10 bg-white/90 rounded-2xl shadow flex items-center justify-center ${fav ? 'text-red-500' : 'text-emerald-600'}">
+                            <i class="${fav ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+                        </button>
+
+                        ${item.sponsored ? `
+                            <span class="absolute bottom-2 right-2 bg-orange-500 text-white px-2 py-1 rounded-full text-[9px] font-black">إعلان</span>
+                        ` : ""}
+                    </div>
+
+                    <h4 class="font-black text-[12px] text-slate-900 leading-relaxed line-clamp-2 min-h-[36px]">${esc(item.item)}</h4>
+                    <p class="text-[10px] text-slate-400 font-bold mt-1 truncate">${esc(item.shopName)}</p>
+
+                    <div class="flex items-center justify-between mt-3">
+                        <span class="text-emerald-600 font-black text-xs">متوفر</span>
+                        <span class="text-orange-600 font-black text-sm">${esc(item.price || "السعر عند الطلب")}</span>
+                    </div>
+
+                    <button onclick="openOrderModal(${index})" class="w-full mt-3 bg-emerald-600 text-white py-2.5 rounded-2xl text-xs font-black shadow-lg shadow-emerald-100">
+                        <i class="fa-solid fa-cart-shopping ml-1"></i>
+                        اطلب الآن
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderProductGrid(targetId, data) {
+            const target = document.getElementById(targetId);
+            if (!target) return;
+
+            currentProducts = data || [];
+
+            if (!currentProducts.length) {
+                target.innerHTML = `
+                    <div class="bg-white border border-dashed border-slate-200 rounded-3xl p-8 text-center text-slate-400 font-bold text-sm">
+                        لا توجد منتجات حالياً
+                    </div>
+                `;
+                return;
+            }
+
+            target.innerHTML = `
+                <div class="grid grid-cols-2 gap-3">
+                    ${currentProducts.map((item, i) => productCard(item, i)).join("")}
+                </div>
+            `;
+        }
+
+        function renderHomeProducts() {
+            const data = filteredProducts()
+                .sort((a, b) => (b.sponsored === true) - (a.sponsored === true))
+                .slice(0, 12);
+
+            renderProductGrid("featuredBox", data);
+        }
+
+        function openCategory(cat) {
+            showList();
+
+            const category = CATEGORIES.find(c => c.id === cat);
+            document.getElementById("listTitle").textContent = category ? category.label : "المنتجات";
+            document.getElementById("listSubtitle").textContent = selectedWilaya === "all" ? "كل الجزائر" : selectedWilaya;
+
+            const base = filteredProducts();
+
+            const data = cat === "all"
+                ? base
+                : base.filter(p => p.category === cat);
+
+            renderProductGrid("listBox", data);
+        }
+
+        function openStores() {
+            showList();
+
+            document.getElementById("listTitle").textContent = "جميع المتاجر";
+            document.getElementById("listSubtitle").textContent = selectedWilaya === "all" ? "كل الجزائر" : selectedWilaya;
+
+            const box = document.getElementById("listBox");
+            const stores = filteredShops();
+
+            if (!stores.length) {
+                box.innerHTML = `
+                    <div class="bg-white rounded-3xl p-8 text-center text-slate-400 font-bold">
+                        لا توجد متاجر حالياً
+                    </div>
+                `;
+                return;
+            }
+
+            box.innerHTML = `
+                <div class="space-y-3">
+                    ${stores.map(shop => `
+                        <button onclick="openShop('${shop.id}')" class="w-full bg-white p-4 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between text-right">
+                            <div class="flex items-center gap-4">
+                                <div class="w-16 h-16 rounded-2xl overflow-hidden bg-slate-50 shrink-0">
+                                    ${imgHtml(shop.imgUrl, "fa-store")}
+                                </div>
+                                <div>
+                                    <h4 class="font-black text-base text-slate-900">${esc(shop.name)}</h4>
+                                    <p class="text-xs text-slate-400 mt-1">
+                                        <i class="fa-solid fa-location-dot text-red-500 ml-1"></i>
+                                        ${esc(shop.wilaya || "")} ${shop.baladiya ? " - " + esc(shop.baladiya) : ""}
+                                    </p>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-left text-slate-300"></i>
+                        </button>
+                    `).join("")}
+                </div>
+            `;
+        }
+
+        function openShop(shopId) {
+            const shop = allShops.find(s => s.id === shopId);
+            if (!shop) return;
+
+            const products = mergedProducts.filter(p => p.shopId === shopId);
+
+            document.getElementById("view-home").classList.add("hidden");
+            document.getElementById("view-list").classList.add("hidden");
+            document.getElementById("view-favorites").classList.add("hidden");
+            document.getElementById("view-shop-profile").classList.remove("hidden");
+            document.getElementById("backBtn").classList.remove("hidden");
+
+            document.getElementById("shopProfileHeader").innerHTML = `
+                <div class="emerald-gradient p-7 rounded-[36px] text-white shadow-xl shadow-emerald-100">
+                    <div class="flex items-center gap-4 mb-5">
+                        <div class="w-20 h-20 bg-white/15 rounded-3xl overflow-hidden shrink-0">
+                            ${imgHtml(shop.imgUrl, "fa-store")}
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h2 class="text-3xl font-black leading-tight">${esc(shop.name)}</h2>
+                                <i class="fa-solid fa-circle-check text-emerald-200"></i>
+                            </div>
+                            <p class="text-sm text-emerald-50 font-bold mt-2">
+                                <i class="fa-solid fa-location-dot ml-1"></i>
+                                ${esc(shop.wilaya || "")} ${shop.baladiya ? " - " + esc(shop.baladiya) : ""}
+                            </p>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-emerald-50 mb-5">${esc(shop.address || "")}</p>
+
+                    <div class="grid grid-cols-3 gap-2">
+                        ${shop.phone ? `
+                            <a href="tel:${esc(shop.phone)}" class="bg-white text-emerald-700 py-3 rounded-2xl text-center font-black text-xs">
+                                <i class="fa-solid fa-phone ml-1"></i> اتصال
+                            </a>
+
+                            <a href="https://wa.me/${normalizePhone(shop.phone)}" target="_blank" class="bg-emerald-400 text-white py-3 rounded-2xl text-center font-black text-xs">
+                                <i class="fa-brands fa-whatsapp ml-1"></i> واتساب
+                            </a>
+                        ` : `
+                            <span class="bg-white/20 py-3 rounded-2xl text-center font-black text-xs col-span-2">لا يوجد رقم</span>
+                        `}
+
+                        <a href="${esc(shop.websiteUrl || ZALO_STORE_URL)}" target="_blank" class="bg-slate-900 text-white py-3 rounded-2xl text-center font-black text-xs">
+                            <i class="fa-solid fa-globe ml-1"></i> الموقع
+                        </a>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById("shopProdCount").textContent = products.length + " منتج";
+
+            renderProductGrid("shopProductsGrid", products);
+
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        function searchApp(value) {
+            const q = String(value || "").trim().toLowerCase();
+
+            if (!q) {
+                renderHomeProducts();
+                return;
+            }
+
+            const data = filteredProducts().filter(p =>
+                p.item.toLowerCase().includes(q) ||
+                p.shopName.toLowerCase().includes(q) ||
+                p.category.toLowerCase().includes(q)
+            );
+
+            renderProductGrid("featuredBox", data);
+        }
+
+        function openOrderModal(index) {
+            const item = currentProducts[index];
+            if (!item) return;
+
+            currentOrderItem = item;
+            orderQty = 1;
+
+            document.getElementById("orderContent").innerHTML = `
+                <div class="flex items-start gap-4">
+                    <div class="w-28 h-28 rounded-3xl overflow-hidden bg-slate-50 shrink-0">
+                        ${imgHtml(item.imgUrl)}
+                    </div>
+
+                    <div class="flex-1">
+                        <h4 class="font-black text-lg text-slate-900 leading-relaxed">${esc(item.item)}</h4>
+                        <p class="text-xs text-slate-400 font-bold mt-1">${esc(item.shopName)}</p>
+                        <p class="text-emerald-600 font-black text-xl mt-2">${esc(item.price || "السعر عند الطلب")}</p>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <label class="block text-xs font-black text-slate-500 mb-2">الكمية</label>
+
+                    <div class="flex items-center justify-center gap-4">
+                        <button onclick="changeQty(-1)" class="w-12 h-12 bg-slate-100 rounded-2xl text-xl font-black">-</button>
+                        <span id="qtyText" class="text-2xl font-black">1</span>
+                        <button onclick="changeQty(1)" class="w-12 h-12 bg-emerald-600 text-white rounded-2xl text-xl font-black">+</button>
+                    </div>
+                </div>
+
+                <div class="mt-5">
+                    <label class="block text-xs font-black text-slate-500 mb-2">ملاحظات الطلب</label>
+                    <textarea id="orderNotes" class="w-full bg-slate-50 border border-slate-100 rounded-2xl p-4 text-sm outline-none" rows="3" placeholder="مثال: أريد التوصيل إلى وسط المدينة..."></textarea>
+                </div>
+
+                ${item.videoUrl ? `
+                    <a href="${esc(item.videoUrl)}" target="_blank" class="block mt-4 bg-blue-50 text-blue-600 py-3 rounded-2xl text-center font-black text-xs">
+                        <i class="fa-solid fa-play ml-1"></i>
+                        مشاهدة فيديو المنتج
+                    </a>
+                ` : ""}
+
+                <div class="grid grid-cols-2 gap-3 mt-5">
+                    <button onclick="sendWhatsAppOrder()" class="bg-emerald-600 text-white py-4 rounded-2xl font-black text-xs shadow-lg shadow-emerald-100">
+                        <i class="fa-brands fa-whatsapp ml-1"></i>
+                        اطلب واتساب
+                    </button>
+
+                    <button onclick="openZaloStore()" class="bg-slate-900 text-white py-4 rounded-2xl font-black text-xs">
+                        <i class="fa-solid fa-globe ml-1"></i>
+                        المتجر الإلكتروني
+                    </button>
+                </div>
+            `;
+
+            document.getElementById("orderModal").classList.add("open");
+        }
+
+        function changeQty(n) {
+            orderQty += n;
+            if (orderQty < 1) orderQty = 1;
+
+            document.getElementById("qtyText").textContent = orderQty;
+        }
+
+        function sendWhatsAppOrder() {
+            if (!currentOrderItem) return;
+
+            const notes = document.getElementById("orderNotes").value || "";
+
+            const msg =
+`السلام عليكم
+أريد طلب منتج من تطبيق ZaLo Smart:
+
+المنتج: ${currentOrderItem.item}
+المحل: ${currentOrderItem.shopName}
+السعر: ${currentOrderItem.price || "السعر عند الطلب"}
+الكمية: ${orderQty}
+الولاية: ${currentOrderItem.wilaya || ""}
+البلدية: ${currentOrderItem.baladiya || ""}
+الملاحظات: ${notes || "لا توجد"}
+
+رابط متجر ZaLo:
+${ZALO_STORE_URL}`;
+
+            const phone = normalizePhone(currentOrderItem.phone);
+
+            if (!phone) {
+                window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank");
+                return;
+            }
+
+            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, "_blank");
+        }
+
+        function toggleFavorite(id) {
+            if (favorites.has(id)) {
+                favorites.delete(id);
+                showToast("تمت الإزالة من المفضلة");
+            } else {
+                favorites.add(id);
+                showToast("تمت الإضافة إلى المفضلة");
+            }
+
+            localStorage.setItem("zalo_favorites", JSON.stringify([...favorites]));
+            renderHomeProducts();
+        }
+
+        function openFavorites() {
+            document.getElementById("view-home").classList.add("hidden");
+            document.getElementById("view-list").classList.add("hidden");
+            document.getElementById("view-shop-profile").classList.add("hidden");
+            document.getElementById("view-favorites").classList.remove("hidden");
+            document.getElementById("backBtn").classList.remove("hidden");
+
+            const data = mergedProducts.filter(p => favorites.has(p.id));
+            renderProductGrid("favoritesBox", data);
+        }
+
+        function selectWilaya(w) {
+            selectedWilaya = w;
+            localStorage.setItem("zalo_selected_wilaya", w);
+            updateCityText();
+            updateStats();
+            renderFeaturedStores();
+            renderHomeProducts();
+            closeCityModal();
+            goHome();
+        }
+
+        function showList() {
+            document.getElementById("view-home").classList.add("hidden");
+            document.getElementById("view-shop-profile").classList.add("hidden");
+            document.getElementById("view-favorites").classList.add("hidden");
+            document.getElementById("view-list").classList.remove("hidden");
+            document.getElementById("backBtn").classList.remove("hidden");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        function goHome() {
+            document.getElementById("view-list").classList.add("hidden");
+            document.getElementById("view-shop-profile").classList.add("hidden");
+            document.getElementById("view-favorites").classList.add("hidden");
+            document.getElementById("view-home").classList.remove("hidden");
+            document.getElementById("backBtn").classList.add("hidden");
+            renderHomeProducts();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        function openDrawer() {
+            document.getElementById("drawerBackdrop").classList.add("open");
+            document.getElementById("drawer").classList.add("open");
+        }
+
+        function closeDrawer() {
+            document.getElementById("drawerBackdrop").classList.remove("open");
+            document.getElementById("drawer").classList.remove("open");
+        }
+
+        function openCategoriesModal() {
+            document.getElementById("categoriesModal").classList.add("open");
+        }
+
+        function closeCategoriesModal() {
+            document.getElementById("categoriesModal").classList.remove("open");
+        }
+
+        function selectCategoryFromModal(cat) {
+            closeCategoriesModal();
+            openCategory(cat);
+        }
+
+        function openCityModal() {
+            renderCityList();
+            document.getElementById("cityModal").classList.add("open");
+        }
+
+        function closeCityModal() {
+            document.getElementById("cityModal").classList.remove("open");
+        }
+
+        function closeOrderModal() {
+            document.getElementById("orderModal").classList.remove("open");
+        }
+
+        function openZaloStore() {
+            window.open(ZALO_STORE_URL, "_blank");
+        }
+
+        function openWebsite(url) {
+            window.open(url || ZALO_STORE_URL, "_blank");
+        }
+
+        function openWhatsApp(phone, message) {
+            const p = normalizePhone(phone);
+            const url = p
+                ? `https://wa.me/${p}?text=${encodeURIComponent(message)}`
+                : `https://wa.me/?text=${encodeURIComponent(message)}`;
+
+            window.open(url, "_blank");
+        }
+
+        function openMap(name, address) {
+            const q = encodeURIComponent(`${name || ""} ${address || ""}`);
+            window.open(`https://www.google.com/maps/search/?api=1&query=${q}`, "_blank");
+        }
+
+        function focusSearch() {
+            const input = document.getElementById("searchInput");
+            if (input) {
+                goHome();
+                setTimeout(() => {
+                    input.focus();
+                    input.scrollIntoView({ behavior: "smooth", block: "center" });
+                }, 250);
+            }
+        }
+
+        function categoryLabel(id) {
+            return CATEGORIES.find(c => c.id === id)?.label || "قسم آخر";
+        }
+
+        function showToast(message) {
+            const el = document.getElementById("toast");
+            el.textContent = message;
+            el.classList.remove("hidden");
+
+            clearTimeout(window.__toastTimer);
+            window.__toastTimer = setTimeout(() => {
+                el.classList.add("hidden");
+            }, 2500);
+        }
+
+        window.addEventListener("DOMContentLoaded", loadData);
+    </script>
+</body>
+</html>
