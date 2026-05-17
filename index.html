@@ -912,10 +912,21 @@
         }
 
         function openShop(shopId) {
+                function openShop(shopId) {
             const shop = allShops.find(s => s.id === shopId);
             if (!shop) return;
 
             const products = mergedProducts.filter(p => p.shopId === shopId);
+
+            const shopName = shop.name || "متجر";
+            const categoryName = categoryLabel(shop.category);
+            const wilayaText = shop.wilaya || "الجزائر";
+            const baladiyaText = shop.baladiya ? " - " + shop.baladiya : "";
+            const addressText = shop.address || "العنوان غير محدد";
+            const websiteUrl = shop.websiteUrl || ZALO_STORE_URL;
+            const phoneClean = normalizePhone(shop.phone);
+            const mapQuery = encodeURIComponent(`${shopName} ${addressText} ${wilayaText}`);
+            const mapUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
 
             document.getElementById("view-home").classList.add("hidden");
             document.getElementById("view-list").classList.add("hidden");
@@ -924,41 +935,204 @@
             document.getElementById("backBtn").classList.remove("hidden");
 
             document.getElementById("shopProfileHeader").innerHTML = `
-                <div class="emerald-gradient p-7 rounded-[36px] text-white shadow-xl shadow-emerald-100">
-                    <div class="flex items-center gap-4 mb-5">
-                        <div class="w-20 h-20 bg-white/15 rounded-3xl overflow-hidden shrink-0">
-                            ${imgHtml(shop.imgUrl, "fa-store")}
-                        </div>
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <h2 class="text-3xl font-black leading-tight">${esc(shop.name)}</h2>
-                                <i class="fa-solid fa-circle-check text-emerald-200"></i>
+                <div class="space-y-5">
+
+                    <!-- بطاقة الغلاف -->
+                    <div class="bg-white rounded-[38px] overflow-hidden border border-slate-100 soft-shadow">
+
+                        <!-- الغلاف الأخضر -->
+                        <div class="relative h-44 emerald-gradient p-6 text-white overflow-hidden">
+                            <div class="absolute -left-8 -bottom-10 text-white/10 text-9xl">
+                                <i class="fa-solid fa-store"></i>
                             </div>
-                            <p class="text-sm text-emerald-50 font-bold mt-2">
-                                <i class="fa-solid fa-location-dot ml-1"></i>
-                                ${esc(shop.wilaya || "")} ${shop.baladiya ? " - " + esc(shop.baladiya) : ""}
-                            </p>
+
+                            <div class="relative z-10">
+                                <div class="flex items-center gap-2 mb-2">
+                                    ${shop.verified ? `
+                                        <span class="bg-white/20 text-white px-3 py-1 rounded-full text-[10px] font-black">
+                                            <i class="fa-solid fa-circle-check ml-1"></i>
+                                            موثق
+                                        </span>
+                                    ` : `
+                                        <span class="bg-white/20 text-white px-3 py-1 rounded-full text-[10px] font-black">
+                                            قيد التحقق
+                                        </span>
+                                    `}
+
+                                    <span class="bg-white/20 text-white px-3 py-1 rounded-full text-[10px] font-black">
+                                        ${esc(categoryName)}
+                                    </span>
+                                </div>
+
+                                <h2 class="text-3xl font-black leading-tight max-w-[230px]">
+                                    ${esc(shopName)}
+                                </h2>
+
+                                <p class="text-sm text-emerald-50 font-bold mt-3">
+                                    <i class="fa-solid fa-location-dot ml-1"></i>
+                                    ${esc(wilayaText)}${esc(baladiyaText)}
+                                </p>
+                            </div>
+
+                            <div class="absolute left-5 bottom-5 bg-white text-slate-900 px-3 py-2 rounded-2xl text-xs font-black shadow-lg">
+                                ${esc(shop.rating || "4.7")}
+                                <i class="fa-solid fa-star text-orange-400 mr-1"></i>
+                            </div>
+                        </div>
+
+                        <!-- معلومات المتجر -->
+                        <div class="p-5 -mt-10 relative z-10">
+
+                            <div class="flex items-end gap-4">
+                                <div class="w-24 h-24 bg-white rounded-[28px] p-2 shadow-xl border border-slate-100 shrink-0">
+                                    <div class="w-full h-full rounded-2xl overflow-hidden">
+                                        ${imgHtml(shop.imgUrl, "fa-store")}
+                                    </div>
+                                </div>
+
+                                <div class="pb-2 flex-1">
+                                    <h3 class="font-black text-xl text-slate-900 leading-tight">
+                                        ${esc(shopName)}
+                                    </h3>
+                                    <p class="text-xs text-slate-400 font-bold mt-1">
+                                        ${esc(categoryName)}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- أزرار التواصل -->
+                            <div class="grid grid-cols-4 gap-2 mt-5">
+
+                                ${shop.phone ? `
+                                    <a href="tel:${esc(shop.phone)}" class="bg-blue-50 text-blue-600 py-3 rounded-2xl text-center font-black text-[10px]">
+                                        <i class="fa-solid fa-phone text-lg block mb-1"></i>
+                                        اتصال
+                                    </a>
+
+                                    <a href="https://wa.me/${phoneClean}" target="_blank" class="bg-emerald-50 text-emerald-600 py-3 rounded-2xl text-center font-black text-[10px]">
+                                        <i class="fa-brands fa-whatsapp text-lg block mb-1"></i>
+                                        واتساب
+                                    </a>
+                                ` : `
+                                    <button class="bg-slate-50 text-slate-300 py-3 rounded-2xl text-center font-black text-[10px] col-span-2">
+                                        لا يوجد رقم
+                                    </button>
+                                `}
+
+                                <a href="${mapUrl}" target="_blank" class="bg-red-50 text-red-600 py-3 rounded-2xl text-center font-black text-[10px]">
+                                    <i class="fa-solid fa-location-dot text-lg block mb-1"></i>
+                                    موقع
+                                </a>
+
+                                <a href="${esc(websiteUrl)}" target="_blank" class="bg-slate-900 text-white py-3 rounded-2xl text-center font-black text-[10px]">
+                                    <i class="fa-solid fa-globe text-lg block mb-1"></i>
+                                    الموقع
+                                </a>
+                            </div>
                         </div>
                     </div>
 
-                    <p class="text-xs text-emerald-50 mb-5">${esc(shop.address || "")}</p>
+                    <!-- إحصائيات المتجر -->
+                    <div class="grid grid-cols-3 gap-3">
+                        <div class="bg-white rounded-3xl p-4 border border-slate-100 text-center shadow-sm">
+                            <div class="text-xl font-black text-emerald-600">${products.length}</div>
+                            <div class="text-[10px] text-slate-400 font-black mt-1">منتج</div>
+                        </div>
 
-                    <div class="grid grid-cols-3 gap-2">
-                        ${shop.phone ? `
-                            <a href="tel:${esc(shop.phone)}" class="bg-white text-emerald-700 py-3 rounded-2xl text-center font-black text-xs">
-                                <i class="fa-solid fa-phone ml-1"></i> اتصال
-                            </a>
+                        <div class="bg-white rounded-3xl p-4 border border-slate-100 text-center shadow-sm">
+                            <div class="text-xl font-black text-orange-500">${esc(shop.rating || "4.7")}</div>
+                            <div class="text-[10px] text-slate-400 font-black mt-1">تقييم</div>
+                        </div>
 
-                            <a href="https://wa.me/${normalizePhone(shop.phone)}" target="_blank" class="bg-emerald-400 text-white py-3 rounded-2xl text-center font-black text-xs">
-                                <i class="fa-brands fa-whatsapp ml-1"></i> واتساب
-                            </a>
-                        ` : `
-                            <span class="bg-white/20 py-3 rounded-2xl text-center font-black text-xs col-span-2">لا يوجد رقم</span>
-                        `}
+                        <div class="bg-white rounded-3xl p-4 border border-slate-100 text-center shadow-sm">
+                            <div class="text-xl font-black text-emerald-600">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </div>
+                            <div class="text-[10px] text-slate-400 font-black mt-1">موثوق</div>
+                        </div>
+                    </div>
 
-                        <a href="${esc(shop.websiteUrl || ZALO_STORE_URL)}" target="_blank" class="bg-slate-900 text-white py-3 rounded-2xl text-center font-black text-xs">
-                            <i class="fa-solid fa-globe ml-1"></i> الموقع
-                        </a>
+                    <!-- نبذة عن المتجر -->
+                    <div class="bg-white rounded-[30px] p-5 border border-slate-100 shadow-sm">
+                        <h4 class="font-black text-slate-900 text-base mb-3">
+                            نبذة عن المتجر
+                        </h4>
+
+                        <p class="text-sm text-slate-500 font-bold leading-relaxed">
+                            ${esc(shopName)} متجر مسجل في منصة ZaLo Smart، يقدم خدماته ومنتجاته للزبائن داخل ${esc(wilayaText)}${esc(baladiyaText)}.
+                            يمكنك التواصل مباشرة مع المتجر عبر الهاتف أو واتساب، أو زيارة موقعه الإلكتروني.
+                        </p>
+                    </div>
+
+                    <!-- معلومات المتجر -->
+                    <div class="bg-white rounded-[30px] p-5 border border-slate-100 shadow-sm">
+                        <h4 class="font-black text-slate-900 text-base mb-4">
+                            معلومات المتجر
+                        </h4>
+
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between bg-slate-50 rounded-2xl p-3">
+                                <span class="text-xs text-slate-400 font-black">العنوان</span>
+                                <span class="text-xs text-slate-700 font-black text-left max-w-[220px]">
+                                    ${esc(addressText)}
+                                </span>
+                            </div>
+
+                            <div class="flex items-center justify-between bg-slate-50 rounded-2xl p-3">
+                                <span class="text-xs text-slate-400 font-black">الولاية</span>
+                                <span class="text-xs text-slate-700 font-black">${esc(wilayaText)}</span>
+                            </div>
+
+                            <div class="flex items-center justify-between bg-slate-50 rounded-2xl p-3">
+                                <span class="text-xs text-slate-400 font-black">البلدية</span>
+                                <span class="text-xs text-slate-700 font-black">${esc(shop.baladiya || "غير محددة")}</span>
+                            </div>
+
+                            <div class="flex items-center justify-between bg-slate-50 rounded-2xl p-3">
+                                <span class="text-xs text-slate-400 font-black">الهاتف</span>
+                                <span class="text-xs text-slate-700 font-black">${esc(shop.phone || "غير متوفر")}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- طرق الدفع -->
+                    <div class="bg-white rounded-[30px] p-5 border border-slate-100 shadow-sm">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="font-black text-slate-900 text-base">طرق الدفع</h4>
+                            <span class="text-[10px] bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full font-black">
+                                حسب المتجر
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="bg-slate-50 rounded-2xl p-3 flex items-center gap-2">
+                                <div class="w-9 h-9 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center">
+                                    <i class="fa-solid fa-hand-holding-dollar"></i>
+                                </div>
+                                <span class="text-[11px] font-black text-slate-700">الدفع عند الاستلام</span>
+                            </div>
+
+                            <div class="bg-slate-50 rounded-2xl p-3 flex items-center gap-2">
+                                <div class="w-9 h-9 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
+                                    <i class="fa-solid fa-building-columns"></i>
+                                </div>
+                                <span class="text-[11px] font-black text-slate-700">CCP</span>
+                            </div>
+
+                            <div class="bg-slate-50 rounded-2xl p-3 flex items-center gap-2">
+                                <div class="w-9 h-9 bg-yellow-50 text-yellow-600 rounded-xl flex items-center justify-center">
+                                    <i class="fa-solid fa-mobile-screen"></i>
+                                </div>
+                                <span class="text-[11px] font-black text-slate-700">BaridiMob</span>
+                            </div>
+
+                            <div class="bg-slate-50 rounded-2xl p-3 flex items-center gap-2">
+                                <div class="w-9 h-9 bg-orange-50 text-orange-500 rounded-xl flex items-center justify-center">
+                                    <i class="fa-solid fa-credit-card"></i>
+                                </div>
+                                <span class="text-[11px] font-black text-slate-700">البطاقة الذهبية</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
