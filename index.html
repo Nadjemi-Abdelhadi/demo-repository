@@ -1144,15 +1144,15 @@
         }
 
                         function normalizeSearchText(text) {
-            return String(text || "")
-                .toLowerCase()
-                .replace(/[أإآ]/g, "ا")
-                .replace(/ى/g, "ي")
-                .replace(/ة/g, "ه")
-                .replace(/[^\u0600-\u06FFa-zA-Z0-9\s]/g, " ")
-                .replace(/\s+/g, " ")
-                .trim();
-                         }
+    return String(text || "")
+        .toLowerCase()
+        .replace(/[أإآ]/g, "ا")
+        .replace(/ى/g, "ي")
+        .replace(/ة/g, "ه")
+        .replace(/[^\u0600-\u06FFa-zA-Z0-9\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+}
 
         function searchApp(value) {
             const q = normalizeSearchText(value);
