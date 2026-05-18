@@ -1143,21 +1143,44 @@
             window.scrollTo({ top: 0, behavior: "smooth" });
         }
 
+                        function normalizeSearchText(text) {
+            return String(text || "")
+                .toLowerCase()
+                .replace(/[أإآ]/g, "ا")
+                .replace(/ى/g, "ي")
+                .replace(/ة/g, "ه")
+                .replace(/[^\u0600-\u06FFa-zA-Z0-9\s]/g, " ")
+                .replace(/\s+/g, " ")
+                .trim();
+                         }
+
         function searchApp(value) {
-            const q = String(value || "").trim().toLowerCase();
+            const q = normalizeSearchText(value);
 
             if (!q) {
                 renderHomeProducts();
                 return;
             }
 
-            const data = filteredProducts().filter(p =>
-                p.item.toLowerCase().includes(q) ||
-                p.shopName.toLowerCase().includes(q) ||
-                p.category.toLowerCase().includes(q)
-            );
+            const terms = q.split(" ").filter(Boolean);
+            const data = filteredProducts().filter(p => {
+                const haystack = normalizeSearchText(`
+                    ${p.item}
+                    ${p.shopName}
+                    ${p.category}
+                    ${p.price}
+                    ${p.wilaya}
+                    ${p.baladiya}
+                    ${p.address}
+                `);
+
+                return terms.every(t => haystack.includes(t));
+            });
 
             renderProductGrid("featuredBox", data);
+
+            const title = document.querySelector("#view-home h3");
+            showToast(data.length ? `تم العثور على ${data.length} نتيجة` : "لا توجد نتائج مطابقة");
         }
 
                 function paymentMethodsHtml() {
