@@ -240,37 +240,49 @@
             </button>
 
             <!-- Hero -->
-            <div class="emerald-gradient rounded-[36px] p-7 text-white shadow-xl shadow-emerald-100 relative overflow-hidden">
-                <div class="relative z-10">
-                    <p class="text-xs font-bold text-emerald-100 mb-2">المنصة الرقمية المباشرة</p>
-                    <h2 class="text-3xl font-black leading-tight">
-                        اكتشف أفضل المتاجر<br>
-                        والمنتجات في مدينتك
-                    </h2>
+            <!-- Hero Compact Centered -->
+<div class="emerald-gradient rounded-[32px] p-5 text-white shadow-lg shadow-emerald-100 relative overflow-hidden text-center">
 
-                    <button onclick="openStores()" class="mt-5 bg-white text-emerald-700 px-6 py-3 rounded-2xl text-xs font-black shadow-lg">
-                        تسوق الآن
-                    </button>
+    <div class="relative z-10 flex flex-col items-center justify-center">
 
-                    <div id="statsBox" class="grid grid-cols-3 gap-3 mt-6 pt-5 border-t border-white/10">
-                        <div class="text-center bg-white/10 rounded-3xl p-3">
-                            <div class="text-2xl font-black">-</div>
-                            <div class="text-[10px] text-emerald-100 font-bold">متجر</div>
-                        </div>
-                        <div class="text-center bg-white/10 rounded-3xl p-3">
-                            <div class="text-2xl font-black">-</div>
-                            <div class="text-[10px] text-emerald-100 font-bold">منتج</div>
-                        </div>
-                        <div class="text-center bg-white/10 rounded-3xl p-3">
-                            <div class="text-2xl font-black">-</div>
-                            <div class="text-[10px] text-emerald-100 font-bold">قسم</div>
-                        </div>
-                    </div>
-                </div>
+        <p class="text-[11px] font-bold text-emerald-100 mb-2">
+            المنصة الرقمية المباشرة
+        </p>
 
-                <i class="fa-solid fa-store absolute -bottom-6 -left-5 text-white/10 text-8xl"></i>
+        <h2 class="text-2xl font-black leading-tight">
+            اكتشف أفضل المتاجر<br>
+            والمنتجات في مدينتك
+        </h2>
+
+        <p class="text-xs text-emerald-100 font-bold mt-2">
+            عروض، منتجات، وخدمات قريبة منك
+        </p>
+
+        <button onclick="openStores()" class="mt-4 bg-white text-emerald-700 px-6 py-3 rounded-2xl text-xs font-black shadow-lg">
+            تسوق الآن
+        </button>
+
+        <div id="statsBox" class="grid grid-cols-3 gap-2 w-full mt-5 pt-4 border-t border-white/10">
+            <div class="text-center bg-white/10 rounded-2xl p-2">
+                <div class="text-lg font-black">-</div>
+                <div class="text-[9px] text-emerald-100 font-bold">متجر</div>
             </div>
 
+            <div class="text-center bg-white/10 rounded-2xl p-2">
+                <div class="text-lg font-black">-</div>
+                <div class="text-[9px] text-emerald-100 font-bold">منتج</div>
+            </div>
+
+            <div class="text-center bg-white/10 rounded-2xl p-2">
+                <div class="text-lg font-black">-</div>
+                <div class="text-[9px] text-emerald-100 font-bold">قسم</div>
+            </div>
+        </div>
+
+    </div>
+
+    <i class="fa-solid fa-store absolute -bottom-6 -left-5 text-white/10 text-7xl"></i>
+</div>
             <!-- Categories -->
             <div>
                 <div class="flex items-center justify-between mb-4">
