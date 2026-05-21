@@ -138,11 +138,11 @@
 
 <body class="pb-28">
 
-    <!-- Header Centered -->
+    <!-- Header -->
     <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm">
         <div class="max-w-md mx-auto px-5 py-3 relative text-center">
 
-            <button id="backBtn" onclick="goHome()" class="hidden absolute right-5 top-1/2 -translate-y-1/2 w-11 h-11 rounded-2xl bg-slate-100 text-emerald-700 items-center justify-center">
+            <button id="backBtn" onclick="goHome()" class="hidden absolute right-5 top-1/2 -translate-y-1/2 w-11 h-11 rounded-2xl bg-slate-100 text-emerald-700 flex items-center justify-center">
                 <i class="fa-solid fa-arrow-right text-lg"></i>
             </button>
 
@@ -353,8 +353,7 @@
         </section>
 
     </main>
-
-    <!-- Bottom Nav -->
+        <!-- Bottom Nav -->
     <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-100 shadow-2xl rounded-t-[30px]">
         <div class="max-w-md mx-auto px-5 py-3 grid grid-cols-5 gap-2 text-center">
 
@@ -494,4 +493,541 @@
     <!-- Order Modal -->
     <div id="orderModal" class="modal-backdrop">
         <div class="bottom-sheet">
-            <div class="flex items-ce
+            <div class="flex items-center justify-between mb-5">
+                <h3 class="text-2xl font-black text-slate-900">طلب المنتج</h3>
+                <button onclick="closeOrderModal()" class="w-11 h-11 rounded-2xl bg-slate-100 text-slate-500">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div id="orderContent"></div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="hidden fixed top-5 left-1/2 -translate-x-1/2 z-[200] bg-slate-950 text-white px-5 py-3 rounded-2xl text-sm font-bold shadow-xl"></div>
+
+    <script>
+        const PROJECT_ID = "zalo-smart";
+        const BASE_URL = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents`;
+        const ZALO_STORE_URL = "https://zalo2.youcan.store/";
+
+        let allShops = [];
+        let allProducts = [];
+        let mergedProducts = [];
+        let currentProducts = [];
+        let currentOrderItem = null;
+        let orderQty = 1;
+        let selectedWilaya = localStorage.getItem("zalo_selected_wilaya") || "all";
+        let favorites = new Set(JSON.parse(localStorage.getItem("zalo_favorites") || "[]"));
+
+        const CATEGORIES = [
+            { id: "all", label: "جميع المنتجات", icon: "fa-boxes-stacked" },
+            { id: "electronics", label: "هواتف وإلكترونيات", icon: "fa-mobile-screen-button" },
+            { id: "restaurants", label: "مطاعم ومقاهي", icon: "fa-utensils" },
+            { id: "cars", label: "قطع غيار سيارات", icon: "fa-car" },
+            { id: "food", label: "مواد غذائية", icon: "fa-basket-shopping" },
+            { id: "pro", label: "حرفيين ومهن", icon: "fa-screwdriver-wrench" },
+            { id: "services", label: "خدمات وصيانة", icon: "fa-tools" },
+            { id: "building", label: "مواد البناء", icon: "fa-hammer" },
+            { id: "fashion", label: "ملابس وموضة", icon: "fa-shirt" },
+            { id: "delivery", label: "خدمات التوصيل", icon: "fa-motorcycle" },
+            { id: "sweets", label: "حلويات ومملحات", icon: "fa-cookie-bite" }
+        ];
+
+        function fsVal(field) {
+            if (!field) return "";
+            if ("stringValue" in field) return field.stringValue;
+            if ("integerValue" in field) return String(field.integerValue);
+            if ("doubleValue" in field) return String(field.doubleValue);
+            if ("booleanValue" in field) return field.booleanValue ? "true" : "false";
+            return "";
+        }
+
+        function esc(v) {
+            return String(v || "").replace(/[&<>"']/g, m => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#039;"
+            }[m]));
+        }
+
+        function normalizePhone(phone) {
+            let p = String(phone || "").replace(/[^\d+]/g, "");
+            if (!p) return "";
+            if (p.startsWith("+")) return p.replace("+", "");
+            if (p.startsWith("00")) return p.slice(2);
+            if (p.startsWith("0")) return "213" + p.slice(1);
+            if (p.startsWith("213")) return p;
+            return p;
+        }
+
+        function imgHtml(url, icon = "fa-box") {
+            if (url) {
+                return `
+                    <img src="${esc(url)}"
+                         class="w-full h-full object-cover rounded-2xl"
+                         onerror="this.outerHTML='<div class=&quot;w-full h-full bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300 text-3xl&quot;><i class=&quot;fa-solid ${icon}&quot;></i></div>'">
+                `;
+            }
+
+            return `
+                <div class="w-full h-full bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300 text-3xl">
+                    <i class="fa-solid ${icon}"></i>
+                </div>
+            `;
+        }
+
+        function setConnectionStatus(type) {
+            const status = document.getElementById("dataStatus");
+            if (!status) return;
+
+            if (type === "loading") {
+                status.className = "mt-2 text-[10px] bg-slate-50 text-slate-500 px-3 py-1.5 rounded-full inline-flex items-center gap-2 font-black border border-slate-100";
+                status.innerHTML = `
+                    <span class="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span>
+                    <span>اتصال</span>
+                `;
+            }
+
+            if (type === "online") {
+                status.className = "mt-2 text-[10px] bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full inline-flex items-center gap-2 font-black border border-emerald-100";
+                status.innerHTML = `
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span>مباشر</span>
+                `;
+            }
+
+            if (type === "offline") {
+                status.className = "mt-2 text-[10px] bg-red-50 text-red-600 px-3 py-1.5 rounded-full inline-flex items-center gap-2 font-black border border-red-100";
+                status.innerHTML = `
+                    <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                    <span>أوفلاين</span>
+                `;
+            }
+        }
+                async function fetchCollection(name) {
+            const res = await fetch(`${BASE_URL}/${name}?_=${Date.now()}`);
+            if (!res.ok) return [];
+            const json = await res.json();
+            return json.documents || [];
+        }
+
+        async function loadData() {
+            try {
+                setConnectionStatus("loading");
+
+                const [shopDocs, productDocs] = await Promise.all([
+                    fetchCollection("shops"),
+                    fetchCollection("products")
+                ]);
+
+                allShops = shopDocs.map(doc => {
+                    const f = doc.fields || {};
+                    return {
+                        id: doc.name.split("/").pop(),
+                        name: fsVal(f.name),
+                        phone: fsVal(f.phone),
+                        address: fsVal(f.address),
+                        wilaya: fsVal(f.wilaya),
+                        baladiya: fsVal(f.baladiya),
+                        category: fsVal(f.category) || "other",
+                        imgUrl: fsVal(f.imgUrl),
+                        websiteUrl: fsVal(f.websiteUrl) || ZALO_STORE_URL,
+                        productCount: fsVal(f.productCount),
+                        verified: fsVal(f.verified) === "true",
+                        featured: fsVal(f.featured) === "true",
+                        rating: fsVal(f.rating) || "4.7"
+                    };
+                });
+
+                allProducts = productDocs.map(doc => {
+                    const f = doc.fields || {};
+                    return {
+                        id: doc.name.split("/").pop(),
+                        name: fsVal(f.name),
+                        price: fsVal(f.price),
+                        imgUrl: fsVal(f.imgUrl),
+                        videoUrl: fsVal(f.videoUrl),
+                        shopId: fsVal(f.shopId),
+                        sponsored: fsVal(f.sponsored) === "true"
+                    };
+                });
+
+                mergedProducts = allProducts.map(p => {
+                    const shop = allShops.find(s => s.id === p.shopId) || {};
+                    return {
+                        id: p.id,
+                        item: p.name,
+                        price: p.price,
+                        imgUrl: p.imgUrl,
+                        videoUrl: p.videoUrl,
+                        shopId: p.shopId,
+                        shopName: shop.name || "متجر",
+                        phone: shop.phone || "",
+                        address: shop.address || "",
+                        wilaya: shop.wilaya || "",
+                        baladiya: shop.baladiya || "",
+                        category: shop.category || "other",
+                        websiteUrl: shop.websiteUrl || ZALO_STORE_URL,
+                        sponsored: p.sponsored || false
+                    };
+                });
+
+                updateCityText();
+                updateStats();
+                renderCategories();
+                renderCategoriesModal();
+                renderCityList();
+                renderFeaturedStores();
+                renderHomeProducts();
+
+                setConnectionStatus("online");
+            } catch (e) {
+                console.error(e);
+                setConnectionStatus("offline");
+            }
+        }
+
+        function filteredShops() {
+            if (selectedWilaya === "all") return allShops;
+            return allShops.filter(s => s.wilaya === selectedWilaya);
+        }
+
+        function filteredProducts() {
+            if (selectedWilaya === "all") return mergedProducts;
+            return mergedProducts.filter(p => p.wilaya === selectedWilaya);
+        }
+
+        function updateCityText() {
+            const el = document.getElementById("selectedCityText");
+            if (!el) return;
+            el.textContent = selectedWilaya === "all" ? "كل الجزائر" : selectedWilaya;
+        }
+
+        function updateStats() {
+            const shops = filteredShops();
+            const products = filteredProducts();
+            const cats = new Set(shops.map(s => s.category).filter(Boolean));
+
+            const box = document.getElementById("statsBox");
+            if (!box) return;
+
+            box.innerHTML = `
+                <div class="text-center bg-white/10 rounded-2xl p-2">
+                    <div class="text-lg font-black">${shops.length}</div>
+                    <div class="text-[9px] text-emerald-100 font-bold">متجر</div>
+                </div>
+                <div class="text-center bg-white/10 rounded-2xl p-2">
+                    <div class="text-lg font-black">${products.length}</div>
+                    <div class="text-[9px] text-emerald-100 font-bold">منتج</div>
+                </div>
+                <div class="text-center bg-white/10 rounded-2xl p-2">
+                    <div class="text-lg font-black">${cats.size || 0}</div>
+                    <div class="text-[9px] text-emerald-100 font-bold">قسم</div>
+                </div>
+            `;
+        }
+
+        function categoryLabel(id) {
+            return CATEGORIES.find(c => c.id === id)?.label || "قسم آخر";
+        }
+
+        function renderCategories() {
+            const box = document.getElementById("categoriesGrid");
+            if (!box) return;
+
+            const visible = CATEGORIES.filter(c => c.id !== "all").slice(0, 6);
+
+            box.innerHTML = visible.map(c => `
+                <button onclick='openCategory(${JSON.stringify(c.id)})' class="bg-white p-4 rounded-3xl border border-slate-100 text-center shadow-sm card-active transition">
+                    <div class="w-12 h-12 mx-auto bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-xl mb-3">
+                        <i class="fa-solid ${c.icon}"></i>
+                    </div>
+                    <span class="font-black text-xs text-slate-800">${c.label}</span>
+                </button>
+            `).join("");
+        }
+
+        function renderCategoriesModal() {
+            const box = document.getElementById("categoriesList");
+            if (!box) return;
+
+            box.innerHTML = CATEGORIES.map(c => `
+                <button onclick='selectCategoryFromModal(${JSON.stringify(c.id)})' class="w-full bg-slate-50 hover:bg-emerald-50 p-4 rounded-2xl flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-2xl bg-white text-emerald-600 flex items-center justify-center shadow-sm">
+                            <i class="fa-solid ${c.icon}"></i>
+                        </div>
+                        <span class="font-black text-sm text-slate-800">${c.label}</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-left text-slate-300"></i>
+                </button>
+            `).join("");
+        }
+
+        function renderCityList() {
+            const box = document.getElementById("cityList");
+            if (!box) return;
+
+            const wilayas = [...new Set(allShops.map(s => s.wilaya).filter(Boolean))];
+
+            box.innerHTML = `
+                <button onclick="selectWilaya('all')" class="w-full bg-emerald-50 text-emerald-700 p-4 rounded-2xl flex items-center justify-between">
+                    <span class="font-black text-sm">كل الجزائر</span>
+                    <i class="fa-solid fa-location-dot"></i>
+                </button>
+
+                ${wilayas.map(w => `
+                    <button onclick='selectWilaya(${JSON.stringify(w)})' class="w-full bg-slate-50 p-4 rounded-2xl flex items-center justify-between">
+                        <span class="font-black text-sm">${esc(w)}</span>
+                        <i class="fa-solid fa-chevron-left text-slate-300"></i>
+                    </button>
+                `).join("")}
+            `;
+        }
+
+        function renderFeaturedStores() {
+            const box = document.getElementById("featuredStoresBox");
+            if (!box) return;
+
+            const stores = filteredShops().slice(0, 6);
+
+            if (!stores.length) {
+                box.innerHTML = `
+                    <div class="col-span-2 bg-white border border-dashed border-slate-200 rounded-3xl p-8 text-center text-slate-400 font-bold text-sm">
+                        لا توجد متاجر في هذه الولاية بعد
+                    </div>
+                `;
+                return;
+            }
+
+            box.innerHTML = stores.map(shop => `
+                <div onclick='openShop(${JSON.stringify(shop.id)})' class="bg-white rounded-3xl border border-slate-100 p-4 shadow-sm card-active transition cursor-pointer">
+                    <div class="w-20 h-20 mx-auto rounded-3xl overflow-hidden bg-slate-50 mb-3">
+                        ${imgHtml(shop.imgUrl, "fa-store")}
+                    </div>
+
+                    <div class="flex items-center justify-center gap-1 mb-1">
+                        <h4 class="font-black text-sm text-slate-900 text-center truncate">${esc(shop.name)}</h4>
+                        <i class="fa-solid fa-circle-check text-emerald-600 text-xs"></i>
+                    </div>
+
+                    <p class="text-[10px] text-slate-400 text-center font-bold">${categoryLabel(shop.category)}</p>
+
+                    <div class="flex items-center justify-center gap-1 mt-2">
+                        <span class="text-xs font-black">${esc(shop.rating || "4.7")}</span>
+                        <i class="fa-solid fa-star text-orange-400 text-xs"></i>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2 mt-3">
+                        <button onclick='event.stopPropagation(); openWebsite(${JSON.stringify(shop.websiteUrl || ZALO_STORE_URL)})' class="bg-emerald-50 text-emerald-700 h-10 rounded-2xl">
+                            <i class="fa-solid fa-globe"></i>
+                        </button>
+
+                        <button onclick='event.stopPropagation(); openMap(${JSON.stringify(shop.name)}, ${JSON.stringify(shop.address)})' class="bg-red-50 text-red-600 h-10 rounded-2xl">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </button>
+
+                        <button onclick='event.stopPropagation(); openWhatsApp(${JSON.stringify(shop.phone)}, "السلام عليكم، تواصلت معكم عبر تطبيق ZaLo Smart")' class="bg-green-50 text-green-600 h-10 rounded-2xl">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function productCard(item, index) {
+            const fav = favorites.has(item.id);
+
+            return `
+                <div class="bg-white border border-slate-100 rounded-3xl p-3 shadow-sm card-active transition">
+                    <div class="relative">
+                        <div class="aspect-square rounded-2xl overflow-hidden bg-slate-50 mb-3">
+                            ${imgHtml(item.imgUrl)}
+                        </div>
+
+                        <button onclick='toggleFavorite(${JSON.stringify(item.id)}, event)' class="absolute top-2 left-2 w-10 h-10 bg-white/90 rounded-2xl shadow flex items-center justify-center ${fav ? 'text-red-500' : 'text-emerald-600'}">
+                            <i class="${fav ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+                        </button>
+
+                        ${item.sponsored ? `
+                            <span class="absolute bottom-2 right-2 bg-orange-500 text-white px-2 py-1 rounded-full text-[9px] font-black">إعلان</span>
+                        ` : ""}
+                    </div>
+
+                    <h4 class="font-black text-[12px] text-slate-900 leading-relaxed line-clamp-2 min-h-[36px]">${esc(item.item)}</h4>
+                    <p class="text-[10px] text-slate-400 font-bold mt-1 truncate">${esc(item.shopName)}</p>
+
+                    <div class="flex items-center justify-between mt-3">
+                        <span class="text-emerald-600 font-black text-xs">متوفر</span>
+                        <span class="text-orange-600 font-black text-sm">${esc(item.price || "السعر عند الطلب")}</span>
+                    </div>
+
+                    <button onclick="openOrderModal(${index})" class="w-full mt-3 bg-emerald-600 text-white py-2.5 rounded-2xl text-xs font-black shadow-lg shadow-emerald-100">
+                        <i class="fa-solid fa-cart-shopping ml-1"></i>
+                        اطلب الآن
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderProductGrid(targetId, data) {
+            const target = document.getElementById(targetId);
+            if (!target) return;
+
+            currentProducts = data || [];
+
+            if (!currentProducts.length) {
+                target.innerHTML = `
+                    <div class="bg-white border border-dashed border-slate-200 rounded-3xl p-8 text-center text-slate-400 font-bold text-sm">
+                        لا توجد منتجات حالياً
+                    </div>
+                `;
+                return;
+            }
+
+            target.innerHTML = `
+                <div class="grid grid-cols-2 gap-3">
+                    ${currentProducts.map((item, i) => productCard(item, i)).join("")}
+                </div>
+            `;
+        }
+
+        function renderHomeProducts() {
+            const data = filteredProducts()
+                .sort((a, b) => (b.sponsored === true) - (a.sponsored === true))
+                .slice(0, 12);
+
+            renderProductGrid("featuredBox", data);
+        }
+
+        function openCategory(cat) {
+            showList();
+
+            const category = CATEGORIES.find(c => c.id === cat);
+            document.getElementById("listTitle").textContent = category ? category.label : "المنتجات";
+            document.getElementById("listSubtitle").textContent = selectedWilaya === "all" ? "كل الجزائر" : selectedWilaya;
+
+            const base = filteredProducts();
+            const data = cat === "all" ? base : base.filter(p => p.category === cat);
+
+            renderProductGrid("listBox", data);
+        }
+
+        function openStores() {
+            showList();
+
+            document.getElementById("listTitle").textContent = "جميع المتاجر";
+            document.getElementById("listSubtitle").textContent = selectedWilaya === "all" ? "كل الجزائر" : selectedWilaya;
+
+            const box = document.getElementById("listBox");
+            const stores = filteredShops();
+
+            if (!stores.length) {
+                box.innerHTML = `
+                    <div class="bg-white rounded-3xl p-8 text-center text-slate-400 font-bold">
+                        لا توجد متاجر حالياً
+                    </div>
+                `;
+                return;
+            }
+
+            box.innerHTML = `
+                <div class="space-y-3">
+                    ${stores.map(shop => `
+                        <button onclick='openShop(${JSON.stringify(shop.id)})' class="w-full bg-white p-4 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between text-right">
+                            <div class="flex items-center gap-4">
+                                <div class="w-16 h-16 rounded-2xl overflow-hidden bg-slate-50 shrink-0">
+                                    ${imgHtml(shop.imgUrl, "fa-store")}
+                                </div>
+
+                                <div>
+                                    <h4 class="font-black text-base text-slate-900">${esc(shop.name)}</h4>
+                                    <p class="text-xs text-slate-400 mt-1">
+                                        <i class="fa-solid fa-location-dot text-red-500 ml-1"></i>
+                                        ${esc(shop.wilaya || "")} ${shop.baladiya ? " - " + esc(shop.baladiya) : ""}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <i class="fa-solid fa-chevron-left text-slate-300"></i>
+                        </button>
+                    `).join("")}
+                </div>
+            `;
+        }
+
+        function openShop(shopId) {
+            const shop = allShops.find(s => s.id === shopId);
+            if (!shop) return;
+
+            const products = mergedProducts.filter(p => p.shopId === shopId);
+
+            const shopName = shop.name || "متجر";
+            const categoryName = categoryLabel(shop.category);
+            const wilayaText = shop.wilaya || "الجزائر";
+            const baladiyaText = shop.baladiya ? " - " + shop.baladiya : "";
+            const addressText = shop.address || "العنوان غير محدد";
+            const websiteUrl = shop.websiteUrl || ZALO_STORE_URL;
+            const phoneClean = normalizePhone(shop.phone);
+            const mapQuery = encodeURIComponent(`${shopName} ${addressText} ${wilayaText}`);
+            const mapUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
+
+            document.getElementById("view-home").classList.add("hidden");
+            document.getElementById("view-list").classList.add("hidden");
+            document.getElementById("view-favorites").classList.add("hidden");
+            document.getElementById("view-shop-profile").classList.remove("hidden");
+            document.getElementById("backBtn").classList.remove("hidden");
+
+            document.getElementById("shopProfileHeader").innerHTML = `
+                <div class="space-y-5">
+
+                    <div class="bg-white rounded-[38px] overflow-hidden border border-slate-100 soft-shadow">
+
+                        <div class="relative h-44 emerald-gradient p-6 text-white overflow-hidden">
+                            <div class="absolute -left-8 -bottom-10 text-white/10 text-9xl">
+                                <i class="fa-solid fa-store"></i>
+                            </div>
+
+                            <div class="relative z-10">
+                                <div class="flex items-center gap-2 mb-2">
+                                    ${shop.verified ? `
+                                        <span class="bg-white/20 text-white px-3 py-1 rounded-full text-[10px] font-black">
+                                            <i class="fa-solid fa-circle-check ml-1"></i>
+                                            موثق
+                                        </span>
+                                    ` : `
+                                        <span class="bg-white/20 text-white px-3 py-1 rounded-full text-[10px] font-black">
+                                            قيد التحقق
+                                        </span>
+                                    `}
+
+                                    <span class="bg-white/20 text-white px-3 py-1 rounded-full text-[10px] font-black">
+                                        ${esc(categoryName)}
+                                    </span>
+                                </div>
+
+                                <h2 class="text-3xl font-black leading-tight max-w-[230px]">
+                                    ${esc(shopName)}
+                                </h2>
+
+                                <p class="text-sm text-emerald-50 font-bold mt-3">
+                                    <i class="fa-solid fa-location-dot ml-1"></i>
+                                    ${esc(wilayaText)}${esc(baladiyaText)}
+                                </p>
+                            </div>
+
+                            <div class="absolute left-5 bottom-5 bg-white text-slate-900 px-3 py-2 rounded-2xl text-xs font-black shadow-lg">
+                                ${esc(shop.rating || "4.7")}
+                                <i class="fa-solid fa-star text-orange-400 mr-1"></i>
+                            </div>
+                        </div>
+
+                        <div class="p-5 -mt-10 relative z-10">
+
+                            <div class="flex items-end gap-4">
+                                <div class="w-24 h-24 bg-white rounded-[28px] p-2 
+                                
