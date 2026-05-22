@@ -1029,5 +1029,689 @@
                         <div class="p-5 -mt-10 relative z-10">
 
                             <div class="flex items-end gap-4">
-                                <div class="w-24 h-24 bg-white rounded-[28px] p-2 
-                                
+                                                                <div class="w-24 h-24 bg-white rounded-[28px] p-2 shadow-xl border border-slate-100 shrink-0">
+                                    <div class="w-full h-full rounded-2xl overflow-hidden">
+                                        ${imgHtml(shop.imgUrl, "fa-store")}
+                                    </div>
+                                </div>
+
+                                <div class="pb-2 flex-1">
+                                    <h3 class="font-black text-xl text-slate-900 leading-tight">
+                                        ${esc(shopName)}
+                                    </h3>
+                                    <p class="text-xs text-slate-400 font-bold mt-1">
+                                        ${esc(categoryName)}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-4 gap-2 mt-5">
+                                ${shop.phone ? `
+                                    <a href="tel:${esc(shop.phone)}" class="bg-blue-50 text-blue-600 py-3 rounded-2xl text-center font-black text-[10px]">
+                                        <i class="fa-solid fa-phone text-lg block mb-1"></i>
+                                        اتصال
+                                    </a>
+
+                                    <a href="https://wa.me/${phoneClean}" target="_blank" class="bg-emerald-50 text-emerald-600 py-3 rounded-2xl text-center font-black text-[10px]">
+                                        <i class="fa-brands fa-whatsapp text-lg block mb-1"></i>
+                                        واتساب
+                                    </a>
+                                ` : `
+                                    <button class="bg-slate-50 text-slate-300 py-3 rounded-2xl text-center font-black text-[10px] col-span-2">
+                                        لا يوجد رقم
+                                    </button>
+                                `}
+
+                                <a href="${mapUrl}" target="_blank" class="bg-red-50 text-red-600 py-3 rounded-2xl text-center font-black text-[10px]">
+                                    <i class="fa-solid fa-location-dot text-lg block mb-1"></i>
+                                    موقع
+                                </a>
+
+                                <a href="${esc(websiteUrl)}" target="_blank" class="bg-slate-900 text-white py-3 rounded-2xl text-center font-black text-[10px]">
+                                    <i class="fa-solid fa-globe text-lg block mb-1"></i>
+                                    الموقع
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-3">
+                        <div class="bg-white rounded-3xl p-4 border border-slate-100 text-center shadow-sm">
+                            <div class="text-xl font-black text-emerald-600">${products.length}</div>
+                            <div class="text-[10px] text-slate-400 font-black mt-1">منتج</div>
+                        </div>
+
+                        <div class="bg-white rounded-3xl p-4 border border-slate-100 text-center shadow-sm">
+                            <div class="text-xl font-black text-orange-500">${esc(shop.rating || "4.7")}</div>
+                            <div class="text-[10px] text-slate-400 font-black mt-1">تقييم</div>
+                        </div>
+
+                        <div class="bg-white rounded-3xl p-4 border border-slate-100 text-center shadow-sm">
+                            <div class="text-xl font-black text-emerald-600">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </div>
+                            <div class="text-[10px] text-slate-400 font-black mt-1">موثوق</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-[30px] p-5 border border-slate-100 shadow-sm">
+                        <h4 class="font-black text-slate-900 text-base mb-3">
+                            نبذة عن المتجر
+                        </h4>
+
+                        <p class="text-sm text-slate-500 font-bold leading-relaxed">
+                            ${esc(shopName)} متجر مسجل في منصة ZaLo Smart، يقدم خدماته ومنتجاته للزبائن داخل ${esc(wilayaText)}${esc(baladiyaText)}.
+                            يمكنك التواصل مباشرة مع المتجر عبر الهاتف أو واتساب، أو زيارة موقعه الإلكتروني.
+                        </p>
+                    </div>
+
+                    <div class="bg-white rounded-[30px] p-5 border border-slate-100 shadow-sm">
+                        <h4 class="font-black text-slate-900 text-base mb-4">
+                            معلومات المتجر
+                        </h4>
+
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between bg-slate-50 rounded-2xl p-3">
+                                <span class="text-xs text-slate-400 font-black">العنوان</span>
+                                <span class="text-xs text-slate-700 font-black text-left max-w-[220px]">
+                                    ${esc(addressText)}
+                                </span>
+                            </div>
+
+                            <div class="flex items-center justify-between bg-slate-50 rounded-2xl p-3">
+                                <span class="text-xs text-slate-400 font-black">الولاية</span>
+                                <span class="text-xs text-slate-700 font-black">${esc(wilayaText)}</span>
+                            </div>
+
+                            <div class="flex items-center justify-between bg-slate-50 rounded-2xl p-3">
+                                <span class="text-xs text-slate-400 font-black">البلدية</span>
+                                <span class="text-xs text-slate-700 font-black">${esc(shop.baladiya || "غير محددة")}</span>
+                            </div>
+
+                            <div class="flex items-center justify-between bg-slate-50 rounded-2xl p-3">
+                                <span class="text-xs text-slate-400 font-black">الهاتف</span>
+                                <span class="text-xs text-slate-700 font-black">${esc(shop.phone || "غير متوفر")}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-[30px] p-5 border border-slate-100 shadow-sm">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="font-black text-slate-900 text-base">طرق الدفع</h4>
+                            <span class="text-[10px] bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full font-black">
+                                حسب المتجر
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="bg-slate-50 rounded-2xl p-3 flex items-center gap-2">
+                                <div class="w-9 h-9 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center">
+                                    <i class="fa-solid fa-hand-holding-dollar"></i>
+                                </div>
+                                <span class="text-[11px] font-black text-slate-700">الدفع عند الاستلام</span>
+                            </div>
+
+                            <div class="bg-slate-50 rounded-2xl p-3 flex items-center gap-2">
+                                <div class="w-9 h-9 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
+                                    <i class="fa-solid fa-building-columns"></i>
+                                </div>
+                                <span class="text-[11px] font-black text-slate-700">CCP</span>
+                            </div>
+
+                            <div class="bg-slate-50 rounded-2xl p-3 flex items-center gap-2">
+                                <div class="w-9 h-9 bg-yellow-50 text-yellow-600 rounded-xl flex items-center justify-center">
+                                    <i class="fa-solid fa-mobile-screen"></i>
+                                </div>
+                                <span class="text-[11px] font-black text-slate-700">BaridiMob</span>
+                            </div>
+
+                            <div class="bg-slate-50 rounded-2xl p-3 flex items-center gap-2">
+                                <div class="w-9 h-9 bg-orange-50 text-orange-500 rounded-xl flex items-center justify-center">
+                                    <i class="fa-solid fa-credit-card"></i>
+                                </div>
+                                <span class="text-[11px] font-black text-slate-700">البطاقة الذهبية</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById("shopProdCount").textContent = products.length + " منتج";
+            renderProductGrid("shopProductsGrid", products);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        function normalizeSearchText(text) {
+            return String(text || "")
+                .toLowerCase()
+                .replace(/[أإآ]/g, "ا")
+                .replace(/ى/g, "ي")
+                .replace(/ة/g, "ه")
+                .replace(/[^\u0600-\u06FFa-zA-Z0-9\s]/g, " ")
+                .replace(/\s+/g, " ")
+                .trim();
+        }
+
+        function ensureLiveSearchBox() {
+            return document.getElementById("liveSearchBox");
+        }
+
+        function searchMatches(text, terms) {
+            const haystack = normalizeSearchText(text);
+            return terms.every(t => haystack.includes(t));
+        }
+
+        function renderLiveSearchResults(productResults, storeResults, queryText) {
+            const box = ensureLiveSearchBox();
+            if (!box) return;
+
+            currentProducts = productResults;
+
+            const hasProducts = productResults.length > 0;
+            const hasStores = storeResults.length > 0;
+
+            if (!hasProducts && !hasStores) {
+                box.innerHTML = `
+                    <div class="bg-white border border-dashed border-slate-200 rounded-3xl p-6 text-center shadow-sm">
+                        <div class="w-14 h-14 mx-auto rounded-2xl bg-slate-50 text-slate-300 flex items-center justify-center text-2xl mb-3">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </div>
+                        <h4 class="font-black text-slate-800 text-sm">لا توجد نتائج</h4>
+                        <p class="text-xs text-slate-400 mt-1">جرّب كلمة أخرى مثل: هاتف، ساعة، مطعم، قطع غيار</p>
+                    </div>
+                `;
+                box.classList.remove("hidden");
+                return;
+            }
+
+            const storesHtml = storeResults.slice(0, 5).map(shop => `
+                <button onclick='openShop(${JSON.stringify(shop.id)})' class="w-full bg-white p-4 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between text-right card-active">
+                    <div class="flex items-center gap-3">
+                        <div class="w-14 h-14 rounded-2xl bg-slate-50 overflow-hidden shrink-0">
+                            ${imgHtml(shop.imgUrl, "fa-store")}
+                        </div>
+                        <div>
+                            <h4 class="font-black text-sm text-slate-900">${esc(shop.name)}</h4>
+                            <p class="text-[11px] text-slate-400 font-bold mt-1">${esc(categoryLabel(shop.category))}</p>
+                            <p class="text-[10px] text-emerald-600 font-black mt-1">
+                                <i class="fa-solid fa-location-dot ml-1 text-red-500"></i>
+                                ${esc(shop.wilaya || "")}${shop.baladiya ? " - " + esc(shop.baladiya) : ""}
+                            </p>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-left text-slate-300"></i>
+                </button>
+            `).join("");
+
+            const productsHtml = productResults.slice(0, 8).map((p, i) => `
+                <div class="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-16 h-16 rounded-2xl bg-slate-50 overflow-hidden shrink-0">
+                            ${imgHtml(p.imgUrl, "fa-box")}
+                        </div>
+                        <div class="min-w-0">
+                            <h4 class="font-black text-sm text-slate-900 truncate">${esc(p.item)}</h4>
+                            <p class="text-[11px] text-slate-400 font-bold mt-1 truncate">${esc(p.shopName)}</p>
+                            <p class="text-emerald-600 font-black text-xs mt-1">${esc(p.price || "السعر عند الطلب")}</p>
+                        </div>
+                    </div>
+
+                    <button onclick="openOrderModal(${i})" class="bg-emerald-600 text-white px-3 py-2 rounded-2xl text-[10px] font-black shrink-0">
+                        اطلب
+                    </button>
+                </div>
+            `).join("");
+
+            box.innerHTML = `
+                <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-black text-slate-900 text-sm">
+                            نتائج البحث عن: <span class="text-emerald-600">${esc(queryText)}</span>
+                        </h3>
+                        <button onclick="clearSearchResults()" class="text-xs text-slate-400 font-black">إغلاق</button>
+                    </div>
+
+                    ${hasStores ? `
+                        <div class="mb-4">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="w-1 h-4 bg-emerald-600 rounded-full"></span>
+                                <h4 class="font-black text-xs text-slate-700">متاجر مطابقة</h4>
+                            </div>
+                            <div class="space-y-2">${storesHtml}</div>
+                        </div>
+                    ` : ""}
+
+                    ${hasProducts ? `
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="w-1 h-4 bg-orange-500 rounded-full"></span>
+                                <h4 class="font-black text-xs text-slate-700">منتجات مطابقة</h4>
+                            </div>
+                            <div class="space-y-2">${productsHtml}</div>
+                        </div>
+                    ` : ""}
+                </div>
+            `;
+
+            box.classList.remove("hidden");
+        }
+
+        function clearSearchResults() {
+            const input = document.getElementById("searchInput");
+            const box = document.getElementById("liveSearchBox");
+
+            if (input) input.value = "";
+            if (box) {
+                box.innerHTML = "";
+                box.classList.add("hidden");
+            }
+
+            renderHomeProducts();
+        }
+
+        function searchApp(value) {
+            const raw = String(value || "").trim();
+            const q = normalizeSearchText(raw);
+            const box = ensureLiveSearchBox();
+
+            if (!q) {
+                if (box) {
+                    box.innerHTML = "";
+                    box.classList.add("hidden");
+                }
+                renderHomeProducts();
+                return;
+            }
+
+            const terms = q.split(" ").filter(Boolean);
+
+            const productResults = filteredProducts().filter(p => {
+                return searchMatches(`
+                    ${p.item}
+                    ${p.shopName}
+                    ${p.category}
+                    ${p.price}
+                    ${p.wilaya}
+                    ${p.baladiya}
+                    ${p.address}
+                `, terms);
+            });
+
+            const storeResults = filteredShops().filter(s => {
+                return searchMatches(`
+                    ${s.name}
+                    ${s.category}
+                    ${s.phone}
+                    ${s.address}
+                    ${s.wilaya}
+                    ${s.baladiya}
+                `, terms);
+            });
+
+            renderLiveSearchResults(productResults, storeResults, raw);
+        }
+        
+                 function paymentMethodsHtml() {
+            return `
+                <div class="mt-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <h4 class="font-black text-sm text-slate-900">طرق الدفع المتاحة</h4>
+                        <span class="text-[10px] bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full font-black">
+                            حسب اتفاق المتجر
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="bg-slate-50 border border-slate-100 rounded-2xl p-3 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="paymentMethod" value="الدفع عند الاستلام" checked class="accent-emerald-600">
+                            <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                                <i class="fa-solid fa-hand-holding-dollar"></i>
+                            </div>
+                            <span class="text-[11px] font-black text-slate-700">الدفع عند الاستلام</span>
+                        </label>
+
+                        <label class="bg-slate-50 border border-slate-100 rounded-2xl p-3 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="paymentMethod" value="CCP" class="accent-emerald-600">
+                            <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                                <i class="fa-solid fa-building-columns"></i>
+                            </div>
+                            <span class="text-[11px] font-black text-slate-700">CCP</span>
+                        </label>
+
+                        <label class="bg-slate-50 border border-slate-100 rounded-2xl p-3 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="paymentMethod" value="BaridiMob" class="accent-emerald-600">
+                            <div class="w-9 h-9 rounded-xl bg-yellow-50 text-yellow-600 flex items-center justify-center">
+                                <i class="fa-solid fa-mobile-screen"></i>
+                            </div>
+                            <span class="text-[11px] font-black text-slate-700">BaridiMob</span>
+                        </label>
+
+                        <label class="bg-slate-50 border border-slate-100 rounded-2xl p-3 flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="paymentMethod" value="البطاقة الذهبية" class="accent-emerald-600">
+                            <div class="w-9 h-9 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center">
+                                <i class="fa-solid fa-credit-card"></i>
+                            </div>
+                            <span class="text-[11px] font-black text-slate-700">البطاقة الذهبية</span>
+                        </label>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openOrderModal(index) {
+            const item = currentProducts[index];
+            if (!item) return;
+
+            currentOrderItem = item;
+            orderQty = 1;
+
+            const productName = item.item || "منتج";
+            const shopName = item.shopName || "متجر";
+            const price = item.price || "السعر عند الطلب";
+            const productImage = item.imgUrl || "";
+            const locationText = `${item.wilaya || ""}${item.baladiya ? " - " + item.baladiya : ""}`;
+
+            document.getElementById("orderContent").innerHTML = `
+                <div class="relative overflow-hidden rounded-[30px] bg-slate-50 mb-5">
+                    <div class="w-full h-64">
+                        ${imgHtml(productImage)}
+                    </div>
+
+                    <div class="absolute top-3 right-3 bg-emerald-600 text-white px-3 py-1.5 rounded-full text-[10px] font-black shadow-lg">
+                        متوفر
+                    </div>
+
+                    ${item.videoUrl ? `
+                        <a href="${esc(item.videoUrl)}" target="_blank" class="absolute top-3 left-3 bg-white/90 text-red-500 w-11 h-11 rounded-2xl flex items-center justify-center shadow-lg">
+                            <i class="fa-solid fa-play"></i>
+                        </a>
+                    ` : ""}
+                </div>
+
+                <div class="space-y-3">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex-1">
+                            <h4 class="font-black text-2xl text-slate-900 leading-relaxed">${esc(productName)}</h4>
+                            <p class="text-xs text-slate-400 font-bold mt-1">
+                                <i class="fa-solid fa-store ml-1 text-emerald-600"></i>
+                                ${esc(shopName)}
+                            </p>
+                        </div>
+
+                        <div class="text-left">
+                            <p class="text-[10px] text-slate-400 font-black">السعر</p>
+                            <p class="text-emerald-600 font-black text-2xl">${esc(price)}</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="bg-slate-50 rounded-2xl p-3">
+                            <p class="text-[10px] text-slate-400 font-black mb-1">الموقع</p>
+                            <p class="text-xs text-slate-700 font-black">
+                                <i class="fa-solid fa-location-dot text-red-500 ml-1"></i>
+                                ${esc(locationText || "غير محدد")}
+                            </p>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-2xl p-3">
+                            <p class="text-[10px] text-slate-400 font-black mb-1">التقييم</p>
+                            <p class="text-xs text-slate-700 font-black">
+                                4.7
+                                <i class="fa-solid fa-star text-orange-400 mr-1"></i>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="bg-emerald-50/70 border border-emerald-100 rounded-2xl p-4">
+                        <p class="text-[10px] text-emerald-700 font-black mb-1">الوصف</p>
+                        <p class="text-xs text-slate-600 font-bold leading-relaxed">
+                            هذا المنتج متوفر لدى المتجر. يمكنك تأكيد السعر والكمية والتوصيل مباشرة عبر واتساب.
+                        </p>
+                    </div>
+                </div>
+
+                ${paymentMethodsHtml()}
+
+                <div class="mt-6">
+                    <label class="block text-xs font-black text-slate-500 mb-3">الكمية المطلوبة</label>
+
+                    <div class="flex items-center justify-center gap-4">
+                        <button onclick="changeQty(-1)" class="w-14 h-14 bg-slate-100 rounded-2xl text-2xl font-black text-slate-700">-</button>
+                        <span id="qtyText" class="text-3xl font-black text-slate-900">1</span>
+                        <button onclick="changeQty(1)" class="w-14 h-14 bg-emerald-600 text-white rounded-2xl text-2xl font-black shadow-lg shadow-emerald-100">+</button>
+                    </div>
+                </div>
+
+                <label class="mt-5 bg-slate-50 rounded-2xl p-4 flex items-center gap-3 cursor-pointer">
+                    <input id="deliveryWanted" type="checkbox" class="accent-emerald-600 w-5 h-5">
+                    <span class="text-sm font-black text-slate-700">أريد التوصيل إذا كان متوفراً</span>
+                </label>
+
+                <div class="mt-5">
+                    <label class="block text-xs font-black text-slate-500 mb-2">ملاحظات الطلب</label>
+                    <textarea id="orderNotes" class="w-full bg-slate-50 border border-slate-100 rounded-2xl p-4 text-sm outline-none font-bold" rows="3" placeholder="مثال: أريد التوصيل إلى وسط المدينة..."></textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 mt-6">
+                    <button onclick="sendWhatsAppOrder()" class="bg-emerald-600 text-white py-4 rounded-2xl font-black text-xs shadow-lg shadow-emerald-100">
+                        <i class="fa-brands fa-whatsapp ml-1"></i>
+                        اطلب عبر واتساب
+                    </button>
+
+                    <button onclick="openOrderWebsite()" class="bg-slate-900 text-white py-4 rounded-2xl font-black text-xs">
+                        <i class="fa-solid fa-globe ml-1"></i>
+                        المتجر الإلكتروني
+                    </button>
+                </div>
+
+                <button onclick="openShopFromOrder()" class="w-full mt-3 bg-slate-100 text-slate-700 py-4 rounded-2xl font-black text-xs">
+                    <i class="fa-solid fa-store ml-1 text-emerald-600"></i>
+                    زيارة صفحة المتجر داخل ZaLo
+                </button>
+            `;
+
+            document.getElementById("orderModal").classList.add("open");
+        }
+
+        function changeQty(n) {
+            orderQty += n;
+            if (orderQty < 1) orderQty = 1;
+
+            const el = document.getElementById("qtyText");
+            if (el) el.textContent = orderQty;
+        }
+
+        function getSelectedPaymentMethod() {
+            const checked = document.querySelector('input[name="paymentMethod"]:checked');
+            return checked ? checked.value : "الدفع عند الاستلام";
+        }
+
+        function sendWhatsAppOrder() {
+            if (!currentOrderItem) return;
+
+            const notes = document.getElementById("orderNotes")?.value || "";
+            const deliveryWanted = document.getElementById("deliveryWanted")?.checked;
+            const paymentMethod = getSelectedPaymentMethod();
+
+            const msg =
+`السلام عليكم
+أريد طلب منتج من تطبيق ZaLo Smart:
+
+المنتج: ${currentOrderItem.item}
+المحل: ${currentOrderItem.shopName}
+السعر: ${currentOrderItem.price || "السعر عند الطلب"}
+الكمية: ${orderQty}
+طريقة الدفع المفضلة: ${paymentMethod}
+التوصيل: ${deliveryWanted ? "نعم، أريد التوصيل إذا كان متوفراً" : "لا / حسب الاتفاق"}
+الولاية: ${currentOrderItem.wilaya || ""}
+البلدية: ${currentOrderItem.baladiya || ""}
+الملاحظات: ${notes || "لا توجد"}
+
+رابط متجر ZaLo:
+${currentOrderItem.websiteUrl || ZALO_STORE_URL}`;
+
+            const phone = normalizePhone(currentOrderItem.phone);
+
+            const url = phone
+                ? `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`
+                : `https://wa.me/?text=${encodeURIComponent(msg)}`;
+
+            window.open(url, "_blank");
+        }
+
+        function openOrderWebsite() {
+            if (!currentOrderItem) {
+                openZaloStore();
+                return;
+            }
+
+            window.open(currentOrderItem.websiteUrl || ZALO_STORE_URL, "_blank");
+        }
+
+        function openShopFromOrder() {
+            if (!currentOrderItem || !currentOrderItem.shopId) return;
+
+            closeOrderModal();
+            openShop(currentOrderItem.shopId);
+        }
+
+        function toggleFavorite(id, event) {
+            if (event) event.stopPropagation();
+
+            if (favorites.has(id)) {
+                favorites.delete(id);
+                showToast("تمت الإزالة من المفضلة");
+            } else {
+                favorites.add(id);
+                showToast("تمت الإضافة إلى المفضلة");
+            }
+
+            localStorage.setItem("zalo_favorites", JSON.stringify([...favorites]));
+            renderHomeProducts();
+        }
+
+        function openFavorites() {
+            document.getElementById("view-home").classList.add("hidden");
+            document.getElementById("view-list").classList.add("hidden");
+            document.getElementById("view-shop-profile").classList.add("hidden");
+            document.getElementById("view-favorites").classList.remove("hidden");
+            document.getElementById("backBtn").classList.remove("hidden");
+
+            const data = mergedProducts.filter(p => favorites.has(p.id));
+            renderProductGrid("favoritesBox", data);
+        }
+
+        function selectWilaya(w) {
+            selectedWilaya = w;
+            localStorage.setItem("zalo_selected_wilaya", w);
+            updateCityText();
+            updateStats();
+            renderFeaturedStores();
+            renderHomeProducts();
+            closeCityModal();
+            goHome();
+        }
+
+        function showList() {
+            document.getElementById("view-home").classList.add("hidden");
+            document.getElementById("view-shop-profile").classList.add("hidden");
+            document.getElementById("view-favorites").classList.add("hidden");
+            document.getElementById("view-list").classList.remove("hidden");
+            document.getElementById("backBtn").classList.remove("hidden");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        function goHome() {
+            document.getElementById("view-list").classList.add("hidden");
+            document.getElementById("view-shop-profile").classList.add("hidden");
+            document.getElementById("view-favorites").classList.add("hidden");
+            document.getElementById("view-home").classList.remove("hidden");
+            document.getElementById("backBtn").classList.add("hidden");
+            renderHomeProducts();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        function openDrawer() {
+            document.getElementById("drawerBackdrop").classList.add("open");
+            document.getElementById("drawer").classList.add("open");
+        }
+
+        function closeDrawer() {
+            document.getElementById("drawerBackdrop").classList.remove("open");
+            document.getElementById("drawer").classList.remove("open");
+        }
+
+        function openCategoriesModal() {
+            document.getElementById("categoriesModal").classList.add("open");
+        }
+
+        function closeCategoriesModal() {
+            document.getElementById("categoriesModal").classList.remove("open");
+        }
+
+        function selectCategoryFromModal(cat) {
+            closeCategoriesModal();
+            openCategory(cat);
+        }
+
+        function openCityModal() {
+            renderCityList();
+            document.getElementById("cityModal").classList.add("open");
+        }
+
+        function closeCityModal() {
+            document.getElementById("cityModal").classList.remove("open");
+        }
+
+        function closeOrderModal() {
+            document.getElementById("orderModal").classList.remove("open");
+        }
+
+        function openZaloStore() {
+            window.open(ZALO_STORE_URL, "_blank");
+        }
+
+        function openWebsite(url) {
+            window.open(url || ZALO_STORE_URL, "_blank");
+        }
+
+        function openWhatsApp(phone, message) {
+            const p = normalizePhone(phone);
+            const url = p
+                ? `https://wa.me/${p}?text=${encodeURIComponent(message)}`
+                : `https://wa.me/?text=${encodeURIComponent(message)}`;
+
+            window.open(url, "_blank");
+        }
+
+        function openMap(name, address) {
+            const q = encodeURIComponent(`${name || ""} ${address || ""}`);
+            window.open(`https://www.google.com/maps/search/?api=1&query=${q}`, "_blank");
+        }
+
+        function focusSearch() {
+            const input = document.getElementById("searchInput");
+            if (input) {
+                goHome();
+                setTimeout(() => {
+                    input.focus();
+                    input.scrollIntoView({ behavior: "smooth", block: "center" });
+                }, 250);
+            }
+        }
+
+        function showToast(message) {
+            const el = document.getElementById("toast");
+            el.textContent = message;
+            el.classList.remove("hidden");
+
+            clearTimeout(window.__toastTimer);
+            window.__toastTimer = setTimeout(() => {
+                el.classList.add("hidden");
+            }, 2500);
+        }
+
+        window.addEventListener("DOMContentLoaded", loadData);
+    </script>
+</body>
+</html>                       
