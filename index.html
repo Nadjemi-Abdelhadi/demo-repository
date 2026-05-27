@@ -8,172 +8,39 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-        body {
-            font-family: 'Tajawal', sans-serif;
-            background: #f5f9f7;
-            color: #111B14;
-            overflow-x: hidden;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Tajawal', sans-serif; background: #f5f9f7; color: #111B14; overflow-x: hidden; }
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-track { background: #e2ece6; }
         ::-webkit-scrollbar-thumb { background: #00a857; border-radius: 20px; }
-        .app-container {
-            max-width: 450px;
-            margin: 0 auto;
-            background: #fff;
-            min-height: 100vh;
-            box-shadow: 0 0 40px rgba(0,0,0,0.05);
-            position: relative;
-            overflow-x: hidden;
-        }
+        .app-container { max-width: 450px; margin: 0 auto; background: #fff; min-height: 100vh; box-shadow: 0 0 40px rgba(0,0,0,0.05); position: relative; overflow-x: hidden; }
         .view { display: none; animation: fadeIn 0.25s ease; }
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-        .glass-header {
-            background: rgba(255,255,255,0.96);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(0,168,87,0.12);
-            padding: 12px 16px;
-            position: sticky;
-            top: 0;
-            z-index: 20;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            max-width: 450px;
-            margin: 0 auto;
-            background: rgba(255,255,255,0.94);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid #e9f0ec;
-            border-radius: 24px 24px 0 0;
-            padding: 8px 16px 14px;
-            display: flex;
-            justify-content: space-around;
-            z-index: 30;
-        }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            background: none;
-            border: none;
-            font-family: 'Tajawal', sans-serif;
-            font-weight: 800;
-            font-size: 10px;
-            color: #8ba396;
-            transition: all 0.2s;
-        }
+        .glass-header { background: rgba(255,255,255,0.96); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,168,87,0.12); padding: 12px 16px; position: sticky; top: 0; z-index: 20; display: flex; justify-content: space-between; align-items: center; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; max-width: 450px; margin: 0 auto; background: rgba(255,255,255,0.94); backdrop-filter: blur(20px); border-top: 1px solid #e9f0ec; border-radius: 24px 24px 0 0; padding: 8px 16px 14px; display: flex; justify-content: space-around; z-index: 30; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: none; font-family: 'Tajawal', sans-serif; font-weight: 800; font-size: 10px; color: #8ba396; transition: all 0.2s; }
         .nav-item i { font-size: 22px; }
         .nav-item.active { color: #006233; transform: translateY(-2px); }
-        .card {
-            background: white;
-            border-radius: 24px;
-            padding: 14px;
-            box-shadow: 0 8px 24px rgba(0, 98, 51, 0.06);
-            border: 1px solid #eff3f0;
-        }
-        .gradient-bg {
-            background: linear-gradient(135deg, #006233, #00a857);
-            color: white;
-        }
-        .ai-fab {
-            position: fixed;
-            bottom: 85px;
-            right: 20px;
-            width: 56px;
-            height: 56px;
-            background: linear-gradient(135deg, #00a857, #006233);
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 10px 25px rgba(0,98,51,0.4);
-            z-index: 40;
-            cursor: pointer;
-            border: 2px solid rgba(255,255,255,0.3);
-            transition: all 0.2s;
-        }
+        .card { background: white; border-radius: 24px; padding: 14px; box-shadow: 0 8px 24px rgba(0, 98, 51, 0.06); border: 1px solid #eff3f0; }
+        .gradient-bg { background: linear-gradient(135deg, #006233, #00a857); color: white; }
+        .ai-fab { position: fixed; bottom: 85px; right: 20px; width: 56px; height: 56px; background: linear-gradient(135deg, #00a857, #006233); border-radius: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,98,51,0.4); z-index: 40; cursor: pointer; border: 2px solid rgba(255,255,255,0.3); transition: all 0.2s; }
         .ai-fab i { font-size: 26px; color: white; }
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-        .btn-primary {
-            background: #006233;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 8px 16px;
-            font-weight: 800;
-            cursor: pointer;
-            transition: 0.2s;
-        }
+        .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .btn-primary { background: #006233; color: white; border: none; border-radius: 50px; padding: 8px 16px; font-weight: 800; cursor: pointer; transition: 0.2s; }
         .btn-primary:active { transform: scale(0.96); }
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin: 16px 0 12px;
-            font-weight: 800;
-            font-size: 18px;
-        }
-        .toast {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #1f2e26;
-            color: white;
-            padding: 10px 18px;
-            border-radius: 50px;
-            font-weight: 800;
-            z-index: 150;
-            opacity: 0;
-            transition: 0.2s;
-            pointer-events: none;
-        }
+        .section-header { display: flex; justify-content: space-between; align-items: baseline; margin: 16px 0 12px; font-weight: 800; font-size: 18px; }
+        .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #1f2e26; color: white; padding: 10px 18px; border-radius: 50px; font-weight: 800; z-index: 150; opacity: 0; transition: 0.2s; pointer-events: none; }
         input, button, textarea { font-family: inherit; }
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(5px);
-            z-index: 100;
-            display: none;
-            align-items: flex-end;
-            justify-content: center;
-        }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 100; display: none; align-items: flex-end; justify-content: center; }
         .modal-overlay.open { display: flex; }
-        .bottom-sheet {
-            background: white;
-            width: 100%;
-            max-width: 450px;
-            border-radius: 28px 28px 0 0;
-            padding: 20px;
-            max-height: 85vh;
-            overflow-y: auto;
-        }
+        .bottom-sheet { background: white; width: 100%; max-width: 450px; border-radius: 28px 28px 0 0; padding: 20px; max-height: 85vh; overflow-y: auto; }
         .store-card { margin-bottom: 12px; cursor: pointer; }
         .flex-between { display: flex; justify-content: space-between; align-items: center; }
     </style>
 </head>
 <body>
 <div class="app-container" id="appRoot">
-    <!-- شاشة تسجيل الدخول -->
     <div id="loginView" class="view active">
         <div style="padding: 40px 24px; text-align: center;">
             <div style="width: 80px; height: 80px; background: linear-gradient(135deg,#006233,#00a857); border-radius: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
@@ -190,7 +57,6 @@
         </div>
     </div>
 
-    <!-- التطبيق الرئيسي بعد الدخول -->
     <div id="mainAppView" class="view" style="padding-bottom: 80px;">
         <div class="glass-header">
             <div><i class="fa-solid fa-bars-staggered" style="font-size: 22px; color:#006233;" onclick="openDrawer()"></i></div>
@@ -209,7 +75,6 @@
 <div class="ai-fab" id="aiFab"><i class="fa-regular fa-message"></i></div>
 <div id="toastMsg" class="toast"></div>
 
-<!-- نافذة التسجيل -->
 <div id="registerModal" class="modal-overlay">
     <div class="bottom-sheet">
         <h3>إنشاء حساب جديد</h3>
@@ -222,31 +87,25 @@
 </div>
 
 <script type="module">
-    // Firebase SDKs
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
     import { getFirestore, collection, doc, setDoc, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-    // 🔑 إعدادات Firebase الصحيحة (من مشروعك)
+    // ✅ الإعدادات الصحيحة لمشروع zalo-smart (بعد تفعيل Email/Password)
     const firebaseConfig = {
-        apiKey: "AIzaSyB3JT-1wD_nj3FvCtzewrL-dlyim0tsryc",
-        authDomain: "za-local-mart.firebaseapp.com",
-        projectId: "za-local-mart",
-        storageBucket: "za-local-mart.firebasestorage.app",
-        messagingSenderId: "438326151788",
-        appId: "1:438326151788:web:2d253737c9ceeebf9f3649",
-        measurementId: "G-ECBYRX8WH"
+        apiKey: "AIzaSyBJ3T-jWd_nj3FYCtzewRl-d1yimGtsryc",
+        authDomain: "zalo-smart.firebaseapp.com",
+        projectId: "zalo-smart",
+        storageBucket: "zalo-smart.firebasestorage.app",
+        messagingSenderId: "430326151788",
+        appId: "1:430326151788:web:2d253737c90eeebf9f3649",
+        measurementId: "G-ECBYRX8WKH"
     };
 
-    // تهيئة Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    window.db = db;
-    window.auth = auth;
-
-    // دالة مساعدة للإشعارات
     window.showToast = (msg) => {
         let t = document.getElementById('toastMsg');
         t.innerText = msg;
@@ -254,7 +113,6 @@
         setTimeout(() => t.style.opacity = '0', 2000);
     };
 
-    // دوال المصادقة
     window.signIn = async (email, password) => {
         try {
             const userCred = await signInWithEmailAndPassword(auth, email, password);
@@ -266,13 +124,7 @@
     window.signUp = async (email, password, name) => {
         try {
             const userCred = await createUserWithEmailAndPassword(auth, email, password);
-            await setDoc(doc(db, "users", userCred.user.uid), {
-                name: name,
-                email: email,
-                role: "customer",
-                loyaltyPoints: 0,
-                createdAt: new Date()
-            });
+            await setDoc(doc(db, "users", userCred.user.uid), { name, email, role: "customer", loyaltyPoints: 0, createdAt: new Date() });
             showToast("تم إنشاء الحساب بنجاح");
             return userCred.user;
         } catch(e) { showToast("خطأ: "+e.message); return null; }
@@ -285,130 +137,56 @@
         document.getElementById('mainAppView').classList.remove('active');
     };
 
-    // بيانات تجريبية أولية لـ Firestore
     async function seedInitialData() {
         const storesRef = collection(db, "stores");
         const snapshot = await getDocs(storesRef);
         if(snapshot.empty) {
-            const sampleStores = [
-                { name: "بوحنك تكنولوجي", category: "electronics", logo: "📱", rating: 4.9, verified: true, location: "الجزائر العاصمة", followers: 1240, whatsapp: "+213550000001" },
-                { name: "مطعم الواحة", category: "food", logo: "🍽️", rating: 4.7, verified: true, location: "وهران", followers: 892, whatsapp: "+213550000002" },
-                { name: "قطع غيار سطيف", category: "auto", logo: "🔧", rating: 4.8, verified: true, location: "سطيف", followers: 560, whatsapp: "+213550000003" }
-            ];
-            for(let s of sampleStores) {
-                await addDoc(collection(db, "stores"), s);
-            }
-            const sampleProducts = [
-                { name: "هاتف ذكي 256GB", price: 42000, emoji: "📱", stock: 5, sold: 120, storeId: null, badge: "trending" },
-                { name: "سماعة لاسلكية Pro", price: 8900, emoji: "🎧", stock: 12, sold: 44, storeId: null, badge: "sale" },
-                { name: "وجبة عائلية كسكسي", price: 2500, emoji: "🍲", stock: 20, sold: 89, storeId: null, badge: "popular" }
-            ];
-            for(let p of sampleProducts) {
-                await addDoc(collection(db, "products"), p);
-            }
+            await addDoc(collection(db, "stores"), { name: "بوحنك تكنولوجي", category: "electronics", logo: "📱", rating: 4.9, verified: true, location: "الجزائر العاصمة", followers: 1240, whatsapp: "+213550000001" });
+            await addDoc(collection(db, "stores"), { name: "مطعم الواحة", category: "food", logo: "🍽️", rating: 4.7, verified: true, location: "وهران", followers: 892, whatsapp: "+213550000002" });
+            await addDoc(collection(db, "products"), { name: "هاتف ذكي 256GB", price: 42000, emoji: "📱", stock: 5, sold: 120, storeId: null, badge: "trending" });
+            await addDoc(collection(db, "products"), { name: "سماعة لاسلكية Pro", price: 8900, emoji: "🎧", stock: 12, sold: 44, storeId: null, badge: "sale" });
         }
     }
 
-    // متغيرات عامة
-    let currentUserObj = null;
-    let allStores = [];
-    let allProducts = [];
-
-    async function loadStores() {
-        const snapshot = await getDocs(collection(db, "stores"));
-        allStores = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    }
-    async function loadProducts() {
-        const snapshot = await getDocs(collection(db, "products"));
-        allProducts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    }
-
-    // دوال عرض الصفحات
-    async function renderHome(container) {
-        const trending = allProducts.filter(p => p.sold > 50).slice(0,4);
-        const featuredStores = allStores.slice(0,3);
-        container.innerHTML = `
-            <div style="display:flex; flex-direction:column; gap:16px;">
-                <div class="card gradient-bg" style="padding:20px;">
-                    <p style="font-size:12px;">🇩🇿 منصة رقمية ذكية</p>
-                    <h3 style="font-size:22px;">تسوق من أقرب متجر</h3>
-                    <p>دفع عند الاستلام • توصيل لكل الولايات</p>
-                    <div style="display:flex; gap:12px; margin-top:12px;">
-                        <div><span style="font-weight:900;">${allStores.length}</span><br>متجر</div>
-                        <div><span style="font-weight:900;">${allProducts.length}</span><br>منتج</div>
-                        <div><span style="font-weight:900;">12</span><br>توصيل</div>
-                    </div>
-                </div>
-                <div class="card"><div style="display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-microphone"></i><input type="text" id="homeSearch" placeholder="ابحث..." style="flex:1; border:none; outline:none;"></div></div>
-                <div><div class="section-header"><span>✨ توصيات الذكاء الاصطناعي</span></div><div class="product-grid" id="aiRecoGrid"></div></div>
-                <div><div class="section-header"><span>🔥 الأكثر مبيعاً</span></div><div class="product-grid" id="trendingGrid"></div></div>
-                <div><div class="section-header"><span>🛍️ متاجر موثوقة</span></div><div id="featuredStoresHome"></div></div>
-            </div>
-        `;
-        const aiGrid = document.getElementById('aiRecoGrid');
-        const trendingGrid = document.getElementById('trendingGrid');
-        const featuredDiv = document.getElementById('featuredStoresHome');
-        if(aiGrid) aiGrid.innerHTML = allProducts.slice(0,3).map(p => productCard(p)).join('');
-        if(trendingGrid) trendingGrid.innerHTML = trending.map(p => productCard(p)).join('');
-        if(featuredDiv) featuredDiv.innerHTML = featuredStores.map(s => `<div class="card store-card" onclick="viewStore('${s.id}')"><div class="flex-between"><div><i class="fa-solid fa-store"></i> <strong>${s.name}</strong> ⭐${s.rating}<br>${s.location}</div></div></div>`).join('');
-        document.getElementById('homeSearch')?.addEventListener('input', (e) => searchGlobal(e.target.value));
-    }
-
-    async function renderStores(container) {
-        container.innerHTML = `<div id="storesList"></div>`;
-        const storesDiv = document.getElementById('storesList');
-        storesDiv.innerHTML = allStores.map(s => `<div class="card store-card" onclick="viewStore('${s.id}')"><div class="flex-between"><div><i class="fa-solid fa-store"></i> <strong>${s.name}</strong> ${s.verified?'✅':''}<br>${s.location}</div><div>⭐ ${s.rating}</div></div></div>`).join('');
-    }
-
-    async function renderExplore(container) {
-        container.innerHTML = `<div class="card"><input type="text" id="exploreSearch" placeholder="بحث منتجات..." style="width:100%; padding:10px; border-radius:20px;"></div><div id="productsExploreGrid" class="product-grid" style="margin-top:16px;"></div>`;
-        const productsDiv = document.getElementById('productsExploreGrid');
-        productsDiv.innerHTML = allProducts.map(p => productCard(p)).join('');
-        document.getElementById('exploreSearch')?.addEventListener('input', (e) => {
-            const term = e.target.value.toLowerCase();
-            const filtered = allProducts.filter(p => p.name.includes(term));
-            productsDiv.innerHTML = filtered.map(p => productCard(p)).join('');
-        });
-    }
-
-    function renderProfile(container) {
-        const userData = currentUserObj;
-        container.innerHTML = `
-            <div class="card" style="text-align:center;"><i class="fa-regular fa-circle-user" style="font-size:48px;"></i><h3>${userData?.email || 'عميل'}</h3><p>نقاط الولاء: 50</p><button class="btn-primary" onclick="logout()">تسجيل خروج</button></div>
-            <div class="card" style="margin-top:12px;"><button class="btn-primary" id="viewWishlistBtn" style="width:100%;">❤️ المفضلة</button><button class="btn-primary" id="orderHistoryBtn" style="width:100%; margin-top:8px;">📦 طلباتي</button></div>
-        `;
-        document.getElementById('viewWishlistBtn')?.addEventListener('click', () => showToast("سيتم إضافة المفضلة قريباً"));
-        document.getElementById('orderHistoryBtn')?.addEventListener('click', () => showToast("لا توجد طلبات بعد"));
-    }
+    let allStores = [], allProducts = [];
+    async function loadStores() { const snap = await getDocs(collection(db, "stores")); allStores = snap.docs.map(d => ({ id: d.id, ...d.data() })); }
+    async function loadProducts() { const snap = await getDocs(collection(db, "products")); allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() })); }
 
     function productCard(p) {
         let store = allStores.find(s => s.id === p.storeId);
         return `<div class="card" style="padding:12px;"><div style="font-size:32px;">${p.emoji || '📦'}</div><div style="font-weight:900;">${p.name}</div><div>${p.price.toLocaleString()} دج</div><div style="font-size:12px; color:#006233;">${store?.name || ''}</div><button class="btn-primary" style="margin-top:8px; width:100%;" onclick="addToCart('${p.id}')">اطلب الآن</button></div>`;
     }
 
+    async function renderHome(container) {
+        const featuredStores = allStores.slice(0,3);
+        container.innerHTML = `<div style="display:flex; flex-direction:column; gap:16px;"><div class="card gradient-bg" style="padding:20px;"><p>🇩🇿 منصة رقمية ذكية</p><h3>تسوق من أقرب متجر</h3><p>دفع عند الاستلام • توصيل لكل الولايات</p><div style="display:flex; gap:12px; margin-top:12px;"><div><span>${allStores.length}</span><br>متجر</div><div><span>${allProducts.length}</span><br>منتج</div></div></div><div><div class="section-header"><span>🛍️ متاجر موثوقة</span></div><div id="featuredStoresHome"></div></div></div>`;
+        document.getElementById('featuredStoresHome').innerHTML = featuredStores.map(s => `<div class="card store-card" onclick="viewStore('${s.id}')"><div class="flex-between"><div><i class="fa-solid fa-store"></i> <strong>${s.name}</strong> ⭐${s.rating}<br>${s.location}</div></div></div>`).join('');
+    }
+    async function renderStores(container) {
+        container.innerHTML = `<div id="storesList"></div>`;
+        document.getElementById('storesList').innerHTML = allStores.map(s => `<div class="card store-card" onclick="viewStore('${s.id}')"><div class="flex-between"><div><i class="fa-solid fa-store"></i> <strong>${s.name}</strong> ${s.verified?'✅':''}<br>${s.location}</div><div>⭐ ${s.rating}</div></div></div>`).join('');
+    }
+    async function renderExplore(container) {
+        container.innerHTML = `<div class="card"><input type="text" id="exploreSearch" placeholder="بحث منتجات..." style="width:100%; padding:10px; border-radius:20px;"></div><div id="productsExploreGrid" class="product-grid" style="margin-top:16px;"></div>`;
+        document.getElementById('productsExploreGrid').innerHTML = allProducts.map(p => productCard(p)).join('');
+        document.getElementById('exploreSearch')?.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            document.getElementById('productsExploreGrid').innerHTML = allProducts.filter(p => p.name.includes(term)).map(p => productCard(p)).join('');
+        });
+    }
+    function renderProfile(container) {
+        container.innerHTML = `<div class="card" style="text-align:center;"><i class="fa-regular fa-circle-user" style="font-size:48px;"></i><h3>${auth.currentUser?.email}</h3><button class="btn-primary" onclick="logout()">تسجيل خروج</button></div>`;
+    }
+
     window.viewStore = async (storeId) => {
         const store = allStores.find(s => s.id === storeId);
         if(!store) return;
         const storeProducts = allProducts.filter(p => p.storeId === storeId);
-        document.getElementById('tabContent').innerHTML = `
-            <button onclick="renderCurrentTab('market')" style="margin-bottom:12px;"><i class="fa-solid fa-arrow-right"></i> رجوع</button>
-            <div class="card"><h2>${store.name} ${store.verified?'✔️':''}</h2><p>📍 ${store.location} | ⭐ ${store.rating}</p><a href="https://wa.me/${store.whatsapp}" target="_blank"><button class="btn-primary"><i class="fa-brands fa-whatsapp"></i> واتساب المتجر</button></a></div>
-            <div class="product-grid" style="margin-top:12px;">${storeProducts.map(p => productCard(p)).join('')}</div>
-        `;
+        document.getElementById('tabContent').innerHTML = `<button onclick="renderCurrentTab('market')" style="margin-bottom:12px;"><i class="fa-solid fa-arrow-right"></i> رجوع</button><div class="card"><h2>${store.name}</h2><p>📍 ${store.location} | ⭐ ${store.rating}</p><a href="https://wa.me/${store.whatsapp}" target="_blank"><button class="btn-primary"><i class="fa-brands fa-whatsapp"></i> واتساب المتجر</button></a></div><div class="product-grid">${storeProducts.map(p => productCard(p)).join('')}</div>`;
     };
-
-    window.addToCart = (productId) => {
-        const prod = allProducts.find(p => p.id === productId);
-        showToast(`تم إضافة ${prod?.name} إلى السلة (تجريبي)`);
-    };
-
-    function searchGlobal(term) {
-        if(!term) return;
-        const results = allProducts.filter(p => p.name.includes(term));
-        showToast(`تم العثور على ${results.length} منتج`);
-    }
-window.openDrawer = () => { showToast("القائمة قيد التطوير"); };
-    window.closeRegisterModal = () => { document.getElementById('registerModal').classList.remove('open'); };
+    window.addToCart = (productId) => { const prod = allProducts.find(p => p.id === productId); showToast(`تم إضافة ${prod?.name} إلى السلة (تجريبي)`); };
+    window.openDrawer = () => showToast("القائمة قيد التطوير");
+    window.closeRegisterModal = () => document.getElementById('registerModal').classList.remove('open');
 
     let activeTab = 'home';
     function renderCurrentTab(tab) {
@@ -418,39 +196,17 @@ window.openDrawer = () => { showToast("القائمة قيد التطوير"); }
         if(tab === 'market') renderStores(container);
         if(tab === 'explore') renderExplore(container);
         if(tab === 'profile') renderProfile(container);
-        document.querySelectorAll('.nav-item').forEach(btn => {
-            btn.classList.remove('active');
-            if(btn.getAttribute('data-tab') === tab) btn.classList.add('active');
-        });
+        document.querySelectorAll('.nav-item').forEach(btn => { btn.classList.remove('active'); if(btn.getAttribute('data-tab') === tab) btn.classList.add('active'); });
     }
     window.renderCurrentTab = renderCurrentTab;
-    window.goHome = () => renderCurrentTab('home');
 
-    // مستمعي الأزرار
-    document.getElementById('doLoginBtn').onclick = async () => {
-        const email = document.getElementById('loginEmail').value;
-        const pass = document.getElementById('loginPass').value;
-        if(email && pass) await signIn(email, pass);
-        else showToast("أدخل البريد وكلمة المرور");
-    };
-    document.getElementById('showRegisterBtn').onclick = () => {
-        document.getElementById('registerModal').classList.add('open');
-    };
-    document.getElementById('doRegisterBtn').onclick = async () => {
-        const name = document.getElementById('regName').value;
-        const email = document.getElementById('regEmail').value;
-        const pass = document.getElementById('regPass').value;
-        if(name && email && pass) {
-            await signUp(email, pass, name);
-            document.getElementById('registerModal').classList.remove('open');
-        } else showToast("املأ جميع الحقول");
-    };
+    document.getElementById('doLoginBtn').onclick = async () => { const email = document.getElementById('loginEmail').value; const pass = document.getElementById('loginPass').value; if(email && pass) await signIn(email, pass); else showToast("أدخل البريد وكلمة المرور"); };
+    document.getElementById('showRegisterBtn').onclick = () => document.getElementById('registerModal').classList.add('open');
+    document.getElementById('doRegisterBtn').onclick = async () => { const name = document.getElementById('regName').value, email = document.getElementById('regEmail').value, pass = document.getElementById('regPass').value; if(name && email && pass) { await signUp(email, pass, name); document.getElementById('registerModal').classList.remove('open'); } else showToast("املأ جميع الحقول"); };
     document.getElementById('aiFab').onclick = () => showToast("🤖 مساعد زالو: اكتشف أفضل العروض اليوم!");
 
-    // مراقب حالة تسجيل الدخول
     onAuthStateChanged(auth, async (user) => {
         if(user) {
-            currentUserObj = user;
             document.getElementById('loginView').classList.remove('active');
             document.getElementById('mainAppView').classList.add('active');
             await seedInitialData();
@@ -458,14 +214,10 @@ window.openDrawer = () => { showToast("القائمة قيد التطوير"); }
             await loadProducts();
             renderCurrentTab('home');
         } else {
-            currentUserObj = null;
             document.getElementById('loginView').classList.add('active');
             document.getElementById('mainAppView').classList.remove('active');
         }
     });
-
-    console.log("✅ تطبيق ZaLo يعمل مع Firebase بنجاح");
 </script>
 </body>
 </html>
- 
