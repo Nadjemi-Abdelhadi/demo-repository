@@ -1,768 +1,471 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
-<title>السوق الذكي - DZ Market | منصة تسوق جزائرية</title>
-<meta name="theme-color" content="#006233">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-<style>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  body {
-    font-family: 'Tajawal', sans-serif;
-    background: #f4f8f5;
-    color: #0f2b1f;
-    padding-bottom: 80px;
-  }
-
-  /* المتغيرات */
-  :root {
-    --primary: #006233;
-    --primary-light: #00a857;
-    --primary-soft: #e0f2e9;
-    --gray-light: #8ba396;
-    --gray-bg: #f2f6f3;
-    --shadow: 0 8px 24px rgba(0, 98, 51, 0.08);
-    --shadow-lg: 0 16px 40px rgba(0, 98, 51, 0.12);
-    --radius: 20px;
-    --radius-sm: 14px;
-  }
-
-  /* شريط التمرير */
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: #e4ece7; }
-  ::-webkit-scrollbar-thumb { background: var(--primary-light); border-radius: 10px; }
-
-  /* الأزرار والعناصر التفاعلية */
-  button, .clickable {
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  button:active { transform: scale(0.96); }
-
-  /* الرأس الثابت */
-  header {
-    position: sticky;
-    top: 0;
-    background: rgba(255, 255, 255, 0.94);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(0, 98, 51, 0.08);
-    z-index: 50;
-  }
-  .header-container {
-    max-width: 500px;
-    margin: 0 auto;
-    padding: 12px 18px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .logo {
-    background: linear-gradient(135deg, var(--primary), var(--primary-light));
-    width: 44px;
-    height: 44px;
-    border-radius: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    color: white;
-    box-shadow: 0 4px 12px rgba(0,98,51,0.3);
-  }
-  .site-title h1 {
-    font-size: 18px;
-    font-weight: 900;
-    color: var(--primary);
-  }
-  .site-title p {
-    font-size: 9px;
-    font-weight: 800;
-    color: var(--gray-light);
-    letter-spacing: 1px;
-  }
-  .badge-online {
-    background: var(--primary-soft);
-    padding: 5px 12px;
-    border-radius: 40px;
-    font-size: 10px;
-    font-weight: 800;
-    color: var(--primary);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .dot {
-    width: 8px;
-    height: 8px;
-    background: #10b981;
-    border-radius: 50%;
-    animation: pulse 1.5s infinite;
-  }
-  @keyframes pulse { 0% { opacity: 0.4; } 100% { opacity: 1; } }
-
-  /* شريط الإجراءات السريعة */
-  .quick-actions {
-    max-width: 500px;
-    margin: 12px auto 0;
-    padding: 0 16px;
-  }
-  .quick-inner {
-    background: white;
-    border-radius: var(--radius-sm);
-    padding: 10px 12px;
-    display: flex;
-    justify-content: space-between;
-    box-shadow: var(--shadow);
-    border: 1px solid rgba(0,98,51,0.05);
-  }
-  .q-btn {
-    background: none;
-    border: none;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    font-family: 'Tajawal', sans-serif;
-    font-weight: 800;
-    font-size: 10px;
-    color: var(--gray-light);
-    transition: all 0.2s;
-    padding: 5px 8px;
-    border-radius: 14px;
-  }
-  .q-btn i { font-size: 18px; }
-  .q-btn:hover, .q-btn.active { color: var(--primary); background: var(--primary-soft); }
-  .q-btn:active { transform: scale(0.94); }
-
-  /* المحتوى الرئيسي */
-  main {
-    max-width: 500px;
-    margin: 16px auto;
-    padding: 0 16px;
-  }
-
-  /* شريط البحث */
-  .search-box {
-    background: white;
-    border-radius: var(--radius);
-    padding: 14px 20px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border: 1.5px solid #e9f0ec;
-    transition: all 0.2s;
-  }
-  .search-box:focus-within {
-    border-color: var(--primary-light);
-    box-shadow: 0 0 0 3px rgba(0,168,87,0.15);
-  }
-  .search-box i { color: var(--gray-light); font-size: 18px; }
-  .search-box input {
-    flex: 1;
-    border: none;
-    outline: none;
-    background: transparent;
-    font-family: 'Tajawal', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    text-align: right;
-  }
-
-  /* بطاقة المدينة */
-  .city-card {
-    background: white;
-    border-radius: var(--radius);
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border: 1px solid #e9f0ec;
-    box-shadow: var(--shadow);
-    cursor: pointer;
-  }
-  .city-icon {
-    background: var(--primary-soft);
-    width: 44px;
-    height: 44px;
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--primary);
-    font-size: 20px;
-  }
-  .city-label { font-size: 11px; font-weight: 800; color: var(--gray-light); }
-  .city-name { font-size: 16px; font-weight: 900; color: var(--primary); }
-
-  /* البانر الرئيسي */
-  .hero {
-    background: linear-gradient(135deg, var(--primary), #008a47);
-    border-radius: 28px;
-    padding: 28px 24px;
-    color: white;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero h2 { font-size: 22px; font-weight: 900; margin-bottom: 6px; }
-  .hero p { font-size: 12px; opacity: 0.85; margin-bottom: 20px; }
-  .hero button {
-    background: white;
-    border: none;
-    padding: 10px 26px;
-    border-radius: 50px;
-    color: var(--primary);
-    font-weight: 900;
-    font-size: 13px;
-    font-family: 'Tajawal', sans-serif;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-  }
-  .stats {
-    display: flex;
-    gap: 16px;
-    margin-top: 24px;
-    justify-content: space-between;
-  }
-  .stat-item { background: rgba(255,255,255,0.15); border-radius: 16px; padding: 10px; text-align: center; flex: 1; }
-  .stat-num { font-size: 22px; font-weight: 900; }
-  .stat-label { font-size: 10px; font-weight: 700; }
-
-  /* الأقسام */
-  .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin: 20px 0 14px;
-  }
-  .section-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 900;
-    font-size: 18px;
-  }
-  .section-title span { width: 6px; height: 22px; background: var(--primary); border-radius: 4px; }
-  .section-link {
-    background: var(--primary-soft);
-    padding: 5px 14px;
-    border-radius: 50px;
-    font-size: 11px;
-    font-weight: 800;
-    color: var(--primary);
-    border: none;
-  }
-
-  /* شبكة الفئات */
-  .cat-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-  }
-  .cat-card {
-    background: white;
-    border-radius: 18px;
-    padding: 16px 8px;
-    text-align: center;
-    box-shadow: var(--shadow);
-    transition: 0.2s;
-  }
-  .cat-card:active { transform: scale(0.96); }
-  .cat-icon {
-    width: 54px;
-    height: 54px;
-    background: var(--primary-soft);
-    border-radius: 18px;
-    margin: 0 auto 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    color: var(--primary);
-  }
-
-  /* بطاقات المتاجر */
-  .store-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-  .store-card {
-    background: white;
-    border-radius: var(--radius);
-    padding: 14px;
-    box-shadow: var(--shadow);
-    border: 1px solid transparent;
-    transition: 0.2s;
-  }
-  .store-card:active { transform: scale(0.97); }
-  .store-thumb {
-    width: 48px;
-    height: 48px;
-    background: var(--primary-soft);
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-  }
-  .store-name { font-weight: 900; font-size: 14px; margin-top: 8px; }
-  .store-location { font-size: 10px; color: var(--gray-light); display: flex; gap: 4px; align-items: center; margin-top: 4px; }
-  .fav-btn {
-    background: var(--primary-soft);
-    border: none;
-    width: 32px;
-    height: 32px;
-    border-radius: 12px;
-    color: var(--gray-light);
-    font-size: 14px;
-  }
-  .fav-btn.active { color: #e11d48; background: #ffe4e6; }
-
-  /* منتجات أفقية */
-  .products-horizontal {
-    display: flex;
-    gap: 12px;
-    overflow-x: auto;
-    padding-bottom: 8px;
-  }
-  .product-card {
-    background: white;
-    border-radius: 20px;
-    width: 160px;
-    flex-shrink: 0;
-    overflow: hidden;
-    box-shadow: var(--shadow);
-  }
-  .product-img {
-    height: 110px;
-    background: var(--primary-soft);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 46px;
-    position: relative;
-  }
-  .product-badge {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: #dcfce7;
-    color: #15803d;
-    border-radius: 40px;
-    font-size: 9px;
-    padding: 2px 8px;
-    font-weight: 800;
-  }
-  .product-info { padding: 12px; }
-  .product-name { font-weight: 900; font-size: 13px; }
-  .product-price { font-weight: 900; color: var(--primary); margin-top: 6px; font-size: 14px; }
-
-  /* التنقل السفلي */
-  .bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(255,255,255,0.96);
-    backdrop-filter: blur(16px);
-    border-top: 1px solid #e2ece6;
-    border-radius: 24px 24px 0 0;
-    padding: 8px 16px 12px;
-    z-index: 60;
-  }
-  .nav-items {
-    max-width: 500px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-around;
-  }
-  .nav-btn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    background: none;
-    border: none;
-    font-family: 'Tajawal', sans-serif;
-    font-size: 10px;
-    font-weight: 800;
-    color: var(--gray-light);
-  }
-  .nav-btn i { font-size: 20px; }
-  .nav-btn.active { color: var(--primary); }
-
-  /* النوافذ المنبثقة */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.5);
-    backdrop-filter: blur(4px);
-    z-index: 100;
-    display: none;
-    align-items: flex-end;
-    justify-content: center;
-    padding: 16px;
-  }
-  .modal-overlay.open { display: flex; }
-  .bottom-sheet {
-    background: white;
-    width: 100%;
-    max-width: 500px;
-    border-radius: 28px;
-    padding: 20px;
-    max-height: 85vh;
-    overflow-y: auto;
-  }
-  .sheet-handle {
-    width: 44px;
-    height: 5px;
-    background: #ddd;
-    border-radius: 5px;
-    margin: 0 auto 16px;
-  }
-  .form-group {
-    margin-bottom: 16px;
-  }
-  .form-group input, .form-group select, .form-group textarea {
-    width: 100%;
-    padding: 12px;
-    border-radius: 14px;
-    border: 1.5px solid #e2e8e4;
-    font-family: 'Tajawal', sans-serif;
-    font-size: 14px;
-    background: white;
-  }
-  .form-group label {
-    font-weight: 800;
-    display: block;
-    margin-bottom: 6px;
-  }
-  .btn-primary {
-    background: var(--primary);
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 50px;
-    font-weight: 900;
-    width: 100%;
-    font-family: 'Tajawal', sans-serif;
-  }
-  .toast {
-    position: fixed;
-    bottom: 100px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #1f2e26;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 50px;
-    font-size: 13px;
-    font-weight: 800;
-    z-index: 200;
-    opacity: 0;
-    transition: 0.2s;
-    pointer-events: none;
-  }
-  .toast.show { opacity: 1; bottom: 110px; }
-  .view { display: none; animation: fade 0.25s ease; }
-  .view.active { display: block; }
-  @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; } }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>ZaLo Marketplace الذكي | الجزائر</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: #f5f9f7;
+            color: #111B14;
+            overflow-x: hidden;
+        }
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-track { background: #e2ece6; }
+        ::-webkit-scrollbar-thumb { background: #00a857; border-radius: 20px; }
+        .app-container {
+            max-width: 450px;
+            margin: 0 auto;
+            background: #fff;
+            min-height: 100vh;
+            box-shadow: 0 0 40px rgba(0,0,0,0.05);
+            position: relative;
+            overflow-x: hidden;
+        }
+        .view { display: none; animation: fadeIn 0.25s ease; }
+        .view.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .glass-header {
+            background: rgba(255,255,255,0.96);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0,168,87,0.12);
+            padding: 12px 16px;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 450px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.94);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid #e9f0ec;
+            border-radius: 24px 24px 0 0;
+            padding: 8px 16px 14px;
+            display: flex;
+            justify-content: space-around;
+            z-index: 30;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            background: none;
+            border: none;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 800;
+            font-size: 10px;
+            color: #8ba396;
+            transition: all 0.2s;
+        }
+        .nav-item i { font-size: 22px; }
+        .nav-item.active { color: #006233; transform: translateY(-2px); }
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 14px;
+            box-shadow: 0 8px 24px rgba(0, 98, 51, 0.06);
+            border: 1px solid #eff3f0;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #006233, #00a857);
+            color: white;
+        }
+        .ai-fab {
+            position: fixed;
+            bottom: 85px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #00a857, #006233);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(0,98,51,0.4);
+            z-index: 40;
+            cursor: pointer;
+            border: 2px solid rgba(255,255,255,0.3);
+            transition: all 0.2s;
+        }
+        .ai-fab i { font-size: 26px; color: white; }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .btn-primary {
+            background: #006233;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 8px 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-primary:active { transform: scale(0.96); }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin: 16px 0 12px;
+            font-weight: 800;
+            font-size: 18px;
+        }
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f2e26;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 50px;
+            font-weight: 800;
+            z-index: 150;
+            opacity: 0;
+            transition: 0.2s;
+            pointer-events: none;
+        }
+        input, button, textarea { font-family: inherit; }
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        .modal-overlay.open { display: flex; }
+        .bottom-sheet {
+            background: white;
+            width: 100%;
+            max-width: 450px;
+            border-radius: 28px 28px 0 0;
+            padding: 20px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .store-card { margin-bottom: 12px; cursor: pointer; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+    </style>
 </head>
 <body>
-
-<header>
-  <div class="header-container">
-    <div class="logo"><i class="fa-solid fa-shop"></i></div>
-    <div class="site-title">
-      <h1>السوق الذكي</h1>
-      <p>🇩🇿 DZ Market | دفع عند الاستلام</p>
-    </div>
-    <div class="badge-online"><span class="dot"></span> متصل</div>
-  </div>
-</header>
-
-<div class="quick-actions">
-  <div class="quick-inner">
-    <button class="q-btn" onclick="openDrawer()"><i class="fa-solid fa-bars"></i><span>القائمة</span></button>
-    <button class="q-btn" onclick="openCategoriesModal()"><i class="fa-solid fa-grid-2"></i><span>الفئات</span></button>
-    <button class="q-btn" onclick="focusSearch()"><i class="fa-solid fa-magnifying-glass"></i><span>بحث</span></button>
-    <button class="q-btn" id="favNavBtn" onclick="switchView('favorites')"><i class="fa-regular fa-heart"></i><span>المفضلة</span></button>
-    <button class="q-btn" onclick="openSellerModal()"><i class="fa-solid fa-store"></i><span>تاجر جديد</span></button>
-  </div>
-</div>
-
-<main>
-  <!-- الرئيسية -->
-  <div id="homeView" class="view active">
-    <div style="display: flex; flex-direction: column; gap: 16px;">
-      <div class="search-box">
-        <i class="fa-solid fa-search"></i>
-        <input type="text" id="searchInput" placeholder="ابحث عن منتج، محل أو خدمة..." oninput="liveSearch(this.value)">
-      </div>
-      <div id="liveResults"></div>
-
-      <div class="city-card" onclick="openCityModal()">
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <div class="city-icon"><i class="fa-solid fa-location-dot"></i></div>
-          <div><div class="city-label">الموقع الحالي</div><div class="city-name" id="cityLabel">كل الجزائر</div></div>
+<div class="app-container" id="appRoot">
+    <!-- شاشة تسجيل الدخول -->
+    <div id="loginView" class="view active">
+        <div style="padding: 40px 24px; text-align: center;">
+            <div style="width: 80px; height: 80px; background: linear-gradient(135deg,#006233,#00a857); border-radius: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                <i class="fa-solid fa-shop" style="font-size: 42px; color: white;"></i>
+            </div>
+            <h1 style="font-size: 28px; font-weight: 900;">ZaLo الذكي</h1>
+            <p style="color: #006233; font-weight: 800; margin: 8px 0;">🇩🇿 منصة جزائرية متكاملة</p>
+            <div class="card" style="margin: 32px 0; text-align: right;">
+                <input type="email" id="loginEmail" placeholder="البريد الإلكتروني" style="width:100%; padding: 12px; border:1px solid #e0e8e4; border-radius: 16px; margin-bottom: 12px;">
+                <input type="password" id="loginPass" placeholder="كلمة المرور" style="width:100%; padding: 12px; border:1px solid #e0e8e4; border-radius: 16px; margin-bottom: 20px;">
+                <button id="doLoginBtn" class="btn-primary" style="width:100%; padding: 12px;">دخول</button>
+                <button id="showRegisterBtn" style="background:none; border:none; color:#006233; margin-top: 16px; font-weight: 800;">إنشاء حساب جديد</button>
+            </div>
         </div>
-        <i class="fa-solid fa-chevron-left" style="color: var(--gray-light);"></i>
-      </div>
-
-      <div class="hero">
-        <h2>تسوق من متاجر محلية موثوقة</h2>
-        <p>✓ توصيل لكل الولايات ✓ دفع عند الاستلام</p>
-        <button onclick="switchView('stores')">اكتشف المتاجر</button>
-        <div class="stats">
-          <div class="stat-item"><div class="stat-num" id="statStores">0</div><div class="stat-label">متجر</div></div>
-          <div class="stat-item"><div class="stat-num" id="statProducts">0</div><div class="stat-label">منتج</div></div>
-          <div class="stat-item"><div class="stat-num" id="statCats">0</div><div class="stat-label">قسم</div></div>
-        </div>
-      </div>
-
-      <div><div class="section-header"><div class="section-title"><span></span>الأقسام</div><button class="section-link" onclick="openCategoriesModal()">عرض الكل</button></div>
-        <div class="cat-grid" id="catGrid"></div>
-      </div>
-
-      <div><div class="section-header"><div class="section-title"><span></span>متاجر موصى بها</div><button class="section-link" onclick="switchView('stores')">المزيد</button></div>
-        <div class="store-grid" id="featuredStores"></div>
-      </div>
-
-      <div><div class="section-header"><div class="section-title"><span style="background:#ff8c00;"></span>أحدث المنتجات</div><button class="section-link" onclick="switchView('products')">جميع المنتجات</button></div>
-        <div class="products-horizontal" id="prodScroll"></div>
-      </div>
     </div>
-  </div>
 
-  <!-- قائمة المتاجر -->
-  <div id="storesView" class="view">
-    <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 16px;"><button onclick="goHome()" style="background: var(--primary-soft); border: none; width: 38px; height: 38px; border-radius: 14px;"><i class="fa-solid fa-arrow-right"></i></button><h2>جميع المتاجر</h2></div>
-    <div id="storesList"></div>
-  </div>
-
-  <!-- قائمة المنتجات -->
-  <div id="productsView" class="view">
-    <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 16px;"><button onclick="goHome()" style="background: var(--primary-soft); border: none; width: 38px; height: 38px; border-radius: 14px;"><i class="fa-solid fa-arrow-right"></i></button><h2>جميع المنتجات</h2></div>
-    <div class="store-grid" id="allProductsGrid"></div>
-  </div>
-
-  <!-- صفحة المتجر (تفاصيل) -->
-  <div id="shopView" class="view"><div id="shopDetail"></div></div>
-
-  <!-- المفضلة -->
-  <div id="favoritesView" class="view"><div class="section-header"><div class="section-title"><span></span>المتاجر المفضلة</div></div><div id="favStoresList"></div></div>
-</main>
-
-<nav class="bottom-nav">
-  <div class="nav-items">
-    <button class="nav-btn active" onclick="goHome()"><i class="fa-solid fa-house"></i><span>الرئيسية</span></button>
-    <button class="nav-btn" onclick="openCategoriesModal()"><i class="fa-solid fa-grid-2"></i><span>الأقسام</span></button>
-    <button class="nav-btn" onclick="switchView('stores')"><i class="fa-solid fa-store"></i><span>المتاجر</span></button>
-    <button class="nav-btn" onclick="switchView('favorites')"><i class="fa-regular fa-heart"></i><span>المفضلة</span></button>
-    <button class="nav-btn" onclick="openDrawer()"><i class="fa-solid fa-user"></i><span>الحساب</span></button>
-  </div>
-</nav>
-
-<!-- قائمة جانبية (دروير) -->
-<div class="modal-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
-<div class="bottom-sheet" style="position: fixed; bottom: 0; right: -100%; width: 80%; max-width: 340px; height: 100vh; border-radius: 28px 0 0 28px; transition: 0.3s; background: white; z-index: 110; display: flex; flex-direction: column;" id="drawer">
-  <div style="padding: 28px 20px; background: linear-gradient(135deg, var(--primary), #008a47); color: white; border-radius: 0 0 24px 24px;">
-    <div style="display: flex; justify-content: space-between;"><div class="logo">🇩🇿</div><button onclick="closeDrawer()" style="background: rgba(255,255,255,0.2); border: none; width: 38px; height: 38px; border-radius: 14px; color: white;"><i class="fa-solid fa-xmark"></i></button></div>
-    <h2 style="margin-top: 20px;">مرحباً بك</h2>
-    <p style="font-size: 12px;">منصة جزائرية 100% — دفع عند الاستلام</p>
-  </div>
-  <div style="padding: 20px; overflow-y: auto;">
-    <button class="drawer-item" onclick="switchView('stores'); closeDrawer()" style="display: flex; justify-content: space-between; width: 100%; padding: 14px; background: #f5f8f6; border: none; border-radius: 18px; margin-bottom: 12px;"><span>جميع المتاجر</span> <i class="fa-solid fa-store"></i></button>
-    <button class="drawer-item" onclick="openSellerModal(); closeDrawer()" style="display: flex; justify-content: space-between; width: 100%; padding: 14px; background: #f5f8f6; border: none; border-radius: 18px; margin-bottom: 12px;"><span>📦 فتح متجر جديد (تاجر)</span> <i class="fa-solid fa-user-plus"></i></button>
-    <button class="drawer-item" onclick="showToast('سيتم تفعيل التوصيل قريباً لجميع الولايات')" style="display: flex; justify-content: space-between; width: 100%; padding: 14px; background: #f5f8f6; border: none; border-radius: 18px; margin-bottom: 12px;"><span>خدمة التوصيل</span> <i class="fa-solid fa-truck"></i></button>
-    <div class="section-header"><span>تواصل معنا</span></div>
-    <div style="display: flex; gap: 12px;"><a href="#" style="background:#1877f2; color:white; padding: 12px; border-radius: 18px; flex:1; text-align: center;"><i class="fa-brands fa-facebook"></i></a><a href="#" style="background:#25d366; color:white; padding: 12px; border-radius: 18px; flex:1; text-align: center;"><i class="fa-brands fa-whatsapp"></i></a></div>
-  </div>
+    <!-- التطبيق الرئيسي بعد الدخول -->
+    <div id="mainAppView" class="view" style="padding-bottom: 80px;">
+        <div class="glass-header">
+            <div><i class="fa-solid fa-bars-staggered" style="font-size: 22px; color:#006233;" onclick="openDrawer()"></i></div>
+            <div><h2 style="font-size: 18px;">ZaLo سوق ذكي</h2></div>
+            <div><i class="fa-regular fa-bell" style="font-size: 20px; color:#006233;"></i></div>
+        </div>
+        <div id="tabContent" style="padding: 16px;"></div>
+        <div class="bottom-nav">
+            <button class="nav-item" data-tab="home"><i class="fa-solid fa-house"></i><span>الرئيسية</span></button>
+            <button class="nav-item" data-tab="market"><i class="fa-solid fa-store"></i><span>المتاجر</span></button>
+            <button class="nav-item" data-tab="explore"><i class="fa-solid fa-magnifying-glass"></i><span>استكشاف</span></button>
+            <button class="nav-item" data-tab="profile"><i class="fa-regular fa-user"></i><span>حسابي</span></button>
+        </div>
+    </div>
 </div>
-
-<!-- نافذة تسجيل التاجر -->
-<div id="sellerModal" class="modal-overlay"><div class="bottom-sheet"><div class="sheet-handle"></div><h3 style="margin-bottom: 16px;">فتح متجر جديد</h3>
-  <form id="sellerForm">
-    <div class="form-group"><label>الاسم الكامل / اسم المحل *</label><input type="text" id="shopName" required></div>
-    <div class="form-group"><label>البريد الإلكتروني *</label><input type="email" id="shopEmail" required placeholder="example@domain.com"></div>
-    <div class="form-group"><label>رقم الهاتف *</label><input type="tel" id="shopPhone" required></div>
-    <div class="form-group"><label>الولاية</label><select id="shopCity"><option>الجزائر العاصمة</option><option>وهران</option><option>قسنطينة</option></select></div>
-    <div class="form-group"><label>كلمة المرور *</label><input type="password" id="shopPass" required></div>
-    <div class="form-group"><label>تأكيد كلمة المرور *</label><input type="password" id="shopPassConfirm" required></div>
-    <div class="form-group"><label>وصف السلع أو الخدمات<
-       <button type="submit" class="btn-primary">إرسال طلب الانضمام</button>
-  </form>
-  <p style="font-size: 11px; margin-top: 12px; color: gray;">✓ سيتم مراجعة الطلب والتواصل معك خلال 24 ساعة</p>
-</div></div>
-
-<!-- نافذة اختيار الولاية -->
-<div id="cityModal" class="modal-overlay"><div class="bottom-sheet"><div class="sheet-handle"></div><h3>اختر ولايتك</h3><div id="cityList"></div></div></div>
-
+<div class="ai-fab" id="aiFab"><i class="fa-regular fa-message"></i></div>
 <div id="toastMsg" class="toast"></div>
 
-<script>
-  // ------------------------------------------------
-  // بيانات تجريبية (متاجر ومنتجات وفئات)
-  // ------------------------------------------------
-  const CATEGORIES = [
-    { id: 'cars', label: 'قطع غيار سيارات', icon: 'fa-car' },
-    { id: 'food', label: 'مطاعم ومقاهي', icon: 'fa-utensils' },
-    { id: 'tech', label: 'هواتف وإلكترونيات', icon: 'fa-mobile-alt' },
-    { id: 'maint', label: 'خدمات وصيانة', icon: 'fa-wrench' }
-  ];
-  const STORES = [
-    { id: 1, name: 'بوحنك طاهر', cat: 'cars', location: 'المنيعة', rating: 4.8, verified: true, products: [1,3] },
-    { id: 2, name: 'مطعم الواحة', cat: 'food', location: 'عين صالح', rating: 4.5, verified: false, products: [] },
-    { id: 3, name: 'تقني تك', cat: 'tech', location: 'الجزائر', rating: 4.9, verified: true, products: [2,4] },
-    { id: 4, name: 'ناجمي', cat: 'food', location: 'ورقلة', rating: 4.7, verified: true, products: [] }
-  ];
-  const PRODUCTS = [
-    { id: 1, name: 'بطارية سيارة 60Ah', price: 23000, storeId: 1, emoji: '🔋', available: true },
-    { id: 2, name: 'هاتف ذكي 128GB', price: 35000, storeId: 3, emoji: '📱', available: true },
-    { id: 3, name: 'زيت محرك 5L', price: 2800, storeId: 1, emoji: '🛢️', available: true },
-    { id: 4, name: 'سماعة بلوتوث', price: 5200, storeId: 3, emoji: '🎧', available: true }
-  ];
-  CATEGORIES.forEach(c => c.count = STORES.filter(s=>s.cat===c.id).length);
+<!-- نافذة التسجيل -->
+<div id="registerModal" class="modal-overlay">
+    <div class="bottom-sheet">
+        <h3>إنشاء حساب جديد</h3>
+        <input type="text" id="regName" placeholder="الاسم الكامل" style="width:100%; padding:12px; margin:10px 0; border-radius:16px; border:1px solid #ddd;">
+        <input type="email" id="regEmail" placeholder="البريد الإلكتروني" style="width:100%; padding:12px; margin:10px 0; border-radius:16px; border:1px solid #ddd;">
+        <input type="password" id="regPass" placeholder="كلمة المرور" style="width:100%; padding:12px; margin:10px 0; border-radius:16px; border:1px solid #ddd;">
+        <button id="doRegisterBtn" class="btn-primary" style="width:100%;">تسجيل</button>
+        <button onclick="closeRegisterModal()" style="margin-top:8px; background:none; border:none;">إلغاء</button>
+    </div>
+</div>
 
-  let currentCity = 'كل الجزائر';
-  let favorites = JSON.parse(localStorage.getItem('dz_favs') || '[]');
-  let activeView = 'home';
+<script type="module">
+    // Firebase SDKs
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getFirestore, collection, doc, setDoc, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-  function updateStatsUI() {
-    document.getElementById('statStores').innerText = STORES.length;
-    document.getElementById('statProducts').innerText = PRODUCTS.length;
-    document.getElementById('statCats').innerText = CATEGORIES.length;
-  }
-  function renderCategories() {
-    document.getElementById('catGrid').innerHTML = CATEGORIES.map(c => `
-      <div class="cat-card" onclick="filterByCat('${c.id}')">
-        <div class="cat-icon"><i class="fa-solid ${c.icon}"></i></div>
-        <div>${c.label}</div>
-      </div>
-    `).join('');
-  }
-  function filterByCat(catId) {
-    const filtered = STORES.filter(s => s.cat === catId);
-    switchView('stores');
-    renderStoresList(filtered);
-    showToast(`عرض ${CATEGORIES.find(c=>c.id===catId).label}`);
-  }
-  function renderStoresList(list = STORES) {
-    const container = document.getElementById('storesList');
-    if(!list.length) { container.innerHTML = '<div class="city-card" style="text-align:center;">لا توجد متاجر</div>'; return; }
-    container.innerHTML = list.map(s => storeCardHTML(s)).join('');
-  }
-  function storeCardHTML(s) {
-    const isFav = favorites.includes(s.id);
-    return `<div class="store-card" onclick="openShop(${s.id})">
-      <div style="display:flex; align-items:center; gap: 10px;">
-        <div class="store-thumb"><i class="fa-solid fa-store"></i></div>
-        <div style="flex:1"><div class="store-name">${s.name} ${s.verified?'✅':''}</div><div class="store-location"><i class="fa-regular fa-star"></i> ${s.rating} · ${s.location}</div></div>
-        <button class="fav-btn ${isFav?'active':''}" onclick="event.stopPropagation(); toggleFav(${s.id})"><i class="fa-${isFav?'solid':'regular'} fa-heart"></i></button>
-      </div>
-    </div>`;
-  }
-  function renderFeaturedStores() {
-    document.getElementById('featuredStores').innerHTML = STORES.slice(0,4).map(s => storeCardHTML(s)).join('');
-  }
-  function renderProducts() {
-    const scrollDiv = document.getElementById('prodScroll');
-    scrollDiv.innerHTML = PRODUCTS.map(p => prodCardHTML(p)).join('');
-    document.getElementById('allProductsGrid').innerHTML = PRODUCTS.map(p => prodCardHTML(p)).join('');
-  }
-  function prodCardHTML(p) {
-    const store = STORES.find(s=>s.id===p.storeId);
-    return `<div class="product-card"><div class="product-img">${p.emoji}<div class="product-badge">متوفر</div></div><div class="product-info"><div class="product-name">${p.name}</div><div class="product-price">${p.price.toLocaleString()} دج</div><div style="font-size:10px;color:gray;">${store?.name}</div><button onclick="orderNow(${p.id})" style="margin-top:8px; background:var(--primary); color:white; border:none; width:100%; padding:6px; border-radius:40px;">اطلب</button></div></div>`;
-  }
-  function orderNow(pid) { showToast('تم إرسال الطلب للتاجر، سيتم التواصل معك'); }
-  function toggleFav(id) {
-    if(favorites.includes(id)) favorites = favorites.filter(f=>f!==id);
-    else favorites.push(id);
-    localStorage.setItem('dz_favs', JSON.stringify(favorites));
-    renderFeaturedStores(); if(activeView === 'favorites') renderFavs();
-    if(activeView === 'stores') renderStoresList(STORES);
-    showToast(favorites.includes(id)?'أضيف إلى المفضلة':'أزيل من المفضلة');
-  }
-  function renderFavs() {
-    const favStores = STORES.filter(s=>favorites.includes(s.id));
-    document.getElementById('favStoresList').innerHTML = favStores.length ? favStores.map(s=>storeCardHTML(s)).join('') : '<div class="city-card">لا توجد متاجر مفضلة بعد ❤️</div>';
-  }
-  function openShop(id) {
-    const s = STORES.find(st=>st.id===id);
-    if(!s) return;
-    const prods = PRODUCTS.filter(p=>s.products.includes(p.id));
-    document.getElementById('shopDetail').innerHTML = `
-      <button onclick="goBackFromShop()" style="background:var(--primary-soft); border:none; padding:8px 16px; border-radius:40px; margin-bottom:12px;"><i class="fa-solid fa-arrow-right"></i> رجوع</button>
-      <div class="hero" style="background:#006233;"> <h2>${s.name}</h2><p>${s.location} · ${s.rating}⭐</p></div>
-      <div class="store-grid" style="margin-top:14px;">${prods.map(p=>prodCardHTML(p)).join('')}</div>
-    `;
-    switchView('shop');
-  }
-  function goBackFromShop() { switchView('stores'); }
-  function goHome() { switchView('home'); document.getElementById('searchInput').value=''; document.getElementById('liveResults').innerHTML=''; }
-  function switchView(view) {
-    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-    document.getElementById(`${view}View`).classList.add('active');
-    activeView = view;
-    if(view === 'stores') renderStoresList(STORES);
-    if(view === 'products') renderProducts();
-    if(view === 'favorites') renderFavs();
-    document.querySelectorAll('.nav-btn').forEach(btn=>btn.classList.remove('active'));
-    const idx = {home:0,stores:1,favorites:3}[view];
-    if(idx!==undefined) document.querySelectorAll('.nav-btn')[idx]?.classList.add('active');
-  }
-  function liveSearch(q) {
-    const resultsDiv = document.getElementById('liveResults');
-    if(!q.trim()) { resultsDiv.innerHTML = ''; return; }
-    const matchedStores = STORES.filter(s=>s.name.includes(q));
-    const matchedProds = PRODUCTS.filter(p=>p.name.includes(q));
-    if(!matchedStores.length && !matchedProds.length) { resultsDiv.innerHTML = '<div class="city-card">لا توجد نتائج</div>'; return; }
-    let html = '<div class="city-card" style="flex-direction:column; gap:8px;">';
-    if(matchedStores.length) html += `<strong>🛍️ متاجر</strong>${matchedStores.map(s=>`<div onclick="openShop(${s.id})">📌 ${s.name}</div>`).join('')}`;
-    if(matchedProds.length) html += `<strong>📦 منتجات</strong>${matchedProds.map(p=>`<div>${p.emoji} ${p.name} - ${p.price} دج</div>`).join('')}`;
-    html += '</div>';
-    resultsDiv.innerHTML = html;
-  }
-  function focusSearch() { document.querySelector('#homeView .search-box input').focus(); }
+    // 🔑 إعدادات Firebase الصحيحة (من مشروعك)
+    const firebaseConfig = {
+        apiKey: "AIzaSyB3JT-1wD_nj3FvCtzewrL-dlyim0tsryc",
+        authDomain: "za-local-mart.firebaseapp.com",
+        projectId: "za-local-mart",
+        storageBucket: "za-local-mart.firebasestorage.app",
+        messagingSenderId: "438326151788",
+        appId: "1:438326151788:web:2d253737c9ceeebf9f3649",
+        measurementId: "G-ECBYRX8WH"
+    };
 
-  // المدن
-  const cities = ['كل الجزائر', 'الجزائر العاصمة', 'وهران', 'قسنطينة', 'عنابة', 'سطيف'];
-  function openCityModal() {
-    const list = document.getElementById('cityList');
-    list.innerHTML = cities.map(c => `<div class="city-card" style="margin-bottom:8px;" onclick="selectCity('${c}')">${c}</div>`).join('');
-    document.getElementById('cityModal').classList.add('open');
-  }
-  function selectCity(c) { currentCity = c; document.getElementById('cityLabel').innerText = c; closeCityModal(); showToast(`تم اختيار ${c}`); }
-  function closeCityModal() { document.getElementById('cityModal').classList.remove('open'); }
+    // تهيئة Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-  // المودالات
-  function openCategoriesModal() { alert('يمكنك اختيار الفئة من الصفحة الرئيسية'); }
-  function openDrawer() { document.getElementById('drawer').style.right = '0'; document.getElementById('drawerOverlay').classList.add('open'); }
-  function closeDrawer() { document.getElementById('drawer').style.right = '-100%'; document.getElementById('drawerOverlay').classList.remove('open'); }
-  function openSellerModal() { document.getElementById('sellerModal').classList.add('open'); }
-  document.getElementById('sellerForm')?.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const pass = document.getElementById('shopPass').value;
-    const confirm = document.getElementById('shopPassConfirm').value;
-    const email = document.getElementById('shopEmail').value;
-    if(!email.includes('@')) { showToast('بريد إلكتروني غير صحيح'); return; }
-    if(pass !== confirm) { showToast('كلمة المرور غير متطابقة'); return; }
-    showToast('تم إرسال طلب فتح المتجر بنجاح، سيتم مراجعته قريباً');
-    document.getElementById('sellerModal').classList.remove('open');
-    this.reset();
-  });
-  function showToast(msg) { const t = document.getElementById('toastMsg'); t.innerText = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2000); }
-  document.querySelectorAll('.modal-overlay').forEach(ov => ov.addEventListener('click', function(e){ if(e.target === this) this.classList.remove('open'); }));
+    window.db = db;
+    window.auth = auth;
 
-  updateStatsUI(); renderCategories(); renderFeaturedStores(); renderProducts(); renderFavs();
+    // دالة مساعدة للإشعارات
+    window.showToast = (msg) => {
+        let t = document.getElementById('toastMsg');
+        t.innerText = msg;
+        t.style.opacity = '1';
+        setTimeout(() => t.style.opacity = '0', 2000);
+    };
+
+    // دوال المصادقة
+    window.signIn = async (email, password) => {
+        try {
+            const userCred = await signInWithEmailAndPassword(auth, email, password);
+            showToast("تم تسجيل الدخول بنجاح");
+            return userCred.user;
+        } catch(e) { showToast("خطأ: "+e.message); return null; }
+    };
+
+    window.signUp = async (email, password, name) => {
+        try {
+            const userCred = await createUserWithEmailAndPassword(auth, email, password);
+            await setDoc(doc(db, "users", userCred.user.uid), {
+                name: name,
+                email: email,
+                role: "customer",
+                loyaltyPoints: 0,
+                createdAt: new Date()
+            });
+            showToast("تم إنشاء الحساب بنجاح");
+            return userCred.user;
+        } catch(e) { showToast("خطأ: "+e.message); return null; }
+    };
+
+    window.logout = async () => {
+        await signOut(auth);
+        showToast("تم تسجيل الخروج");
+        document.getElementById('loginView').classList.add('active');
+        document.getElementById('mainAppView').classList.remove('active');
+    };
+
+    // بيانات تجريبية أولية لـ Firestore
+    async function seedInitialData() {
+        const storesRef = collection(db, "stores");
+        const snapshot = await getDocs(storesRef);
+        if(snapshot.empty) {
+            const sampleStores = [
+                { name: "بوحنك تكنولوجي", category: "electronics", logo: "📱", rating: 4.9, verified: true, location: "الجزائر العاصمة", followers: 1240, whatsapp: "+213550000001" },
+                { name: "مطعم الواحة", category: "food", logo: "🍽️", rating: 4.7, verified: true, location: "وهران", followers: 892, whatsapp: "+213550000002" },
+                { name: "قطع غيار سطيف", category: "auto", logo: "🔧", rating: 4.8, verified: true, location: "سطيف", followers: 560, whatsapp: "+213550000003" }
+            ];
+            for(let s of sampleStores) {
+                await addDoc(collection(db, "stores"), s);
+            }
+            const sampleProducts = [
+                { name: "هاتف ذكي 256GB", price: 42000, emoji: "📱", stock: 5, sold: 120, storeId: null, badge: "trending" },
+                { name: "سماعة لاسلكية Pro", price: 8900, emoji: "🎧", stock: 12, sold: 44, storeId: null, badge: "sale" },
+                { name: "وجبة عائلية كسكسي", price: 2500, emoji: "🍲", stock: 20, sold: 89, storeId: null, badge: "popular" }
+            ];
+            for(let p of sampleProducts) {
+                await addDoc(collection(db, "products"), p);
+            }
+        }
+    }
+
+    // متغيرات عامة
+    let currentUserObj = null;
+    let allStores = [];
+    let allProducts = [];
+
+    async function loadStores() {
+        const snapshot = await getDocs(collection(db, "stores"));
+        allStores = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    }
+    async function loadProducts() {
+        const snapshot = await getDocs(collection(db, "products"));
+        allProducts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    }
+
+    // دوال عرض الصفحات
+    async function renderHome(container) {
+        const trending = allProducts.filter(p => p.sold > 50).slice(0,4);
+        const featuredStores = allStores.slice(0,3);
+        container.innerHTML = `
+            <div style="display:flex; flex-direction:column; gap:16px;">
+                <div class="card gradient-bg" style="padding:20px;">
+                    <p style="font-size:12px;">🇩🇿 منصة رقمية ذكية</p>
+                    <h3 style="font-size:22px;">تسوق من أقرب متجر</h3>
+                    <p>دفع عند الاستلام • توصيل لكل الولايات</p>
+                    <div style="display:flex; gap:12px; margin-top:12px;">
+                        <div><span style="font-weight:900;">${allStores.length}</span><br>متجر</div>
+                        <div><span style="font-weight:900;">${allProducts.length}</span><br>منتج</div>
+                        <div><span style="font-weight:900;">12</span><br>توصيل</div>
+                    </div>
+                </div>
+                <div class="card"><div style="display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-microphone"></i><input type="text" id="homeSearch" placeholder="ابحث..." style="flex:1; border:none; outline:none;"></div></div>
+                <div><div class="section-header"><span>✨ توصيات الذكاء الاصطناعي</span></div><div class="product-grid" id="aiRecoGrid"></div></div>
+                <div><div class="section-header"><span>🔥 الأكثر مبيعاً</span></div><div class="product-grid" id="trendingGrid"></div></div>
+                <div><div class="section-header"><span>🛍️ متاجر موثوقة</span></div><div id="featuredStoresHome"></div></div>
+            </div>
+        `;
+        const aiGrid = document.getElementById('aiRecoGrid');
+        const trendingGrid = document.getElementById('trendingGrid');
+        const featuredDiv = document.getElementById('featuredStoresHome');
+        if(aiGrid) aiGrid.innerHTML = allProducts.slice(0,3).map(p => productCard(p)).join('');
+        if(trendingGrid) trendingGrid.innerHTML = trending.map(p => productCard(p)).join('');
+        if(featuredDiv) featuredDiv.innerHTML = featuredStores.map(s => `<div class="card store-card" onclick="viewStore('${s.id}')"><div class="flex-between"><div><i class="fa-solid fa-store"></i> <strong>${s.name}</strong> ⭐${s.rating}<br>${s.location}</div></div></div>`).join('');
+        document.getElementById('homeSearch')?.addEventListener('input', (e) => searchGlobal(e.target.value));
+    }
+
+    async function renderStores(container) {
+        container.innerHTML = `<div id="storesList"></div>`;
+        const storesDiv = document.getElementById('storesList');
+        storesDiv.innerHTML = allStores.map(s => `<div class="card store-card" onclick="viewStore('${s.id}')"><div class="flex-between"><div><i class="fa-solid fa-store"></i> <strong>${s.name}</strong> ${s.verified?'✅':''}<br>${s.location}</div><div>⭐ ${s.rating}</div></div></div>`).join('');
+    }
+
+    async function renderExplore(container) {
+        container.innerHTML = `<div class="card"><input type="text" id="exploreSearch" placeholder="بحث منتجات..." style="width:100%; padding:10px; border-radius:20px;"></div><div id="productsExploreGrid" class="product-grid" style="margin-top:16px;"></div>`;
+        const productsDiv = document.getElementById('productsExploreGrid');
+        productsDiv.innerHTML = allProducts.map(p => productCard(p)).join('');
+        document.getElementById('exploreSearch')?.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = allProducts.filter(p => p.name.includes(term));
+            productsDiv.innerHTML = filtered.map(p => productCard(p)).join('');
+        });
+    }
+
+    function renderProfile(container) {
+        const userData = currentUserObj;
+        container.innerHTML = `
+            <div class="card" style="text-align:center;"><i class="fa-regular fa-circle-user" style="font-size:48px;"></i><h3>${userData?.email || 'عميل'}</h3><p>نقاط الولاء: 50</p><button class="btn-primary" onclick="logout()">تسجيل خروج</button></div>
+            <div class="card" style="margin-top:12px;"><button class="btn-primary" id="viewWishlistBtn" style="width:100%;">❤️ المفضلة</button><button class="btn-primary" id="orderHistoryBtn" style="width:100%; margin-top:8px;">📦 طلباتي</button></div>
+        `;
+        document.getElementById('viewWishlistBtn')?.addEventListener('click', () => showToast("سيتم إضافة المفضلة قريباً"));
+        document.getElementById('orderHistoryBtn')?.addEventListener('click', () => showToast("لا توجد طلبات بعد"));
+    }
+
+    function productCard(p) {
+        let store = allStores.find(s => s.id === p.storeId);
+        return `<div class="card" style="padding:12px;"><div style="font-size:32px;">${p.emoji || '📦'}</div><div style="font-weight:900;">${p.name}</div><div>${p.price.toLocaleString()} دج</div><div style="font-size:12px; color:#006233;">${store?.name || ''}</div><button class="btn-primary" style="margin-top:8px; width:100%;" onclick="addToCart('${p.id}')">اطلب الآن</button></div>`;
+    }
+
+    window.viewStore = async (storeId) => {
+        const store = allStores.find(s => s.id === storeId);
+        if(!store) return;
+        const storeProducts = allProducts.filter(p => p.storeId === storeId);
+        document.getElementById('tabContent').innerHTML = `
+            <button onclick="renderCurrentTab('market')" style="margin-bottom:12px;"><i class="fa-solid fa-arrow-right"></i> رجوع</button>
+            <div class="card"><h2>${store.name} ${store.verified?'✔️':''}</h2><p>📍 ${store.location} | ⭐ ${store.rating}</p><a href="https://wa.me/${store.whatsapp}" target="_blank"><button class="btn-primary"><i class="fa-brands fa-whatsapp"></i> واتساب المتجر</button></a></div>
+            <div class="product-grid" style="margin-top:12px;">${storeProducts.map(p => productCard(p)).join('')}</div>
+        `;
+    };
+
+    window.addToCart = (productId) => {
+        const prod = allProducts.find(p => p.id === productId);
+        showToast(`تم إضافة ${prod?.name} إلى السلة (تجريبي)`);
+    };
+
+    function searchGlobal(term) {
+        if(!term) return;
+        const results = allProducts.filter(p => p.name.includes(term));
+        showToast(`تم العثور على ${results.length} منتج`);
+    }
+window.openDrawer = () => { showToast("القائمة قيد التطوير"); };
+    window.closeRegisterModal = () => { document.getElementById('registerModal').classList.remove('open'); };
+
+    let activeTab = 'home';
+    function renderCurrentTab(tab) {
+        activeTab = tab;
+        const container = document.getElementById('tabContent');
+        if(tab === 'home') renderHome(container);
+        if(tab === 'market') renderStores(container);
+        if(tab === 'explore') renderExplore(container);
+        if(tab === 'profile') renderProfile(container);
+        document.querySelectorAll('.nav-item').forEach(btn => {
+            btn.classList.remove('active');
+            if(btn.getAttribute('data-tab') === tab) btn.classList.add('active');
+        });
+    }
+    window.renderCurrentTab = renderCurrentTab;
+    window.goHome = () => renderCurrentTab('home');
+
+    // مستمعي الأزرار
+    document.getElementById('doLoginBtn').onclick = async () => {
+        const email = document.getElementById('loginEmail').value;
+        const pass = document.getElementById('loginPass').value;
+        if(email && pass) await signIn(email, pass);
+        else showToast("أدخل البريد وكلمة المرور");
+    };
+    document.getElementById('showRegisterBtn').onclick = () => {
+        document.getElementById('registerModal').classList.add('open');
+    };
+    document.getElementById('doRegisterBtn').onclick = async () => {
+        const name = document.getElementById('regName').value;
+        const email = document.getElementById('regEmail').value;
+        const pass = document.getElementById('regPass').value;
+        if(name && email && pass) {
+            await signUp(email, pass, name);
+            document.getElementById('registerModal').classList.remove('open');
+        } else showToast("املأ جميع الحقول");
+    };
+    document.getElementById('aiFab').onclick = () => showToast("🤖 مساعد زالو: اكتشف أفضل العروض اليوم!");
+
+    // مراقب حالة تسجيل الدخول
+    onAuthStateChanged(auth, async (user) => {
+        if(user) {
+            currentUserObj = user;
+            document.getElementById('loginView').classList.remove('active');
+            document.getElementById('mainAppView').classList.add('active');
+            await seedInitialData();
+            await loadStores();
+            await loadProducts();
+            renderCurrentTab('home');
+        } else {
+            currentUserObj = null;
+            document.getElementById('loginView').classList.add('active');
+            document.getElementById('mainAppView').classList.remove('active');
+        }
+    });
+
+    console.log("✅ تطبيق ZaLo يعمل مع Firebase بنجاح");
 </script>
 </body>
-      </html>                                                        
+</html>
+ 
