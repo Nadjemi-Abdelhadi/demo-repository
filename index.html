@@ -61,7 +61,7 @@
         <div id="tabContent" style="padding: 16px;"></div>
         <div class="nav">
             <button class="nav-item active" data-tab="home"><i class="fa-solid fa-house"></i><span>الرئيسية</span></button>
-            <button class="nav-item" data-tab="stores"><i class="fa-solid fa-store"></i><span>المتاجر</span></button>
+            <button class="nav-item" data-tab="shops"><i class="fa-solid fa-store"></i><span>المتاجر</span></button>
             <button class="nav-item" data-tab="explore"><i class="fa-solid fa-magnifying-glass"></i><span>استكشاف</span></button>
             <button class="nav-item" data-tab="profile"><i class="fa-regular fa-user"></i><span>حسابي</span></button>
         </div>
@@ -87,22 +87,21 @@
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
     import { getFirestore, collection, doc, setDoc, getDocs, addDoc, query, where } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-    // إعدادات Firebase (صحيحة لمشروع zalo-smart)
+    // 🔐 إعدادات Firebase (من صورتك - zalo-smart)
     const firebaseConfig = {
-        apiKey: "AIzaSyBJ3T-jWd_nj3FYCtzewRl-d1yimGtsryc",
+        apiKey: "AIzaSy8J3T-jWJ_nj3FvCtzewRl-dIylmOtsryc",
         authDomain: "zalo-smart.firebaseapp.com",
         projectId: "zalo-smart",
         storageBucket: "zalo-smart.firebasestorage.app",
-        messagingSenderId: "430326151788",
+        messagingSenderId: "438326151788",
         appId: "1:430326151788:web:2d253737c90eeebf9f3649",
-        measurementId: "G-ECBYRX8WKH"
+        measurementId: "G-ECBYKX6HKI"
     };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // إشعارات
     function showToast(msg) {
         const toast = document.getElementById('toastMsg');
         toast.innerText = msg;
@@ -110,68 +109,59 @@
         setTimeout(() => toast.classList.remove('show'), 2500);
     }
 
-    // بيانات تجريبية أولية
-    async function seedData() {
-        const storesRef = collection(db, "stores");
-        const snap = await getDocs(storesRef);
-        if (snap.empty) {
-            await addDoc(collection(db, "stores"), { name: "بوحنك تكنولوجي", category: "electronics", rating: 4.9, verified: true, location: "الجزائر العاصمة", whatsapp: "+213550000001", followers: 1240 });
-            await addDoc(collection(db, "stores"), { name: "مطعم الواحة", category: "food", rating: 4.7, verified: true, location: "وهران", whatsapp: "+213550000002", followers: 892 });
-            await addDoc(collection(db, "products"), { name: "هاتف ذكي 256GB", price: 42000, emoji: "📱", storeId: null, sold: 120 });
-            await addDoc(collection(db, "products"), { name: "سماعة لاسلكية Pro", price: 8900, emoji: "🎧", storeId: null, sold: 44 });
-        }
-    }
-
-    let storesList = [];
+    // متغيرات البيانات
+    let shopsList = [];
     let productsList = [];
 
-    async function loadStores() {
-        const snap = await getDocs(collection(db, "stores"));
-        storesList = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    async function loadShops() {
+        const snap = await getDocs(collection(db, "shops"));
+        shopsList = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     }
     async function loadProducts() {
         const snap = await getDocs(collection(db, "products"));
         productsList = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     }
 
-    // عرض المنتج
     function productCard(prod) {
-        const store = storesList.find(s => s.id === prod.storeId);
-        return `<div class="card" style="padding:12px;"><div style="font-size:40px;">${prod.emoji || '📦'}</div><div style="font-weight:900;">${prod.name}</div><div>${prod.price.toLocaleString()} دج</div><div style="font-size:12px;color:#006233;">${store?.name || ''}</div><button class="btn" style="margin-top:8px;" onclick="addToCart('${prod.id}')">اطلب الآن</button></div>`;
+        const shop = shopsList.find(s => s.id === prod.storeId);
+        return `<div class="card" style="padding:12px;">
+                    <div style="font-size:40px;">${prod.emoji || '📦'}</div>
+                    <div style="font-weight:900;">${prod.name}</div>
+                    <div>${prod.price.toLocaleString()} دج</div>
+                    <div style="font-size:12px;color:#006233;">${shop?.name || ''}</div>
+                    <button class="btn" style="margin-top:8px;" onclick="addToCart('${prod.id}')">اطلب الآن</button>
+                </div>`;
     }
 
-    // الصفحة الرئيسية
     async function renderHome() {
-        const featured = storesList.slice(0, 3);
+        const featured = shopsList.slice(0, 3);
         const html = `
             <div class="card gradient-bg" style="padding:20px; margin-bottom:16px;">
                 <p style="font-size:12px;">🇩🇿 منصة رقمية ذكية</p>
                 <h3>تسوق من أقرب متجر</h3>
                 <p>دفع عند الاستلام • توصيل لكل الولايات</p>
                 <div style="display:flex; gap:16px; margin-top:12px;">
-                    <div><span style="font-weight:900;">${storesList.length}</span><br>متجر</div>
+                    <div><span style="font-weight:900;">${shopsList.length}</span><br>متجر</div>
                     <div><span style="font-weight:900;">${productsList.length}</span><br>منتج</div>
                 </div>
             </div>
-            <div><div class="section-header" style="display:flex; justify-content:space-between;"><span style="font-weight:900;">🛍️ متاجر موثوقة</span></div><div id="featuredStores"></div></div>
+            <div><div style="display:flex; justify-content:space-between;"><span style="font-weight:900;">🛍️ متاجر موثوقة</span></div><div id="featuredShops"></div></div>
         `;
         document.getElementById('tabContent').innerHTML = html;
-        const featuredDiv = document.getElementById('featuredStores');
+        const featuredDiv = document.getElementById('featuredShops');
         if (featuredDiv) {
-            featuredDiv.innerHTML = featured.map(s => `<div class="card store-card" onclick="viewStore('${s.id}')"><div class="flex-between"><div><i class="fa-solid fa-store"></i> <strong>${s.name}</strong> ⭐${s.rating}<br>📍 ${s.location}</div></div></div>`).join('');
+            featuredDiv.innerHTML = featured.map(s => `<div class="card shop-card" onclick="viewShop('${s.id}')"><div class="flex-between"><div><i class="fa-solid fa-store"></i> <strong>${s.name}</strong> ⭐${s.rating}<br>📍 ${s.location}</div></div></div>`).join('');
         }
     }
 
-    // المتاجر
-    async function renderStores() {
+    async function renderShops() {
         let html = '';
-        storesList.forEach(s => {
-            html += `<div class="card store-card" onclick="viewStore('${s.id}')"><div class="flex-between"><div><i class="fa-solid fa-store"></i> <strong>${s.name}</strong> ${s.verified ? '✅' : ''}<br>📍 ${s.location}</div><div>⭐ ${s.rating}</div></div></div>`;
+        shopsList.forEach(s => {
+            html += `<div class="card shop-card" onclick="viewShop('${s.id}')"><div class="flex-between"><div><i class="fa-solid fa-store"></i> <strong>${s.name}</strong> ${s.verified ? '✅' : ''}<br>📍 ${s.location}</div><div>⭐ ${s.rating}</div></div></div>`;
         });
         document.getElementById('tabContent').innerHTML = html;
     }
 
-    // استكشاف المنتجات
     async function renderExplore() {
         let html = `<div class="card"><input type="text" id="searchProducts" placeholder="ابحث عن منتج..." style="margin-bottom:0;"></div><div id="productsGrid" class="product-grid" style="margin-top:16px;"></div>`;
         document.getElementById('tabContent').innerHTML = html;
@@ -184,7 +174,6 @@
         });
     }
 
-    // الملف الشخصي
     function renderProfile() {
         document.getElementById('tabContent').innerHTML = `
             <div class="card" style="text-align:center;">
@@ -199,16 +188,14 @@
         });
     }
 
-    // عرض متجر معين
-    window.viewStore = async (storeId) => {
-        const store = storesList.find(s => s.id === storeId);
-        if (!store) return;
-        const storeProducts = productsList.filter(p => p.storeId === storeId);
-        let prodsHtml = '';
-        storeProducts.forEach(p => { prodsHtml += productCard(p); });
+    window.viewShop = async (shopId) => {
+        const shop = shopsList.find(s => s.id === shopId);
+        if (!shop) return;
+        const shopProducts = productsList.filter(p => p.storeId === shopId);
+        let prodsHtml = shopProducts.map(p => productCard(p)).join('');
         document.getElementById('tabContent').innerHTML = `
-            <button onclick="renderCurrentTab('stores')" style="background:#eef2f0; border:none; padding:8px 16px; border-radius:40px; margin-bottom:12px;"><i class="fa-solid fa-arrow-right"></i> رجوع</button>
-            <div class="card"><h2>${store.name}</h2><p>📍 ${store.location} | ⭐ ${store.rating}</p><a href="https://wa.me/${store.whatsapp}" target="_blank"><button class="btn" style="background:#25D366;"><i class="fa-brands fa-whatsapp"></i> واتساب المتجر</button></a></div>
+            <button onclick="renderCurrentTab('shops')" style="background:#eef2f0; border:none; padding:8px 16px; border-radius:40px; margin-bottom:12px;"><i class="fa-solid fa-arrow-right"></i> رجوع</button>
+            <div class="card"><h2>${shop.name}</h2><p>📍 ${shop.location} | ⭐ ${shop.rating}</p><a href="https://wa.me/${shop.whatsapp}" target="_blank"><button class="btn" style="background:#25D366;"><i class="fa-brands fa-whatsapp"></i> واتساب المتجر</button></a></div>
             <div class="product-grid">${prodsHtml}</div>
         `;
     };
@@ -222,7 +209,7 @@
     function renderCurrentTab(tab) {
         currentTab = tab;
         if (tab === 'home') renderHome();
-        if (tab === 'stores') renderStores();
+        if (tab === 'shops') renderShops();
         if (tab === 'explore') renderExplore();
         if (tab === 'profile') renderProfile();
         document.querySelectorAll('.nav-item').forEach(btn => {
@@ -232,7 +219,7 @@
     }
     window.renderCurrentTab = renderCurrentTab;
 
-    // مستمعي الأزرار
+    // أزرار تسجيل الدخول والتسجيل
     document.getElementById('doLogin').onclick = async () => {
         const email = document.getElementById('loginEmail').value;
         const password = document.getElementById('loginPassword').value;
@@ -259,13 +246,12 @@
     };
     window.closeRegisterModal = () => document.getElementById('registerModal').style.display = 'none';
 
-    // مراقب تسجيل الدخول
+    // مراقب حالة الدخول
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             document.getElementById('loginView').classList.remove('active');
             document.getElementById('mainView').classList.add('active');
-            await seedData();
-            await loadStores();
+            await loadShops();
             await loadProducts();
             renderCurrentTab('home');
         } else {
@@ -274,12 +260,7 @@
         }
     });
 
-    // ربط أزرار التنقل
-    document.querySelectorAll('.nav-item').forEach(btn => {
-        btn.addEventListener('click', () => renderCurrentTab(btn.getAttribute('data-tab')));
-    });
-
-    // زر المساعد الذكي (يمكن إضافته)
+    // إضافة زر المساعد الذكي
     const fab = document.createElement('div');
     fab.innerHTML = '<i class="fa-regular fa-message"></i>';
     fab.style.position = 'fixed';
@@ -299,6 +280,11 @@
     fab.style.cursor = 'pointer';
     fab.onclick = () => showToast('🤖 مساعد زالو: اكتشف العروض الحصرية اليوم!');
     document.body.appendChild(fab);
+
+    // ربط أزرار التنقل
+    document.querySelectorAll('.nav-item').forEach(btn => {
+        btn.addEventListener('click', () => renderCurrentTab(btn.getAttribute('data-tab')));
+    });
 </script>
 </body>
-                                                         </html>
+</html>
