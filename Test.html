@@ -1,1 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body>
+<input id="email" placeholder="البريد"><input id="pass" placeholder="كلمة المرور"><button id="login">دخول</button>
+<p id="result"></p>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
+// ضع هنا الإعدادات الصحيحة التي نسختها من Firebase Console
+const firebaseConfig = {
+  apiKey: "AIzaSyB3Jt-JWd_nj3FYCtzeWRl-a....",  // استبدل بالقيمة الصحيحة
+  authDomain: "zalo-smart.firebaseapp.com",
+  projectId: "zalo-smart",
+  storageBucket: "zalo-smart.appspot.com",
+  messagingSenderId: "439326151788",
+  appId: "1:439326151788:web:ef494f37946221429f3649"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+document.getElementById('login').onclick = async () => {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('pass').value;
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    document.getElementById('result').innerText = "✅ تم الدخول بنجاح!";
+  } catch (e) {
+    document.getElementById('result').innerText = "❌ خطأ: " + e.message;
+  }
+};
+</script>
+</body>
+</html>
