@@ -1,88 +1,49 @@
-
-<div style="border: 2px solid #006233; border-radius: 16px; padding: 8px; background: #f0f5f2; text-align: center; margin: 16px 0;">
-  <div style="background: #006233; color: white; padding: 8px 16px; border-radius: 12px; font-weight: bold; display: inline-block;">📋 انسخ الكود النهائي</div>
-  <div id="copyBox" style="direction: ltr; text-align: left; background: white; padding: 12px; border-radius: 12px; font-family: monospace; font-size: 10px; white-space: pre-wrap; max-height: 150px; overflow-y: auto; border: 1px solid #ddd; margin-top: 8px;" onclick="copyCodeFromBox()">اضغط هنا لنسخ الكود</div>
-</div>
-
-<script>
-function copyCodeFromBox() {
-  const code = `<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>ZaLo | السوق الذكي - النسخة النهائية</title>
+    <title>ZaLo | نظام الأدوار</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Tajawal', sans-serif; background: #f0f5f2; direction: rtl; }
-        .container { max-width: 500px; margin: 0 auto; background: #fff; min-height: 100vh; }
-        .card { background: white; border-radius: 24px; padding: 16px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #e9f0ec; }
-        .btn { background: #006233; color: white; border: none; border-radius: 60px; padding: 12px; font-weight: 800; width: 100%; cursor: pointer; margin-top: 8px; }
+        body { font-family: 'Tajawal', sans-serif; background: #f0f5f2; direction: rtl; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 16px; }
+        .card { background: white; border-radius: 32px; padding: 24px; max-width: 400px; width: 100%; margin: auto; box-shadow: 0 8px 24px rgba(0,0,0,0.05); text-align: center; }
+        .btn { background: #006233; color: white; border: none; padding: 12px; border-radius: 60px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 12px; }
         .btn-outline { background: white; border: 1px solid #006233; color: #006233; }
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: white; border-bottom: 1px solid #eef2f0; position: sticky; top: 0; }
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 500px; background: white; display: flex; justify-content: space-around; padding: 8px 12px 14px; border-top: 1px solid #ddd; }
-        .nav-item { text-align: center; color: #8ba396; font-weight: bold; background: none; border: none; cursor: pointer; }
-        .nav-item.active { color: #006233; }
-        .view { display: none; }
-        .view.active { display: block; }
-        .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #1e2f26; color: white; padding: 8px 16px; border-radius: 40px; opacity: 0; transition: 0.2s; z-index: 200; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border-radius: 60px; border: 1.5px solid #e2e8e4; }
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1e2f26; color: white; padding: 8px 16px; border-radius: 40px; opacity: 0; transition: 0.2s; z-index: 1000; }
         .toast.show { opacity: 1; }
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 300; }
-        .modal-card { background: white; width: 90%; border-radius: 28px; padding: 20px; }
-        input, select, textarea { width: 100%; padding: 10px; margin: 8px 0; border-radius: 20px; border: 1px solid #ddd; }
-        .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-        .flex-between { display: flex; justify-content: space-between; align-items: center; }
-        .admin-card { background: #eef2ff; border-right: 4px solid #2563eb; }
-        .merchant-card { background: #fefce8; border-right: 4px solid #eab308; }
-        .like-btn, .comment-btn { background: none; border: none; color: #006233; margin: 0 5px; cursor: pointer; }
+        .role-badge { background: #eef2ff; padding: 8px 16px; border-radius: 60px; display: inline-block; margin: 12px 0; }
+        .error { color: red; margin-top: 8px; }
     </style>
-
 </head>
 <body>
-<div class="container" id="app">
-    <div id="loginView" class="view active" style="padding: 40px 20px; text-align: center;">
-        <div style="width: 70px; height: 70px; background: linear-gradient(135deg,#006233,#00a857); border-radius: 28px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center;">
-            <i class="fa-solid fa-shop" style="font-size: 34px; color: white;"></i>
-        </div>
-        <h1>ZaLo الذكي</h1>
-        <p style="color: #006233;">منصة جزائرية متكاملة - Firestore</p>
-        <input type="email" id="loginEmail" placeholder="البريد الإلكتروني" value="hadi47hadi58@gmail.com">
-        <input type="password" id="loginPass" placeholder="كلمة المرور">
-        <button class="btn" id="doLogin">دخول</button>
-        <button id="openRegBtn" style="background:none; border:none; color:#006233; margin-top:12px;">إنشاء حساب</button>
-        <div id="loginError" style="color:red; margin-top:12px;"></div>
-    </div>
-    <div id="customerView" class="view" style="padding-bottom: 70px;">
-        <div class="header"><h2>ZaLo</h2><i class="fa-regular fa-bell"></i></div>
-        <div id="customerContent" style="padding: 16px;"></div>
-        <div class="bottom-nav">
-            <button class="nav-item active" data-tab="home">🏠 الرئيسية</button>
-            <button class="nav-item" data-tab="shops">🏪 المتاجر</button>
-            <button class="nav-item" data-tab="profile">👤 حسابي</button>
-        </div>
-    </div>
-    <div id="merchantView" class="view" style="padding-bottom: 70px;">
-        <div class="header"><h2>لوحة التاجر</h2></div>
-        <div id="merchantContent" style="padding: 16px;"></div>
-        <div class="bottom-nav"><button class="nav-item" id="merchantLogout">🚪 خروج</button></div>
-    </div>
-    <div id="adminView" class="view" style="padding-bottom: 70px;">
-        <div class="header"><h2>لوحة الإدارة</h2></div>
-        <div id="adminContent" style="padding: 16px;"></div>
-        <div class="bottom-nav"><button class="nav-item" id="adminLogout">🚪 خروج</button></div>
-    </div>
+<div id="loginBox" class="card">
+    <i class="fa-solid fa-shop" style="font-size: 48px; color: #006233; margin-bottom: 12px;"></i>
+    <h1>ZaLo</h1>
+    <p style="color: #006233;">منصة جزائرية متكاملة</p>
+    <input type="email" id="email" placeholder="البريد الإلكتروني" value="hadi47hadi58@gmail.com">
+    <input type="password" id="password" placeholder="كلمة المرور">
+    <button class="btn" id="loginBtn">دخول</button>
+    <button class="btn btn-outline" id="registerBtn">إنشاء حساب جديد</button>
+    <div id="errorMsg" class="error"></div>
 </div>
-<div id="regModal" class="modal"><div class="modal-card"><h3>حساب جديد</h3><input type="text" id="regName" placeholder="الاسم"><input type="email" id="regEmail" placeholder="البريد"><input type="password" id="regPass" placeholder="كلمة المرور"><button class="btn" id="doRegister">تسجيل</button><button onclick="closeModal('regModal')">إلغاء</button></div></div>
-<div id="productModal" class="modal"><div class="modal-card"><h3>إضافة منتج</h3><input type="text" id="prodName" placeholder="اسم المنتج"><input type="number" id="prodPrice" placeholder="السعر"><input type="text" id="prodMedia" placeholder="رابط صورة/فيديو"><button class="btn" id="saveProduct">حفظ</button><button onclick="closeModal('productModal')">إلغاء</button></div></div>
-<div id="commentsModal" class="modal"><div class="modal-card"><h3>التعليقات</h3><div id="commentsList"></div><textarea id="newComment" placeholder="تعليق..."></textarea><button class="btn" id="addComment">إضافة</button><button onclick="closeModal('commentsModal')">إغلاق</button></div></div>
-<div id="locationModal" class="modal"><div class="modal-card"><h3>اختر الولاية</h3><select id="wilayaSelect"></select><button class="btn" id="confirmLocation">تأكيد</button><button onclick="closeModal('locationModal')">إلغاء</button></div></div>
-<div id="toastMsg" class="toast"></div>
+
+<div id="dashboardBox" class="card" style="display: none;">
+    <h2 id="welcomeMsg"></h2>
+    <div id="roleInfo" class="role-badge"></div>
+    <button class="btn" id="logoutBtn">تسجيل خروج</button>
+    <div style="margin-top: 16px; font-size: 14px; color: #555;" id="extraInfo"></div>
+</div>
+
+<div id="toast" class="toast"></div>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    import { getFirestore, collection, getDocs, getDoc, doc, setDoc, updateDoc, deleteDoc, addDoc, increment, arrayUnion } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
     const firebaseConfig = {
         apiKey: "AIzaSyBJ3T-jWd_nj3FYCtzewRl-d1yimGtsryc",
         authDomain: "zalo-smart.firebaseapp.com",
@@ -95,91 +56,93 @@ function copyCodeFromBox() {
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-    let currentRole = "customer";
-    let currentUserData = null;
-    let allShops = [], allProducts = [], allUsers = [];
-    let currentLocation = { wilaya: "الجزائر", baladia: "الجزائر" };
-    let currentProductId = null;
-    function showToast(msg) { const t = document.getElementById('toastMsg'); t.innerText = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-    async function loadData() {
-        const shopsSnap = await getDocs(collection(db, "shops"));
-        allShops = shopsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-        const productsSnap = await getDocs(collection(db, "products"));
-        allProducts = productsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-        const usersSnap = await getDocs(collection(db, "users"));
-        allUsers = usersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.innerText = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2500);
     }
-    function productCard(p) {
-        const shop = allShops.find(s => s.id === p.shopId);
-        return `<div class="card"><div style="font-size:40px;">${p.mediaUrl ? (p.mediaUrl.includes('.mp4')?'🎥':'📷') : '📦'}</div><div><strong>${p.name}</strong></div><div>${p.price} دج</div><div style="font-size:12px;">${shop?.name || ''}</div><div><button class="like-btn" onclick="like('${p.id}')">❤️ ${p.likes||0}</button> <button class="comment-btn" onclick="openComments('${p.id}')">💬 ${p.comments?.length||0}</button> 👁️ ${p.views||0}</div><button class="btn" style="margin-top:8px" onclick="alert('طلب تجريبي')">اطلب</button></div>`;
+
+    async function updateUserRole(userId, email, role = "customer") {
+        const userRef = doc(db, "users", userId);
+        const userSnap = await getDoc(userRef);
+        if (!userSnap.exists()) {
+            await setDoc(userRef, { email, role, createdAt: new Date() });
+        }
+        return role;
     }
-    window.like = async (pid) => { await updateDoc(doc(db, "products", pid), { likes: increment(1) }); showToast("👍"); loadData(); renderCustomerCurrentTab(); };
-    window.openComments = async (pid) => { currentProductId = pid; const prod = allProducts.find(p => p.id === pid); document.getElementById('commentsList').innerHTML = prod?.comments?.map(c => `<div><strong>${c.userName}</strong>: ${c.text}</div>`).join('') || ''; document.getElementById('commentsModal').style.display = 'flex'; };
-    document.getElementById('addComment').onclick = async () => { const text = document.getElementById('newComment').value; if(text && currentProductId) { await updateDoc(doc(db, "products", currentProductId), { comments: arrayUnion({ userName: auth.currentUser.email, text }) }); showToast("تم"); document.getElementById('newComment').value = ''; await loadData(); openComments(currentProductId); } };
-    async function renderCustomerHome() { document.getElementById('customerContent').innerHTML = `<div class="card" style="background:linear-gradient(135deg,#006233,#00a857);color:white;"><h3>مرحباً في ZaLo</h3><p>${allShops.length} متجر | ${allProducts.length} منتج</p></div><div><h3>🛍️ متاجر مميزة</h3><div id="featured"></div></div>`; document.getElementById('featured').innerHTML = allShops.slice(0,3).map(s => `<div class="card" onclick="viewShop('${s.id}')"><strong>${s.name}</strong><br>📍 ${s.wilaya || 'غير محدد'}</div>`).join(''); }
-    async function renderShopsList() { document.getElementById('customerContent').innerHTML = `<div class="card"><button class="btn-outline" id="locationBtn">📍 ${currentLocation.wilaya}</button></div>` + allShops.filter(s => s.wilaya === currentLocation.wilaya).map(s => `<div class="card" onclick="viewShop('${s.id}')"><strong>${s.name}</strong><br>📍 ${s.wilaya}</div>`).join(''); document.getElementById('locationBtn').onclick = () => document.getElementById('locationModal').style.display = 'flex'; }
-    window.viewShop = async (sid) => { const shop = allShops.find(s => s.id === sid); const prods = allProducts.filter(p => p.shopId === sid); document.getElementById('customerContent').innerHTML = `<button onclick="renderCustomerCurrentTab('shops')" style="background:#eee;border:none;padding:8px;border-radius:20px;">⬅ رجوع</button><div class="card"><h2>${shop.name}</h2><p>📞 ${shop.phone || ''} | <a href="${shop.whatsapp||'#'}" target="_blank">واتساب</a></p></div><div class="product-grid">${prods.map(p => productCard(p)).join('')}</div>`; };
-    function renderProfile() { document.getElementById('customerContent').innerHTML = `<div class="card"><h3>${auth.currentUser.email}</h3><button class="btn" id="logoutCustomer">تسجيل خروج</button></div>`; document.getElementById('logoutCustomer').onclick = () => signOut(auth); }
-    let customerTab = 'home';
-    function renderCustomerCurrentTab(tab = customerTab) { customerTab = tab; if(tab === 'home') renderCustomerHome(); else if(tab === 'shops') renderShopsList(); else if(tab === 'profile') renderProfile(); document.querySelectorAll('#customerView .nav-item').forEach(btn => { btn.classList.toggle('active', btn.getAttribute('data-tab') === tab); }); }
-    async function renderMerchant() {
-        const myShop = allShops.find(s => s.ownerId === auth.currentUser.uid);
-        if (!myShop) { document.getElementById('merchantContent').innerHTML = `<div class="card"><p>ليس لديك متجر. تواصل مع الإدارة.</p></div>`; return; }
-        const myProds = allProducts.filter(p => p.shopId === myShop.id);
-        document.getElementById('merchantContent').innerHTML = `<div class="card merchant-card"><h3>${myShop.name}</h3><button class="btn-outline" id="addProdBtn">➕ إضافة منتج</button></div><div class="product-grid">${myProds.map(p => `<div class="card"><div><strong>${p.name}</strong> - ${p.price} دج<br>❤️ ${p.likes||0} | 💬 ${p.comments?.length||0}</div>${p.mediaUrl ? (p.mediaUrl.includes('.mp4')?`<video src="${p.mediaUrl}" style="width:100%"></video>`:`<img src="${p.mediaUrl}" style="width:100%">`) : ''}<button class="btn" style="background:#b91c1c" onclick="deleteProd('${p.id}')">حذف</button></div>`).join('')}</div>`;
-        document.getElementById('addProdBtn').onclick = () => document.getElementById('productModal').style.display = 'flex';
+
+    async function getUserRole(userId) {
+        const userRef = doc(db, "users", userId);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+            return userSnap.data().role || "customer";
+        }
+        return "customer";
     }
-    window.deleteProd = async (pid) => { await deleteDoc(doc(db, "products", pid)); loadData(); renderMerchant(); };
-    document.getElementById('saveProduct').onclick = async () => { const name = document.getElementById('prodName').value, price = parseInt(document.getElementById('prodPrice').value), media = document.getElementById('prodMedia').value; if(name && price) { const myShop = allShops.find(s => s.ownerId === auth.currentUser.uid); if(myShop) { await addDoc(collection(db, "products"), { name, price, mediaUrl: media, shopId: myShop.id, likes: 0, comments: [] }); showToast("تم"); closeModal('productModal'); loadData(); renderMerchant(); } } };
-    async function renderAdmin() {
-        await loadData();
-        const isSuper = currentRole === 'super_admin';
-        document.getElementById('adminContent').innerHTML = `<div class="card admin-card"><h3>📊 إحصائيات</h3><p>المتاجر: ${allShops.length} | المنتجات: ${allProducts.length} | المستخدمون: ${allUsers.length}</p></div>${isSuper ? `<div class="card"><h3>➕ تعيين مشرف</h3><input type="email" id="adminEmail" placeholder="بريد المستخدم"><button class="btn" id="assignAdmin">تعيين كمشرف</button></div>` : ''}<div class="card"><h3>👥 المستخدمون</h3><div id="usersList"></div></div><div class="card"><h3>🏪 المتاجر</h3><div id="shopsList"></div></div><div class="card"><h3>📦 المنتجات</h3><div id="prodsList"></div></div>`;
-        document.getElementById('usersList').innerHTML = allUsers.map(u => `<div class="flex-between"><span>${u.email} (${u.role||'customer'})</span><button onclick="deleteUser('${u.id}')">حذف</button></div>`).join('');
-        document.getElementById('shopsList').innerHTML = allShops.map(s => `<div class="flex-between"><span>${s.name}</span><button onclick="deleteShop('${s.id}')">حذف</button></div>`).join('');
-        document.getElementById('prodsList').innerHTML = allProducts.map(p => `<div class="flex-between"><span>${p.name}</span><button onclick="deleteProdAdmin('${p.id}')">حذف</button></div>`).join('');
-        if(isSuper) document.getElementById('assignAdmin').onclick = async () => { const email = document.getElementById('adminEmail').value; const user = allUsers.find(u => u.email === email); if(user) { await updateDoc(doc(db, "users", user.id), { role: "supervisor" }); showToast("تم"); renderAdmin(); } else showToast("غير موجود"); };
-    }
-    window.deleteUser = async (id) => { await deleteDoc(doc(db, "users", id)); renderAdmin(); };
-    window.deleteShop = async (id) => { await deleteDoc(doc(db, "shops", id)); renderAdmin(); };
-    window.deleteProdAdmin = async (id) => { await deleteDoc(doc(db, "products", id)); renderAdmin(); };
-    async function switchRole(role) {
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        if (role === 'customer') { document.getElementById('customerView').classList.add('active'); renderCustomerCurrentTab('home'); }
-        else if (role === 'merchant') { document.getElementById('merchantView').classList.add('active'); await loadData(); renderMerchant(); }
-        else if (role === 'super_admin' || role === 'supervisor') { document.getElementById('adminView').classList.add('active'); await renderAdmin(); }
-    }
-    document.getElementById('merchantLogout').onclick = () => signOut(auth);
-    document.getElementById('adminLogout').onclick = () => signOut(auth);
-    document.getElementById('doLogin').onclick = async () => { const email = document.getElementById('loginEmail').value, pass = document.getElementById('loginPass').value; try { await signInWithEmailAndPassword(auth, email, pass); } catch(e) { document.getElementById('loginError').innerText = e.message; } };
-    document.getElementById('openRegBtn').onclick = () => document.getElementById('regModal').style.display = 'flex';
-    document.getElementById('doRegister').onclick = async () => { const name = document.getElementById('regName').value, email = document.getElementById('regEmail').value, pass = document.getElementById('regPass').value; try { const user = await createUserWithEmailAndPassword(auth, email, pass); await setDoc(doc(db, "users", user.user.uid), { name, email, role: "customer" }); showToast("تم التسجيل"); closeModal('regModal'); } catch(e) { showToast(e.message); } };
+
     onAuthStateChanged(auth, async (user) => {
         if (user) {
-            const userDoc = await getDoc(doc(db, "users", user.uid));
-            if (userDoc.exists()) { currentRole = userDoc.data().role; currentUserData = userDoc.data(); }
-            else { currentRole = "customer"; await setDoc(doc(db, "users", user.uid), { email: user.email, role: "customer" }); }
-            await loadData();
-            switchRole(currentRole);
-            document.getElementById('loginView').classList.remove('active');
+            // تسجيل الدخول ناجح
+            const role = await getUserRole(user.uid);
+            document.getElementById('loginBox').style.display = 'none';
+            document.getElementById('dashboardBox').style.display = 'block';
+            document.getElementById('welcomeMsg').innerHTML = `مرحباً ${user.email}`;
+            document.getElementById('roleInfo').innerHTML = `🔑 دورك: ${role === 'super_admin' ? 'مدير عام' : (role === 'supervisor' ? 'مشرف' : (role === 'merchant' ? 'تاجر' : 'عميل'))}`;
+            
+            // رسالة إضافية حسب الدور
+            let extra = '';
+            if (role === 'super_admin') extra = '⭐ يمكنك إدارة المنصة بالكامل من خلال إضافة متاجر ومنتجات في Firestore.';
+            else if (role === 'merchant') extra = '🛍️ يمكنك إدارة منتجاتك بعد إضافة متجرك في Firestore.';
+            else if (role === 'supervisor') extra = '👁️ يمكنك مراقبة الطلبات والمحتوى.';
+            else extra = '🛒 يمكنك تصفح المتاجر والمنتجات (سيتم إضافتها قريباً).';
+            document.getElementById('extraInfo').innerText = extra;
         } else {
-            document.getElementById('loginView').classList.add('active');
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('loginBox').style.display = 'block';
+            document.getElementById('dashboardBox').style.display = 'none';
         }
     });
-    const wilayas = ["الجزائر","وهران","قسنطينة","عنابة","سطيف","باتنة","بجاية","بسكرة","تبسة","تلمسان"];
-    const wilayaSelect = document.getElementById('wilayaSelect');
-    wilayas.forEach(w => { let opt = document.createElement('option'); opt.value = w; opt.textContent = w; wilayaSelect.appendChild(opt); });
-    document.getElementById('confirmLocation').onclick = () => { currentLocation.wilaya = wilayaSelect.value; showToast(`تم اختيار ${currentLocation.wilaya}`); closeModal('locationModal'); renderCustomerCurrentTab('shops'); };
-    document.querySelectorAll('#customerView .nav-item').forEach(btn => btn.onclick = () => renderCustomerCurrentTab(btn.getAttribute('data-tab')));
+
+    document.getElementById('loginBtn').onclick = async () => {
+        const email = document.getElementById('email').value;
+        const pass = document.getElementById('password').value;
+        const errorDiv = document.getElementById('errorMsg');
+        if (!email || !pass) {
+            errorDiv.innerText = "أدخل البريد وكلمة المرور";
+            return;
+        }
+        try {
+            await signInWithEmailAndPassword(auth, email, pass);
+            errorDiv.innerText = "";
+            showToast("✅ تم الدخول بنجاح");
+        } catch (e) {
+            errorDiv.innerText = e.message.includes('user-not-found') ? "مستخدم غير موجود" : (e.message.includes('wrong-password') ? "كلمة مرور خاطئة" : e.message);
+        }
+    };
+
+    document.getElementById('registerBtn').onclick = async () => {
+        const email = document.getElementById('email').value;
+        const pass = document.getElementById('password').value;
+        const errorDiv = document.getElementById('errorMsg');
+        if (!email || !pass || pass.length < 6) {
+            errorDiv.innerText = "كلمة المرور يجب أن تكون 6 أحرف على الأقل";
+            return;
+        }
+        try {
+            const userCred = await createUserWithEmailAndPassword(auth, email, pass);
+            await setDoc(doc(db, "users", userCred.user.uid), { email, role: "customer", createdAt: new Date() });
+            errorDiv.innerText = "";
+            showToast("✅ تم إنشاء الحساب وتسجيل الدخول");
+        } catch (e) {
+            errorDiv.innerText = e.message.includes('email-already-in-use') ? "البريد مستخدم بالفعل" : e.message;
+        }
+    };
+
+    document.getElementById('logoutBtn').onclick = async () => {
+        await signOut(auth);
+        showToast("تم الخروج");
+    };
 </script>
 </body>
-</html>`;
-  navigator.clipboard.writeText(code).then(() => {
-    alert('✅ تم نسخ الكود بنجاح! الصقه الآن في ملف index.html');
-  }).catch(() => {
-    alert('❌ فشل النسخ، حاول نسخ النص يدوياً من المربع أعلاه');
-  });
-}
-</script>
+</html>
