@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>ZaLo | لوحة المدير</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Tajawal', sans-serif; background: #f0f5f2; direction: rtl; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 32px; box-shadow: 0 8px 24px rgba(0,0,0,0.05); overflow: hidden; }
+        .header { background: #006233; color: white; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+        .btn { background: white; color: #006233; border: none; padding: 6px 16px; border-radius: 60px; cursor: pointer; font-weight: bold; }
+        .btn-primary { background: #006233; color: white; }
+        .card { background: #fff; border-radius: 24px; padding: 20px; margin: 20px; border: 1px solid #e9f0ec; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: right; border-bottom: 1px solid #eef2f0; }
+        th { color: #006233; }
+        input, textarea { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #ddd; border-radius: 20px; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; }
+        .modal-card { background: white; width: 90%; max-width: 500px; border-radius: 28px; padding: 20px; }
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1e2f26; color: white; padding: 8px 16px; border-radius: 40px; opacity: 0; transition: 0.2s; z-index: 1000; }
+        .toast.show { opacity: 1; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h2><i class="fa-solid fa-shop"></i> ZaLo | لوحة المدير العام</h2>
+        <button id="logoutBtn" class="btn">تسجيل خروج</button>
+    </div>
+    <div id="adminContent" class="card">
+        <p>جاري التحقق من الصلاحيات...</p>
+    </div>
+</div>
+
+<div id="shopModal" class="modal">
+    <div class="modal-card">
+        <h3 id="modalTitle">إضافة متجر</h3>
+        <input type="text" id="shopName" placeholder="اسم المتجر">
+        <input type="text" id="shopWilaya" placeholder="الولاية">
+        <input type="text" id="shopPhone" placeholder="الهاتف">
+        <input type="text" id="shopWhatsapp" placeholder="واتساب">
+        <button id="saveShopBtn" class="btn-primary" style="margin-top: 10px;">حفظ</button>
+        <button onclick="closeModal()" style="margin-top: 8px; background: none;">إلغاء</button>
+    </div>
+</div>
+<div id="toast" class="toast"></div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getFirestore, collection, getDocs, doc, addDoc, updateDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBJ3T-jWd_nj3FYCtzewRl-d1yimGtsryc",
+        authDomain: "zalo-smart.firebaseapp.com",
+        projectId: "zalo-smart",
+        storageBucket: "zalo-smart.firebasestorage.app",
+        messagingSenderId: "430326151788",
+        appId: "1:430326151788:web:e4f94437946221429f3649",
+        measurementId: "G-HVX2X346E7"
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUser = null;
+    function showToast(msg) { const t = document.getElementById('toast'); t.innerText = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
+    function closeModal() { document.getElementById('shopModal').style.display = 'none'; }
+
+    async function loadShops() {
+        const snap = await getDocs(collection(db, "shops"));
+        const shops = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        let tableRows = '';
+        shops.forEach(s => {
+            tableRows += `<tr><td>${s.name}</td><td>${s.wilaya || '-'}</td><td>${s.phone || '-'}</td><td><button onclick="editShop('${s.id}')">تعديل</button> <button onclick="deleteShop('${s.id}')">حذف</button></td></tr>`;
+        });
+        document.getElementById('adminContent').innerHTML = `
+            <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+                <h3>إدارة المتاجر</h3>
+                <button id="openAddShopBtn" class="btn-primary" style="padding: 6px 16px;">+ إضافة متجر</button>
+            </div>
+            <table border="0" width="100%">
+                <thead><tr><th>الاسم</th><th>الولاية</th><th>الهاتف</th><th>إجراءات</th></tr></thead>
+                <tbody>${tableRows || '<tr><td colspan="4">لا توجد متاجر</td></tr>'}</tbody>
+            </table>
+        `;
+        document.getElementById('openAddShopBtn')?.addEventListener('click', () => {
+            document.getElementById('modalTitle').innerText = 'إضافة متجر';
+            document.getElementById('shopName').value = '';
+            document.getElementById('shopWilaya').value = '';
+            document.getElementById('shopPhone').value = '';
+            document.getElementById('shopWhatsapp').value = '';
+            window.editingId = null;
+            document.getElementById('shopModal').style.display = 'flex';
+        });
+    }
+
+    window.editShop = async (id) => {
+        const docRef = doc(db, "shops", id);
+        const snap = await getDoc(docRef);
+        if (snap.exists()) {
+            const data = snap.data();
+            document.getElementById('shopName').value = data.name || '';
+            document.getElementById('shopWilaya').value = data.wilaya || '';
+            document.getElementById('shopPhone').value = data.phone || '';
+            document.getElementById('shopWhatsapp').value = data.whatsapp || '';
+            window.editingId = id;
+            document.getElementById('modalTitle').innerText = 'تعديل متجر';
+            document.getElementById('shopModal').style.display = 'flex';
+        }
+    };
+    window.deleteShop = async (id) => {
+        if (confirm('هل تريد حذف هذا المتجر؟')) {
+            await deleteDoc(doc(db, "shops", id));
+            showToast('تم الحذف');
+            loadShops();
+        }
+    };
+    document.getElementById('saveShopBtn').onclick = async () => {
+        const data = {
+            name: document.getElementById('shopName').value,
+            wilaya: document.getElementById('shopWilaya').value,
+            phone: document.getElementById('shopPhone').value,
+            whatsapp: document.getElementById('shopWhatsapp').value,
+            updatedAt: new Date()
+        };
+        if (window.editingId) {
+            await updateDoc(doc(db, "shops", window.editingId), data);
+            showToast('تم التحديث');
+        } else {
+            await addDoc(collection(db, "shops"), { ...data, createdAt: new Date() });
+            showToast('تمت الإضافة');
+        }
+        closeModal();
+        loadShops();
+    };
+    window.closeModal = closeModal;
+
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            currentUser = user;
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            const role = userDoc.exists() ? userDoc.data().role : 'customer';
+            if (role === 'super_admin' || role === 'supervisor') {
+                await loadShops();
+            } else {
+                document.getElementById('adminContent').innerHTML = '<div class="card" style="color:red;">⚠️ ليس لديك صلاحية للدخول إلى لوحة المدير.</div>';
+            }
+        } else {
+            window.location.href = './index.html';
+        }
+    });
+    document.getElementById('logoutBtn').onclick = async () => { await signOut(auth); window.location.href = './index.html'; };
+</script>
+</body>
+</html>
