@@ -3,92 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>ZaLo | لوحة المدير المتكاملة</title>
+    <title>ZaLo | لوحة المدير - موثوقة</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Tajawal', sans-serif; background: #f0f5f2; direction: rtl; padding: 16px; }
-        .container { max-width: 1300px; margin: 0 auto; background: white; border-radius: 32px; box-shadow: 0 8px 24px rgba(0,0,0,0.05); overflow: hidden; }
-        /* شريط علوي */
-        .top-bar { background: #006233; color: white; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
-        .logo h2 { font-weight: 900; }
-        .user-info { display: flex; align-items: center; gap: 16px; background: rgba(255,255,255,0.15); padding: 6px 16px; border-radius: 60px; }
-        /* تخطيط الصفحة */
-        .dashboard-layout { display: flex; min-height: 70vh; }
-        .sidebar { width: 260px; background: #f8faf9; border-left: 1px solid #e0e8e4; padding: 24px 16px; }
-        .sidebar-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; margin-bottom: 8px; border-radius: 24px; cursor: pointer; transition: 0.2s; color: #2d4a3b; font-weight: 800; }
-        .sidebar-item i { width: 24px; }
-        .sidebar-item.active, .sidebar-item:hover { background: #e6f7ee; color: #006233; }
-        .main-content { flex: 1; padding: 24px; background: white; }
-        .card { background: #fff; border-radius: 24px; padding: 20px; margin-bottom: 20px; border: 1px solid #e9f0ec; }
-        .btn { background: #006233; color: white; border: none; border-radius: 60px; padding: 10px 20px; font-weight: 800; cursor: pointer; transition: 0.2s; }
-        .btn-sm { padding: 6px 16px; font-size: 13px; }
-        .btn-outline { background: white; border: 1px solid #006233; color: #006233; }
-        .btn-danger { background: #b91c1c; }
-        input, select, textarea { width: 100%; padding: 12px; border: 1.5px solid #e2e8e4; border-radius: 20px; margin-bottom: 12px; font-family: inherit; }
+        body { font-family: 'Tajawal', sans-serif; background: #f0f5f2; direction: rtl; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; border-radius: 32px; box-shadow: 0 8px 24px rgba(0,0,0,0.05); overflow: hidden; }
+        .header { background: #006233; color: white; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+        .btn { background: white; color: #006233; border: none; padding: 6px 16px; border-radius: 60px; cursor: pointer; font-weight: bold; }
+        .btn-primary { background: #006233; color: white; }
+        .card { background: #fff; border-radius: 24px; padding: 20px; margin: 20px; border: 1px solid #e9f0ec; }
+        .stats { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+        .stat-box { background: #f8faf9; padding: 20px; border-radius: 24px; flex: 1; text-align: center; }
+        .stat-number { font-size: 32px; font-weight: 900; color: #006233; }
         table { width: 100%; border-collapse: collapse; }
         th, td { padding: 12px; text-align: right; border-bottom: 1px solid #eef2f0; }
-        th { color: #006233; font-weight: 900; }
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; }
-        .modal-card { background: white; width: 90%; max-width: 550px; border-radius: 32px; padding: 24px; }
-        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1e2f26; color: white; padding: 10px 20px; border-radius: 60px; opacity: 0; transition: 0.2s; z-index: 1100; }
-        .toast.show { opacity: 1; bottom: 40px; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
-        .stat-card { background: #f8faf9; padding: 20px; border-radius: 24px; text-align: center; }
-        .stat-number { font-size: 32px; font-weight: 900; color: #006233; }
-        .flex-between { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
-        @media (max-width: 800px) { .sidebar { display: none; } }
+        th { color: #006233; }
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1e2f26; color: white; padding: 8px 16px; border-radius: 40px; opacity: 0; transition: 0.2s; }
+        .toast.show { opacity: 1; }
     </style>
 </head>
 <body>
 <div class="container">
-    <div class="top-bar">
-        <div class="logo"><h2><i class="fa-solid fa-chart-line"></i> ZaLo | المدير العام</h2></div>
-        <div class="user-info"><span id="userEmail"></span> <button id="logoutBtn" class="btn-sm" style="background:rgba(255,255,255,0.2);">خروج</button></div>
+    <div class="header">
+        <h2><i class="fa-solid fa-shield-haltered"></i> ZaLo | لوحة المدير العام</h2>
+        <button id="logoutBtn" class="btn">تسجيل خروج</button>
     </div>
-    <div class="dashboard-layout">
-        <div class="sidebar">
-            <div class="sidebar-item active" data-tab="dashboard"><i class="fa-solid fa-chart-simple"></i> لوحة القيادة</div>
-            <div class="sidebar-item" data-tab="shops"><i class="fa-solid fa-store"></i> المتاجر</div>
-            <div class="sidebar-item" data-tab="products"><i class="fa-solid fa-box"></i> المنتجات</div>
-            <div class="sidebar-item" data-tab="users"><i class="fa-solid fa-users"></i> المستخدمون</div>
-        </div>
-        <div class="main-content" id="mainContent">جاري التحميل...</div>
+    <div id="content" class="card" style="min-height: 300px;">
+        <p>جاري التحقق من الصلاحيات...</p>
     </div>
 </div>
-
-<!-- مودال إضافة/تعديل متجر -->
-<div id="shopModal" class="modal">
-    <div class="modal-card">
-        <h3 id="shopModalTitle">إضافة متجر</h3>
-        <input type="text" id="shopName" placeholder="اسم المتجر">
-        <input type="text" id="shopWilaya" placeholder="الولاية">
-        <input type="text" id="shopPhone" placeholder="الهاتف">
-        <input type="text" id="shopWhatsapp" placeholder="رابط واتساب">
-        <input type="text" id="shopOwnerId" placeholder="معرف التاجر (اختياري)">
-        <div class="flex-between"><button id="saveShopBtn" class="btn">حفظ</button><button onclick="closeModal('shopModal')" class="btn-outline">إلغاء</button></div>
-    </div>
-</div>
-
-<!-- مودال إضافة/تعديل منتج -->
-<div id="productModal" class="modal">
-    <div class="modal-card">
-        <h3 id="productModalTitle">إضافة منتج</h3>
-        <input type="text" id="prodName" placeholder="اسم المنتج">
-        <input type="number" id="prodPrice" placeholder="السعر (دج)">
-        <input type="text" id="prodMedia" placeholder="رابط صورة / فيديو (اختياري)">
-        <select id="prodShopId"><option value="">اختر المتجر</option></select>
-        <div class="flex-between"><button id="saveProductBtn" class="btn">حفظ</button><button onclick="closeModal('productModal')" class="btn-outline">إلغاء</button></div>
-    </div>
-</div>
-
 <div id="toastMsg" class="toast"></div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    import { getFirestore, collection, getDocs, doc, addDoc, updateDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBJ3T-jWd_nj3FYCtzewRl-d1yimGtsryc",
@@ -103,162 +54,79 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    let currentUser = null;
-    let allShops = [], allProducts = [], allUsers = [];
-
-    function showToast(msg) { const t = document.getElementById('toastMsg'); t.innerText = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-    async function loadData() {
-        const shopsSnap = await getDocs(collection(db, "shops"));
-        allShops = shopsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-        const productsSnap = await getDocs(collection(db, "products"));
-        allProducts = productsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-        const usersSnap = await getDocs(collection(db, "users"));
-        allUsers = usersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    function showToast(msg) {
+        const t = document.getElementById('toastMsg');
+        t.innerText = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2500);
     }
-
-    // لوحة القيادة
-    async function renderDashboard() {
-        await loadData();
-        const html = `<div class="stats-grid">
-            <div class="stat-card"><div class="stat-number">${allShops.length}</div><div>المتاجر</div></div>
-            <div class="stat-card"><div class="stat-number">${allProducts.length}</div><div>المنتجات</div></div>
-            <div class="stat-card"><div class="stat-number">${allUsers.length}</div><div>المستخدمون</div></div>
-        </div><div class="card"><h3>مرحباً مدير عام</h3><p>يمكنك إدارة المنصة بالكامل من القائمة الجانبية.</p></div>`;
-        document.getElementById('mainContent').innerHTML = html;
-    }
-
-    // إدارة المتاجر
-    async function renderShops() {
-        await loadData();
-        let tableRows = '';
-        allShops.forEach(shop => {
-            tableRows += `<tr><td>${shop.name}</td><td>${shop.wilaya || '-'}</td><td>${shop.phone || '-'}</td><td><button class="btn-sm btn-outline" onclick="editShop('${shop.id}')">تعديل</button> <button class="btn-sm btn-danger" onclick="deleteShop('${shop.id}')">حذف</button></td></tr>`;
-        });
-        const html = `<div class="flex-between"><h3>إدارة المتاجر</h3><button id="openAddShopBtn" class="btn">+ إضافة متجر</button></div><div class="card"><table><thead><tr><th>الاسم</th><th>الولاية</th><th>الهاتف</th><th>الإجراءات</th></tr></thead><tbody>${tableRows || '<tr><td colspan="4">لا توجد متاجر</td></tr>'}</tbody></table></div>`;
-        document.getElementById('mainContent').innerHTML = html;
-        document.getElementById('openAddShopBtn')?.addEventListener('click', () => openShopModal());
-    }
-    window.editShop = async (id) => {
-        const shop = allShops.find(s => s.id === id);
-        if (shop) {
-            document.getElementById('shopModalTitle').innerText = 'تعديل متجر';
-            document.getElementById('shopName').value = shop.name || '';
-            document.getElementById('shopWilaya').value = shop.wilaya || '';
-            document.getElementById('shopPhone').value = shop.phone || '';
-            document.getElementById('shopWhatsapp').value = shop.whatsapp || '';
-            document.getElementById('shopOwnerId').value = shop.ownerId || '';
-            window.editingShopId = id;
-            document.getElementById('shopModal').style.display = 'flex';
-        }
-    };
-    window.deleteShop = async (id) => { if(confirm('حذف المتجر؟')) { await deleteDoc(doc(db, "shops", id)); showToast('تم الحذف'); renderShops(); } };
-    function openShopModal(shop = null) {
-        document.getElementById('shopModalTitle').innerText = 'إضافة متجر';
-        document.getElementById('shopName').value = '';
-        document.getElementById('shopWilaya').value = '';
-        document.getElementById('shopPhone').value = '';
-        document.getElementById('shopWhatsapp').value = '';
-        document.getElementById('shopOwnerId').value = '';
-        window.editingShopId = null;
-        document.getElementById('shopModal').style.display = 'flex';
-    }
-    document.getElementById('saveShopBtn').onclick = async () => {
-        const data = { name: document.getElementById('shopName').value, wilaya: document.getElementById('shopWilaya').value, phone: document.getElementById('shopPhone').value, whatsapp: document.getElementById('shopWhatsapp').value, ownerId: document.getElementById('shopOwnerId').value, updatedAt: new Date() };
-        if (window.editingShopId) { await updateDoc(doc(db, "shops", window.editingShopId), data); showToast('تم التحديث'); }
-        else { await addDoc(collection(db, "shops"), { ...data, createdAt: new Date() }); showToast('تمت الإضافة'); }
-        closeModal('shopModal'); renderShops();
-    };
-
-    // إدارة المنتجات
-    async function renderProducts() {
-        await loadData();
-        let tableRows = '';
-        allProducts.forEach(prod => {
-            const shopName = allShops.find(s => s.id === prod.shopId)?.name || '-';
-            tableRows += `<tr><td>${prod.name}</td><td>${prod.price} دج</td><td>${shopName}</td><td><button class="btn-sm btn-outline" onclick="editProduct('${prod.id}')">تعديل</button> <button class="btn-sm btn-danger" onclick="deleteProduct('${prod.id}')">حذف</button></td></tr>`;
-        });
-        const html = `<div class="flex-between"><h3>إدارة المنتجات</h3><button id="openAddProductBtn" class="btn">+ إضافة منتج</button></div><div class="card"><table><thead><tr><th>الاسم</th><th>السعر</th><th>المتجر</th><th>الإجراءات</th></tr></thead><tbody>${tableRows || '<tr><td colspan="4">لا توجد منتجات</td></tr>'}</tbody></table></div>`;
-        document.getElementById('mainContent').innerHTML = html;
-        document.getElementById('openAddProductBtn')?.addEventListener('click', () => openProductModal());
-    }
-    window.editProduct = async (id) => {
-        const prod = allProducts.find(p => p.id === id);
-        if (prod) {
-            document.getElementById('productModalTitle').innerText = 'تعديل منتج';
-            document.getElementById('prodName').value = prod.name || '';
-            document.getElementById('prodPrice').value = prod.price || '';
-            document.getElementById('prodMedia').value = prod.mediaUrl || '';
-            const shopSelect = document.getElementById('prodShopId');
-            shopSelect.innerHTML = '<option value="">اختر المتجر</option>' + allShops.map(s => `<option value="${s.id}" ${s.id === prod.shopId ? 'selected' : ''}>${s.name}</option>`).join('');
-            window.editingProductId = id;
-            document.getElementById('productModal').style.display = 'flex';
-        }
-    };
-    window.deleteProduct = async (id) => { if(confirm('حذف المنتج؟')) { await deleteDoc(doc(db, "products", id)); showToast('تم الحذف'); renderProducts(); } };
-    function openProductModal() {
-        document.getElementById('productModalTitle').innerText = 'إضافة منتج';
-        document.getElementById('prodName').value = '';
-        document.getElementById('prodPrice').value = '';
-        document.getElementById('prodMedia').value = '';
-        const shopSelect = document.getElementById('prodShopId');
-        shopSelect.innerHTML = '<option value="">اختر المتجر</option>' + allShops.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
-        window.editingProductId = null;
-        document.getElementById('productModal').style.display = 'flex';
-    }
-    document.getElementById('saveProductBtn').onclick = async () => {
-        const data = { name: document.getElementById('prodName').value, price: parseInt(document.getElementById('prodPrice').value), mediaUrl: document.getElementById('prodMedia').value, shopId: document.getElementById('prodShopId').value, updatedAt: new Date() };
-        if (!data.shopId) { showToast('اختر المتجر أولاً'); return; }
-        if (window.editingProductId) { await updateDoc(doc(db, "products", window.editingProductId), data); showToast('تم التحديث'); }
-        else { await addDoc(collection(db, "products"), { ...data, likes: 0, comments: [], createdAt: new Date() }); showToast('تمت الإضافة'); }
-        closeModal('productModal'); renderProducts();
-    };
-
-    // إدارة المستخدمين
-    async function renderUsers() {
-        await loadData();
-        let rows = '';
-        allUsers.forEach(u => {
-            rows += `<tr><td>${u.email}</td><td>${u.role || 'customer'}</td><td><select onchange="changeRole('${u.id}', this.value)"><option value="customer" ${u.role === 'customer' ? 'selected' : ''}>عميل</option><option value="merchant" ${u.role === 'merchant' ? 'selected' : ''}>تاجر</option><option value="supervisor" ${u.role === 'supervisor' ? 'selected' : ''}>مشرف</option><option value="super_admin" ${u.role === 'super_admin' ? 'selected' : ''}>مدير عام</option></select></td></tr>`;
-        });
-        const html = `<h3>إدارة المستخدمين</h3><div class="card"><table><thead><tr><th>البريد الإلكتروني</th><th>الدور الحالي</th><th>تغيير الدور</th></tr></thead><tbody>${rows || '<tr><td colspan="3">لا يوجد مستخدمون</td></tr>'}</tbody></table></div>`;
-        document.getElementById('mainContent').innerHTML = html;
-    }
-    window.changeRole = async (userId, newRole) => {
-        await updateDoc(doc(db, "users", userId), { role: newRole });
-        showToast('تم تحديث الدور');
-        renderUsers();
-    };
-
-    // التنقل بين التبويبات
-    async function renderTab(tab) {
-        if (tab === 'dashboard') await renderDashboard();
-        else if (tab === 'shops') await renderShops();
-        else if (tab === 'products') await renderProducts();
-        else if (tab === 'users') await renderUsers();
-        document.querySelectorAll('.sidebar-item').forEach(item => { item.classList.toggle('active', item.getAttribute('data-tab') === tab); });
-    }
-
-    document.querySelectorAll('.sidebar-item').forEach(item => { item.addEventListener('click', () => renderTab(item.getAttribute('data-tab'))); });
 
     onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            currentUser = user;
-            document.getElementById('userEmail').innerText = user.email;
-            const userDoc = await getDoc(doc(db, "users", user.uid));
-            const role = userDoc.exists() ? userDoc.data().role : 'customer';
-            if (role === 'super_admin' || role === 'supervisor') {
-                await renderTab('dashboard');
-            } else {
-                document.getElementById('mainContent').innerHTML = '<div class="card" style="color:red;">⚠️ غير مصرح. ليس لديك صلاحية للدخول إلى لوحة المدير.</div>';
-            }
-        } else {
+        if (!user) {
             window.location.href = './index.html';
+            return;
         }
+
+        // نفس الطريقة المستخدمة في index.html لقراءة الدور
+        const userDocRef = doc(db, "users", user.uid);
+        const userDocSnap = await getDoc(userDocRef);
+        let role = "customer";
+        if (userDocSnap.exists()) {
+            role = userDocSnap.data().role || "customer";
+        } else {
+            // إذا لم توجد وثيقة، ننشئها كـ customer
+            await setDoc(userDocRef, { email: user.email, role: "customer" });
+        }
+
+        console.log("الدور من Firestore:", role);
+
+        if (role !== "super_admin" && role !== "supervisor") {
+            document.getElementById('content').innerHTML = `
+                <div style="color: red; text-align: center; padding: 40px;">
+                    <i class="fa-solid fa-ban" style="font-size: 48px;"></i>
+                    <h3>غير مصرح بالدخول</h3>
+                    <p>ليس لديك صلاحية للدخول إلى لوحة المدير.</p>
+                    <button id="backBtn" class="btn-primary" style="margin-top: 16px;">العودة إلى الرئيسية</button>
+                </div>
+            `;
+            document.getElementById('backBtn')?.addEventListener('click', () => {
+                window.location.href = './index.html';
+            });
+            return;
+        }
+
+        // هنا المستخدم مسموح له (مدير أو مشرف) → نعرض لوحة تحكم مبسطة
+        const shopsSnap = await getDocs(collection(db, "shops"));
+        const shopsCount = shopsSnap.size;
+        const productsSnap = await getDocs(collection(db, "products"));
+        const productsCount = productsSnap.size;
+
+        let shopsTable = '<table><thead><tr><th>اسم المتجر</th><th>الولاية</th><th>الهاتف</th></tr></thead><tbody>';
+        shopsSnap.forEach(doc => {
+            const s = doc.data();
+            shopsTable += `<tr><td>${s.name || '-'}</td><td>${s.wilaya || '-'}</td><td>${s.phone || '-'}</td></tr>`;
+        });
+        shopsTable += '</tbody></table>';
+
+        document.getElementById('content').innerHTML = `
+            <div class="stats">
+                <div class="stat-box"><div class="stat-number">${shopsCount}</div><div>المتاجر</div></div>
+                <div class="stat-box"><div class="stat-number">${productsCount}</div><div>المنتجات</div></div>
+            </div>
+            <div class="card">
+                <h3>قائمة المتاجر</h3>
+                ${shopsTable}
+            </div>
+            <div class="card">
+                <p>🔧 يمكنك إضافة متاجر ومنتجات من خلال Firebase Console، أو سأقوم لاحقاً بإضافة واجهة مباشرة.</p>
+            </div>
+        `;
     });
-    document.getElementById('logoutBtn').onclick = async () => { await signOut(auth); window.location.href = './index.html'; };
-    window.closeModal = closeModal;
+
+    document.getElementById('logoutBtn').onclick = async () => {
+        await signOut(auth);
+        window.location.href = './index.html';
+    };
 </script>
 </body>
 </html>
