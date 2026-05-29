@@ -3,24 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>ZaLo | السوق الذكي</title>
+    <title>ZaLo | السوق الذكي - تجربة سلسة</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Tajawal', sans-serif; background: #f0f5f2; direction: rtl; padding: 16px; }
         .container { max-width: 500px; margin: 0 auto; background: white; border-radius: 32px; box-shadow: 0 8px 24px rgba(0,0,0,0.05); overflow: hidden; }
-        .header { background: #006233; color: white; padding: 16px; text-align: center; }
-        .card { background: white; border-radius: 24px; padding: 16px; margin-bottom: 12px; border: 1px solid #e9f0ec; }
-        .btn { background: #006233; color: white; border: none; border-radius: 60px; padding: 8px 16px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 8px; }
+        .header { background: #006233; color: white; padding: 16px; text-align: center; font-weight: 900; }
+        .card { background: white; border-radius: 24px; padding: 16px; margin-bottom: 16px; border: 1px solid #e9f0ec; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+        .btn { background: #006233; color: white; border: none; border-radius: 60px; padding: 10px 16px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 8px; transition: 0.2s; }
         .btn-outline { background: white; border: 1px solid #006233; color: #006233; }
-        .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-        .like-btn, .comment-btn { background: none; border: none; color: #006233; margin: 0 5px; cursor: pointer; }
+        /* سلايدر أفقي */
+        .horizontal-scroll { display: flex; overflow-x: auto; gap: 12px; padding-bottom: 8px; scroll-snap-type: x mandatory; }
+        .horizontal-scroll::-webkit-scrollbar { height: 4px; }
+        .horizontal-scroll::-webkit-scrollbar-track { background: #e2e8e4; border-radius: 10px; }
+        .horizontal-scroll::-webkit-scrollbar-thumb { background: #006233; border-radius: 10px; }
+        .product-card { flex: 0 0 160px; scroll-snap-align: start; background: white; border-radius: 24px; padding: 12px; border: 1px solid #e9f0ec; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+        .product-card img, .product-card video { width: 100%; height: 100px; object-fit: cover; border-radius: 16px; margin-bottom: 8px; }
+        .product-price { color: #006233; font-weight: 900; font-size: 16px; margin: 6px 0; }
+        .product-name { font-weight: 800; }
         .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1e2f26; color: white; padding: 8px 16px; border-radius: 40px; opacity: 0; transition: 0.2s; z-index: 1000; }
         .toast.show { opacity: 1; }
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; }
         .modal-card { background: white; width: 90%; border-radius: 28px; padding: 20px; }
-        input, select { width: 100%; padding: 10px; margin: 8px 0; border-radius: 20px; border: 1px solid #ddd; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border-radius: 60px; border: 1.5px solid #e2e8e4; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
     </style>
 </head>
 <body>
@@ -39,7 +47,7 @@
         </div>
     </div>
 
-    <!-- واجهة العميل بعد الدخول -->
+    <!-- الواجهة الرئيسية بعد الدخول -->
     <div id="customerView" style="display: none;">
         <div class="header"><h2>ZaLo | السوق الذكي</h2></div>
         <div id="customerContent" style="padding: 16px;"></div>
@@ -50,6 +58,7 @@
     </div>
 </div>
 
+<!-- نافذة التسجيل -->
 <div id="regModal" class="modal">
     <div class="modal-card">
         <h3>حساب جديد</h3>
@@ -95,21 +104,22 @@
         allProducts = productsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
     }
 
-    // دالة عرض المنتج
+    // عرض المنتج كبطاقة في السلايدر
     function productCard(p) {
         const shop = allShops.find(s => s.id === p.shopId);
+        const mediaHtml = p.mediaUrl ? (p.mediaUrl.includes('.mp4') ? `<video src="${p.mediaUrl}" controls style="width:100%; height:100px; object-fit:cover; border-radius:16px;"></video>` : `<img src="${p.mediaUrl}" style="width:100%; height:100px; object-fit:cover; border-radius:16px;">`) : `<div style="font-size: 40px; text-align:center;">📦</div>`;
         return `
-            <div class="card">
-                <div style="font-size: 40px;">${p.mediaUrl ? (p.mediaUrl.includes('.mp4') ? '🎥' : '📷') : '📦'}</div>
-                <div><strong>${p.name}</strong></div>
-                <div>${p.price} دج</div>
-                <div style="font-size: 12px; color: #006233;">${shop?.name || ''}</div>
+            <div class="product-card">
+                ${mediaHtml}
+                <div class="product-name">${p.name}</div>
+                <div class="product-price">${p.price.toLocaleString()} دج</div>
+                <div style="font-size: 11px; color: #006233;">${shop?.name || ''}</div>
                 <button class="btn" style="margin-top: 8px;" onclick="orderProduct('${p.id}')">اطلب الآن</button>
             </div>
         `;
     }
 
-    // دالة الطلب الجديدة (التي تريد إضافتها)
+    // دالة الطلب (تعمل بنجاح)
     window.orderProduct = async (productId) => {
         const product = allProducts.find(p => p.id === productId);
         if (!product) { showToast("المنتج غير موجود"); return; }
@@ -141,17 +151,19 @@
                 <h3>مرحباً في ZaLo</h3>
                 <p>${allShops.length} متجر | ${allProducts.length} منتج</p>
             </div>
-            <h3>🛍️ جميع المنتجات</h3>
-            <div class="product-grid">${productsHtml || '<div class="card">لا توجد منتجات بعد</div>'}</div>
+            <div style="margin-top: 16px;">
+                <h3>🛍️ جميع المنتجات</h3>
+                <div class="horizontal-scroll">
+                    ${productsHtml || '<div class="card">لا توجد منتجات بعد</div>'}
+                </div>
+            </div>
         `;
     }
 
-    // تبديل الواجهة حسب الدور
     async function showCustomerInterface() {
         document.getElementById('loginView').style.display = 'none';
         document.getElementById('customerView').style.display = 'block';
         await renderCustomerHome();
-        // إظهار رابط لوحة الإدارة للمدير فقط
         const adminLink = document.getElementById('adminLink');
         if (currentUserRole === 'super_admin' || currentUserRole === 'supervisor') {
             adminLink.style.display = 'inline-block';
@@ -185,7 +197,6 @@
     };
     document.getElementById('logoutCustomer').onclick = async () => { await signOut(auth); location.reload(); };
 
-    // مراقب حالة الدخول
     onAuthStateChanged(auth, async (user) => {
         if (user) {
             const userDoc = await getDoc(doc(db, "users", user.uid));
@@ -202,5 +213,5 @@
         }
     });
 </script>
-</body>  
+</body>
 </html>
