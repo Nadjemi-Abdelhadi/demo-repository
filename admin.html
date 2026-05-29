@@ -3,63 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>ZaLo | لوحة المدير - الطلبات</title>
+    <title>ZaLo | لوحة المدير المتكاملة</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Tajawal', sans-serif; background: #f0f5f2; direction: rtl; padding: 16px; }
-        .container { max-width: 1300px; margin: 0 auto; background: white; border-radius: 32px; box-shadow: 0 8px 24px rgba(0,0,0,0.05); }
-        .header { background: #006233; color: white; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
-        .tabs { display: flex; background: #f8faf9; padding: 0 20px; gap: 8px; border-bottom: 1px solid #e0e8e4; }
-        .tab { padding: 12px 24px; cursor: pointer; font-weight: 800; border-bottom: 3px solid transparent; }
+        .container { max-width: 1300px; margin: 0 auto; background: white; border-radius: 32px; box-shadow: 0 8px 24px rgba(0,0,0,0.05); overflow: hidden; }
+        .header { background: #006233; color: white; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .tabs { display: flex; background: #f8faf9; padding: 0 20px; gap: 8px; border-bottom: 1px solid #e0e8e4; overflow-x: auto; }
+        .tab { padding: 12px 24px; cursor: pointer; font-weight: 800; border-bottom: 3px solid transparent; white-space: nowrap; }
         .tab.active { color: #006233; border-bottom-color: #006233; background: white; }
         .content { padding: 24px; }
         .stats-grid { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
-        .stat-card { background: #f8faf9; padding: 20px; border-radius: 24px; flex: 1; text-align: center; }
+        .stat-card { background: #f8faf9; padding: 20px; border-radius: 24px; flex: 1; text-align: center; min-width: 120px; }
         .stat-number { font-size: 32px; font-weight: 900; color: #006233; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 10px; text-align: right; border-bottom: 1px solid #eef2f0; }
-        th { color: #006233; }
-        .btn { background: #006233; color: white; border: none; border-radius: 60px; padding: 6px 16px; font-weight: bold; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; overflow-x: auto; display: block; }
+        th, td { padding: 12px; text-align: right; border-bottom: 1px solid #eef2f0; }
+        th { color: #006233; font-weight: 900; }
+        .btn { background: #006233; color: white; border: none; border-radius: 60px; padding: 6px 16px; font-weight: bold; cursor: pointer; transition: 0.2s; margin: 2px; }
         .btn-sm { padding: 4px 12px; font-size: 12px; }
         .btn-outline { background: white; border: 1px solid #006233; color: #006233; }
         .btn-danger { background: #b91c1c; color: white; }
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; }
-        .modal-card { background: white; width: 90%; max-width: 500px; border-radius: 28px; padding: 24px; }
-        input, select { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid #ddd; border-radius: 20px; }
-        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1e2f26; color: white; padding: 8px 16px; border-radius: 40px; opacity: 0; transition: 0.2s; }
+        .modal-card { background: white; width: 90%; max-width: 550px; border-radius: 28px; padding: 24px; max-height: 90vh; overflow-y: auto; }
+        input, select, textarea { width: 100%; padding: 10px; margin-bottom: 12px; border: 1.5px solid #e2e8e4; border-radius: 20px; font-family: inherit; }
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1e2f26; color: white; padding: 10px 20px; border-radius: 60px; opacity: 0; transition: 0.2s; z-index: 1100; }
         .toast.show { opacity: 1; }
-        .flex-between { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .request-card { border-bottom: 1px solid #eee; padding: 12px; margin-bottom: 8px; }
+        @media (max-width: 700px) { .tab { padding: 8px 12px; font-size: 14px; } th, td { font-size: 12px; padding: 6px; } }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
-        <h2><i class="fa-solid fa-chart-line"></i> ZaLo | لوحة المدير</h2>
-        <button id="logoutBtn" class="btn">تسجيل خروج</button>
+        <h2><i class="fa-solid fa-chart-line"></i> ZaLo | لوحة المدير العام</h2>
+        <button id="logoutBtn" class="btn btn-outline" style="background:white;">تسجيل خروج</button>
     </div>
-    <div class="tabs">
+    <div class="tabs" id="tabsContainer">
         <div class="tab active" data-tab="dashboard">📊 لوحة القيادة</div>
         <div class="tab" data-tab="shops">🏪 المتاجر</div>
         <div class="tab" data-tab="products">📦 المنتجات</div>
         <div class="tab" data-tab="users">👥 المستخدمون</div>
         <div class="tab" data-tab="orders">📋 الطلبات</div>
+        <div class="tab" data-tab="merchant_requests">📝 طلبات التجار</div>
     </div>
     <div id="mainContent" class="content">جاري التحميل...</div>
 </div>
 
 <!-- مودال المتجر -->
-<div id="shopModal" class="modal"><div class="modal-card"><h3 id="shopModalTitle">إضافة متجر</h3><input type="text" id="shopName" placeholder="اسم المتجر"><input type="text" id="shopWilaya" placeholder="الولاية"><input type="text" id="shopPhone" placeholder="الهاتف"><input type="text" id="shopWhatsapp" placeholder="واتساب"><div class="flex-between"><button id="saveShopBtn" class="btn">حفظ</button><button onclick="closeModal('shopModal')" class="btn-outline">إلغاء</button></div></div></div>
-<div id="productModal" class="modal"><div class="modal-card"><h3 id="productModalTitle">إضافة منتج</h3><input type="text" id="prodName" placeholder="اسم المنتج"><input type="number" id="prodPrice" placeholder="السعر"><input type="text" id="prodMedia" placeholder="رابط وسائط"><select id="prodShopSelect"><option value="">اختر المتجر</option></select><div class="flex-between"><button id="saveProductBtn" class="btn">حفظ</button><button onclick="closeModal('productModal')" class="btn-outline">إلغاء</button></div></div></div>
-<div id="userModal" class="modal"><div class="modal-card"><h3>تغيير الدور</h3><p id="userEmailSpan"></p><select id="userRoleSelect"><option value="customer">عميل</option><option value="merchant">تاجر</option><option value="supervisor">مشرف</option><option value="super_admin">مدير عام</option></select><div class="flex-between"><button id="updateRoleBtn" class="btn">تحديث</button><button onclick="closeModal('userModal')" class="btn-outline">إلغاء</button></div></div></div>
+<div id="shopModal" class="modal"><div class="modal-card"><h3 id="shopModalTitle">إضافة متجر</h3><input type="text" id="shopName" placeholder="اسم المتجر"><input type="text" id="shopWilaya" placeholder="الولاية"><input type="text" id="shopBaladia" placeholder="البلدية"><input type="text" id="shopPhone" placeholder="الهاتف"><input type="text" id="shopWhatsapp" placeholder="رابط واتساب"><input type="text" id="shopLogo" placeholder="إيموجي الشعار (اختياري)"><div class="flex-between"><button id="saveShopBtn" class="btn">حفظ</button><button onclick="closeModal('shopModal')" class="btn-outline">إلغاء</button></div></div></div>
+
+<!-- مودال المنتج -->
+<div id="productModal" class="modal"><div class="modal-card"><h3 id="productModalTitle">إضافة منتج</h3><input type="text" id="prodName" placeholder="اسم المنتج"><input type="number" id="prodPrice" placeholder="السعر (دج)"><input type="text" id="prodMedia" placeholder="رابط صورة/فيديو (اختياري)"><select id="prodShopId"><option value="">اختر المتجر</option></select><div class="flex-between"><button id="saveProductBtn" class="btn">حفظ</button><button onclick="closeModal('productModal')" class="btn-outline">إلغاء</button></div></div></div>
+
+<!-- مودال تغيير دور المستخدم -->
+<div id="userModal" class="modal"><div class="modal-card"><h3>تغيير دور المستخدم</h3><p id="userEmailSpan"></p><select id="userRoleSelect"><option value="customer">عميل</option><option value="merchant">تاجر</option><option value="supervisor">مشرف</option><option value="super_admin">مدير عام</option></select><div class="flex-between"><button id="updateRoleBtn" class="btn">تحديث</button><button onclick="closeModal('userModal')" class="btn-outline">إلغاء</button></div></div></div>
 
 <div id="toastMsg" class="toast"></div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    import { getFirestore, collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, addDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBJ3T-jWd_nj3FYCtzewRl-d1yimGtsryc",
@@ -74,95 +81,158 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    let shops = [], products = [], users = [], orders = [];
+    let allShops = [], allProducts = [], allUsers = [], allOrders = [], allRequests = [];
+    let editingShopId = null, editingProductId = null, editingUserId = null;
 
-    function showToast(msg) { const t = document.getElementById('toastMsg'); t.innerText = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
+    function showToast(msg) { const t = document.getElementById('toastMsg'); t.innerText = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
     async function loadAll() {
-        shops = (await getDocs(collection(db, "shops"))).docs.map(d => ({ id: d.id, ...d.data() }));
-        products = (await getDocs(collection(db, "products"))).docs.map(d => ({ id: d.id, ...d.data() }));
-        users = (await getDocs(collection(db, "users"))).docs.map(d => ({ id: d.id, ...d.data() }));
-        orders = (await getDocs(collection(db, "orders"))).docs.map(d => ({ id: d.id, ...d.data() }));
+        const shopsSnap = await getDocs(collection(db, "shops"));
+        allShops = shopsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const productsSnap = await getDocs(collection(db, "products"));
+        allProducts = productsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const usersSnap = await getDocs(collection(db, "users"));
+        allUsers = usersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const ordersSnap = await getDocs(collection(db, "orders"));
+        allOrders = ordersSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const requestsSnap = await getDocs(collection(db, "merchant_requests"));
+        allRequests = requestsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
     }
 
+    // ===================== لوحة القيادة =====================
     async function renderDashboard() {
         await loadAll();
         document.getElementById('mainContent').innerHTML = `
             <div class="stats-grid">
-                <div class="stat-card"><div class="stat-number">${shops.length}</div><div>المتاجر</div></div>
-                <div class="stat-card"><div class="stat-number">${products.length}</div><div>المنتجات</div></div>
-                <div class="stat-card"><div class="stat-number">${users.length}</div><div>المستخدمون</div></div>
-                <div class="stat-card"><div class="stat-number">${orders.length}</div><div>الطلبات</div></div>
+                <div class="stat-card"><div class="stat-number">${allShops.length}</div><div>المتاجر</div></div>
+                <div class="stat-card"><div class="stat-number">${allProducts.length}</div><div>المنتجات</div></div>
+                <div class="stat-card"><div class="stat-number">${allUsers.length}</div><div>المستخدمون</div></div>
+                <div class="stat-card"><div class="stat-number">${allOrders.length}</div><div>الطلبات</div></div>
+                <div class="stat-card"><div class="stat-number">${allRequests.length}</div><div>طلبات التجار</div></div>
             </div>
-            <div class="stats-grid"><div class="stat-card"><h3>مرحباً مدير عام</h3><p>استخدم التبويبات لإدارة المنصة.</p></div></div>
+            <div class="stat-card"><h3>مرحباً مدير عام</h3><p>استخدم التبويبات لإدارة المنصة بالكامل.</p></div>
         `;
     }
 
+    // ===================== المتاجر =====================
     async function renderShops() {
         await loadAll();
         let rows = '';
-        shops.forEach(s => rows += `<tr><td>${s.name||'-'}</td><td>${s.wilaya||'-'}</td><td>${s.phone||'-'}</td><td><button class="btn-sm btn-outline" onclick="editShop('${s.id}')">تعديل</button> <button class="btn-sm btn-danger" onclick="deleteShop('${s.id}')">حذف</button></td></tr>`);
-        document.getElementById('mainContent').innerHTML = `<div class="flex-between"><h3>المتاجر</h3><button id="addShopBtn" class="btn">+ إضافة</button></div><table><thead><th>الاسم</th><th>الولاية</th><th>الهاتف</th><th>إجراءات</th></thead><tbody>${rows||'<tr><td colspan="4">لا توجد متاجر</td></tr>'}</tbody></table>`;
+        allShops.forEach(shop => {
+            rows += `<tr><td>${shop.name || '-'}</td><td>${shop.wilaya || '-'}</td><td>${shop.baladia || '-'}</td><td>${shop.phone || '-'}</td><td><button class="btn-sm btn-outline" onclick="editShop('${shop.id}')">تعديل</button> <button class="btn-sm btn-danger" onclick="deleteShop('${shop.id}')">حذف</button></td></tr>`;
+        });
+        document.getElementById('mainContent').innerHTML = `
+            <div class="flex-between"><h3>إدارة المتاجر</h3><button id="addShopBtn" class="btn">+ إضافة متجر</button></div>
+            <div style="overflow-x:auto;"><table><thead><tr><th>الاسم</th><th>الولاية</th><th>البلدية</th><th>الهاتف</th><th>إجراءات</th></tr></thead><tbody>${rows || '<tr><td colspan="5">لا توجد متاجر</td></tr>'}</tbody></table></div>
+        `;
         document.getElementById('addShopBtn')?.addEventListener('click', () => openShopModal());
     }
-    window.editShop = (id) => { const s = shops.find(x=>x.id===id); if(s) openShopModal(s); };
-    window.deleteShop = async (id) => { if(confirm('حذف؟')){ await deleteDoc(doc(db,"shops",id)); renderShops(); showToast('تم'); } };
-    function openShopModal(shop=null){ document.getElementById('shopModalTitle').innerText=shop?'تعديل':'إضافة'; document.getElementById('shopName').value=shop?.name||''; document.getElementById('shopWilaya').value=shop?.wilaya||''; document.getElementById('shopPhone').value=shop?.phone||''; document.getElementById('shopWhatsapp').value=shop?.whatsapp||''; window.editingShop=shop?.id||null; document.getElementById('shopModal').style.display='flex'; }
+    window.editShop = (id) => { const shop = allShops.find(s => s.id === id); if(shop) openShopModal(shop); };
+    window.deleteShop = async (id) => { if(confirm('حذف المتجر؟')) { await deleteDoc(doc(db, "shops", id)); showToast('تم الحذف'); renderShops(); } };
+    function openShopModal(shop = null) {
+        document.getElementById('shopModalTitle').innerText = shop ? 'تعديل متجر' : 'إضافة متجر';
+        document.getElementById('shopName').value = shop?.name || '';
+        document.getElementById('shopWilaya').value = shop?.wilaya || '';
+        document.getElementById('shopBaladia').value = shop?.baladia || '';
+        document.getElementById('shopPhone').value = shop?.phone || '';
+        document.getElementById('shopWhatsapp').value = shop?.whatsapp || '';
+        document.getElementById('shopLogo').value = shop?.logoEmoji || '';
+        editingShopId = shop?.id || null;
+        document.getElementById('shopModal').style.display = 'flex';
+    }
     document.getElementById('saveShopBtn').onclick = async () => {
-        const data={ name:document.getElementById('shopName').value, wilaya:document.getElementById('shopWilaya').value, phone:document.getElementById('shopPhone').value, whatsapp:document.getElementById('shopWhatsapp').value, updatedAt:new Date() };
-        if(!data.name){ showToast('اسم المتجر مطلوب'); return; }
-        if(window.editingShop) await updateDoc(doc(db,"shops",window.editingShop), data);
-        else await addDoc(collection(db,"shops"), {...data, createdAt:new Date()});
+        const data = {
+            name: document.getElementById('shopName').value,
+            wilaya: document.getElementById('shopWilaya').value,
+            baladia: document.getElementById('shopBaladia').value,
+            phone: document.getElementById('shopPhone').value,
+            whatsapp: document.getElementById('shopWhatsapp').value,
+            logoEmoji: document.getElementById('shopLogo').value || '🏪',
+            updatedAt: new Date()
+        };
+        if (!data.name) { showToast('اسم المتجر مطلوب'); return; }
+        if (editingShopId) await updateDoc(doc(db, "shops", editingShopId), data);
+        else await addDoc(collection(db, "shops"), { ...data, createdAt: new Date() });
         closeModal('shopModal'); renderShops(); showToast('تم الحفظ');
     };
 
+    // ===================== المنتجات =====================
     async function renderProducts() {
         await loadAll();
-        let rows='';
-        products.forEach(p => { const shopName = shops.find(s=>s.id===p.shopId)?.name||'-'; rows+=`<tr><td>${p.name||'-'}</td><td>${p.price||0} دج</td><td>${shopName}</td><td><button class="btn-sm btn-outline" onclick="editProduct('${p.id}')">تعديل</button> <button class="btn-sm btn-danger" onclick="deleteProduct('${p.id}')">حذف</button></td></tr>`; });
-        document.getElementById('mainContent').innerHTML = `<div class="flex-between"><h3>المنتجات</h3><button id="addProductBtn" class="btn">+ إضافة</button></div><table><thead><th>الاسم</th><th>السعر</th><th>المتجر</th><th>إجراءات</th></thead><tbody>${rows||'<tr><td colspan="4">لا توجد منتجات</td></tr>'}</tbody></table>`;
+        let rows = '';
+        allProducts.forEach(prod => {
+            const shopName = allShops.find(s => s.id === prod.shopId)?.name || '-';
+            rows += `<tr><td>${prod.name || '-'}</td><td>${prod.price || 0} دج</td><td>${shopName}</td><td><button class="btn-sm btn-outline" onclick="editProduct('${prod.id}')">تعديل</button> <button class="btn-sm btn-danger" onclick="deleteProduct('${prod.id}')">حذف</button></td></tr>`;
+        });
+        document.getElementById('mainContent').innerHTML = `
+            <div class="flex-between"><h3>إدارة المنتجات</h3><button id="addProductBtn" class="btn">+ إضافة منتج</button></div>
+            <div style="overflow-x:auto;"><table><thead><tr><th>الاسم</th><th>السعر</th><th>المتجر</th><th>إجراءات</th></tr></thead><tbody>${rows || '<tr><td colspan="4">لا توجد منتجات</td></tr>'}</tbody></table></div>
+        `;
         document.getElementById('addProductBtn')?.addEventListener('click', () => openProductModal());
     }
-    window.editProduct = (id) => { const p = products.find(x=>x.id===id); if(p) openProductModal(p); };
-    window.deleteProduct = async (id) => { if(confirm('حذف؟')){ await deleteDoc(doc(db,"products",id)); renderProducts(); showToast('تم'); } };
-    function openProductModal(prod=null){
-        document.getElementById('productModalTitle').innerText=prod?'تعديل':'إضافة';
-        document.getElementById('prodName').value=prod?.name||'';
-        document.getElementById('prodPrice').value=prod?.price||'';
-        document.getElementById('prodMedia').value=prod?.mediaUrl||'';
-        const select=document.getElementById('prodShopSelect');
-        select.innerHTML='<option value="">اختر المتجر</option>'+shops.map(s=>`<option value="${s.id}" ${s.id===prod?.shopId?'selected':''}>${s.name}</option>`).join('');
-        window.editingProduct=prod?.id||null;
-        document.getElementById('productModal').style.display='flex';
+    window.editProduct = (id) => { const prod = allProducts.find(p => p.id === id); if(prod) openProductModal(prod); };
+    window.deleteProduct = async (id) => { if(confirm('حذف المنتج؟')) { await deleteDoc(doc(db, "products", id)); showToast('تم الحذف'); renderProducts(); } };
+    function openProductModal(prod = null) {
+        document.getElementById('productModalTitle').innerText = prod ? 'تعديل منتج' : 'إضافة منتج';
+        document.getElementById('prodName').value = prod?.name || '';
+        document.getElementById('prodPrice').value = prod?.price || '';
+        document.getElementById('prodMedia').value = prod?.mediaUrl || '';
+        const select = document.getElementById('prodShopId');
+        select.innerHTML = '<option value="">اختر المتجر</option>' + allShops.map(s => `<option value="${s.id}" ${s.id === prod?.shopId ? 'selected' : ''}>${s.name}</option>`).join('');
+        editingProductId = prod?.id || null;
+        document.getElementById('productModal').style.display = 'flex';
     }
     document.getElementById('saveProductBtn').onclick = async () => {
-        const data={ name:document.getElementById('prodName').value, price:parseInt(document.getElementById('prodPrice').value), mediaUrl:document.getElementById('prodMedia').value, shopId:document.getElementById('prodShopSelect').value, updatedAt:new Date() };
-        if(!data.name || !data.price || !data.shopId){ showToast('الاسم والسعر والمتجر مطلوبة'); return; }
-        if(window.editingProduct) await updateDoc(doc(db,"products",window.editingProduct), data);
-        else await addDoc(collection(db,"products"), {...data, likes:0, comments:[], createdAt:new Date()});
-        closeModal('productModal'); renderProducts(); showToast('تم');
+        const data = {
+            name: document.getElementById('prodName').value,
+            price: parseInt(document.getElementById('prodPrice').value),
+            mediaUrl: document.getElementById('prodMedia').value,
+            shopId: document.getElementById('prodShopId').value,
+            updatedAt: new Date()
+        };
+        if (!data.name || !data.price || !data.shopId) { showToast('الاسم والسعر والمتجر مطلوبة'); return; }
+        if (editingProductId) await updateDoc(doc(db, "products", editingProductId), data);
+        else await addDoc(collection(db, "products"), { ...data, likes: 0, comments: [], createdAt: new Date() });
+        closeModal('productModal'); renderProducts(); showToast('تم الحفظ');
     };
 
+    // ===================== المستخدمون =====================
     async function renderUsers() {
         await loadAll();
-        let rows='';
-        users.forEach(u=> rows+=`<tr><td>${u.email}</td><td>${u.role||'customer'}</td><td><button class="btn-sm btn-outline" onclick="openUserModal('${u.id}','${u.email}','${u.role||'customer'}')">تغيير الدور</button></td></tr>`);
-        document.getElementById('mainContent').innerHTML = `<h3>المستخدمون</h3><table><thead><th>البريد</th><th>الدور</th><th>إجراءات</th></thead><tbody>${rows||'<tr><td colspan="3">لا يوجد مستخدمون</td></tr>'}</tbody></table>`;
+        let rows = '';
+        allUsers.forEach(u => {
+            rows += `<tr><td>${u.email}</td><td>${u.role || 'customer'}</td><td><button class="btn-sm btn-outline" onclick="openUserModal('${u.id}', '${u.email}', '${u.role || 'customer'}')">تغيير الدور</button></td></tr>`;
+        });
+        document.getElementById('mainContent').innerHTML = `<h3>إدارة المستخدمين</h3><div style="overflow-x:auto;"><table><thead><tr><th>البريد</th><th>الدور</th><th>إجراءات</th></tr></thead><tbody>${rows || '<tr><td colspan="3">لا يوجد مستخدمون</td></tr>'}</tbody></table></div>`;
     }
-    window.openUserModal = (id,email,role)=>{ document.getElementById('userEmailSpan').innerText=email; document.getElementById('userRoleSelect').value=role; window.editingUserId=id; document.getElementById('userModal').style.display='flex'; };
-    document.getElementById('updateRoleBtn').onclick = async () => { if(window.editingUserId){ await updateDoc(doc(db,"users",window.editingUserId), {role:document.getElementById('userRoleSelect').value}); showToast('تم'); closeModal('userModal'); renderUsers(); } };
+    window.openUserModal = (id, email, role) => {
+        document.getElementById('userEmailSpan').innerText = email;
+        document.getElementById('userRoleSelect').value = role;
+        editingUserId = id;
+        document.getElementById('userModal').style.display = 'flex';
+    };
+    document.getElementById('updateRoleBtn').onclick = async () => {
+        if (editingUserId) {
+            await updateDoc(doc(db, "users", editingUserId), { role: document.getElementById('userRoleSelect').value });
+            showToast('تم تحديث الدور');
+            closeModal('userModal');
+            renderUsers();
+        }
+    };
 
+    // ===================== الطلبات =====================
     async function renderOrders() {
         await loadAll();
-        let rows='';
-        for(const o of orders){
-            const product = products.find(p=>p.id===o.productId);
+        let rows = '';
+        for (const o of allOrders) {
+            const product = allProducts.find(p => p.id === o.productId);
             const productName = product?.name || 'منتج محذوف';
-            const shop = shops.find(s=>s.id===product?.shopId);
+            const shop = allShops.find(s => s.id === product?.shopId);
             const shopName = shop?.name || '-';
-            rows+=`<tr><td>${productName}</td><td>${o.customerEmail || '-'}</td><td>${shopName}</td><td>${o.status || 'قيد المراجعة'}</td><td><select onchange="updateOrderStatus('${o.id}', this.value)"><option value="pending" ${o.status==='pending'?'selected':''}>قيد المراجعة</option><option value="confirmed" ${o.status==='confirmed'?'selected':''}>مؤكد</option><option value="shipped" ${o.status==='shipped'?'selected':''}>تم الشحن</option><option value="delivered" ${o.status==='delivered'?'selected':''}>تم التوصيل</option></select></td></tr>`;
+            rows += `<tr><td>${productName}</td><td>${o.customerEmail || '-'}</td><td>${shopName}</td><td>${o.status || 'pending'}</td><td><select onchange="updateOrderStatus('${o.id}', this.value)"><option value="pending" ${o.status === 'pending' ? 'selected' : ''}>قيد المراجعة</option><option value="confirmed" ${o.status === 'confirmed' ? 'selected' : ''}>مؤكد</option><option value="shipped" ${o.status === 'shipped' ? 'selected' : ''}>تم الشحن</option><option value="delivered" ${o.status === 'delivered' ? 'selected' : ''}>تم التوصيل</option></select></td></tr>`;
         }
-        document.getElementById('mainContent').innerHTML = `<h3>الطلبات</h3><table><thead><th>المنتج</th><th>العميل</th><th>المتجر</th><th>الحالة</th><th>تحديث الحالة</th></thead><tbody>${rows||'<tr><td colspan="5">لا توجد طلبات</td></tr>'}</tbody></table>`;
+        document.getElementById('mainContent').innerHTML = `<h3>إدارة الطلبات</h3><div style="overflow-x:auto;"><table><thead><tr><th>المنتج</th><th>العميل</th><th>المتجر</th><th>الحالة</th><th>تحديث</th></tr></thead><tbody>${rows || '<tr><td colspan="5">لا توجد طلبات</td></tr>'}</tbody></table></div>`;
     }
     window.updateOrderStatus = async (orderId, newStatus) => {
         await updateDoc(doc(db, "orders", orderId), { status: newStatus, updatedAt: new Date() });
@@ -170,31 +240,79 @@
         renderOrders();
     };
 
+    // ===================== طلبات التجار =====================
+    async function renderMerchantRequests() {
+        await loadAll();
+        let requestsHtml = '';
+        allRequests.forEach(req => {
+            requestsHtml += `
+                <div class="request-card">
+                    <div><strong>${req.shopName}</strong> - ${req.email}</div>
+                    <div>النوع: ${req.merchantType === 'registered' ? 'تاجر مسجل (سجل تجاري)' : 'تاجر حر'}</div>
+                    ${req.commercialFileUrl ? `<div><a href="${req.commercialFileUrl}" target="_blank" class="btn-sm btn-outline">📎 عرض السجل التجاري</a></div>` : ''}
+                    <div style="margin-top:8px;">
+                        <button class="btn-sm" onclick="approveMerchant('${req.id}')">✅ قبول</button>
+                        <button class="btn-sm btn-danger" onclick="rejectMerchant('${req.id}')">❌ رفض</button>
+                    </div>
+                </div>
+            `;
+        });
+        document.getElementById('mainContent').innerHTML = `<h3>📋 طلبات انضمام التجار</h3><div>${requestsHtml || '<p>لا توجد طلبات حالياً</p>'}</div>`;
+    }
+    window.approveMerchant = async (requestId) => {
+        const reqRef = doc(db, "merchant_requests", requestId);
+        const reqSnap = await getDoc(reqRef);
+        if (reqSnap.exists()) {
+            const data = reqSnap.data();
+            await setDoc(doc(db, "users", requestId), {
+                email: data.email,
+                role: "merchant",
+                shopName: data.shopName,
+                merchantType: data.merchantType,
+                status: "active",
+                approvedAt: new Date()
+            });
+            await deleteDoc(reqRef);
+            showToast("✅ تم قبول التاجر بنجاح");
+            renderMerchantRequests();
+        } else showToast("الطلب غير موجود");
+    };
+    window.rejectMerchant = async (requestId) => {
+        if (confirm("هل أنت متأكد من رفض هذا الطلب؟")) {
+            await deleteDoc(doc(db, "merchant_requests", requestId));
+            showToast("❌ تم رفض الطلب");
+            renderMerchantRequests();
+        }
+    };
+
+        // ===================== التبويبات =====================
     let currentTab = 'dashboard';
     async function renderTab(tab) {
         currentTab = tab;
-        if(tab==='dashboard') await renderDashboard();
-        else if(tab==='shops') await renderShops();
-        else if(tab==='products') await renderProducts();
-        else if(tab==='users') await renderUsers();
-        else if(tab==='orders') await renderOrders();
-        document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.getAttribute('data-tab')===tab));
+        if (tab === 'dashboard') await renderDashboard();
+        else if (tab === 'shops') await renderShops();
+        else if (tab === 'products') await renderProducts();
+        else if (tab === 'users') await renderUsers();
+        else if (tab === 'orders') await renderOrders();
+        else if (tab === 'merchant_requests') await renderMerchantRequests();
+        document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.getAttribute('data-tab') === tab));
     }
-    document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click', ()=>renderTab(t.getAttribute('data-tab'))));
+    document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => renderTab(tab.getAttribute('data-tab'))));
 
+    // ===================== الصلاحية =====================
     onAuthStateChanged(auth, async (user) => {
-        if(!user){ window.location.href='./index.html'; return; }
+        if (!user) { window.location.href = './index.html'; return; }
         const userDoc = await getDoc(doc(db, "users", user.uid));
         const role = userDoc.exists() ? userDoc.data().role : 'customer';
-        if(role !== 'super_admin' && role !== 'supervisor'){
-            document.getElementById('mainContent').innerHTML = `<div style="color:red; text-align:center; padding:40px;">⚠️ غير مصرح. ليس لديك صلاحية.</div>`;
+        if (role !== 'super_admin' && role !== 'supervisor') {
+            document.getElementById('mainContent').innerHTML = `<div style="color:red; text-align:center; padding:40px;">⚠️ غير مصرح. ليس لديك صلاحية للدخول إلى لوحة المدير.</div>`;
             document.querySelector('.tabs').style.display = 'none';
             return;
         }
         document.querySelector('.tabs').style.display = 'flex';
         await renderTab('dashboard');
     });
-    document.getElementById('logoutBtn').onclick = async () => { await signOut(auth); window.location.href='./index.html'; };
+    document.getElementById('logoutBtn').onclick = async () => { await signOut(auth); window.location.href = './index.html'; };
     window.closeModal = closeModal;
 </script>
 </body>
