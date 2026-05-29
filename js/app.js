@@ -59,6 +59,14 @@ async function loadShops() {
     }
 }
 
-// تشغيل الدالة عند فتح الصفحة
-loadShops();
+// داخل دالة loadShops، قم بتعديل هذا الجزء ليكون مطابقاً تماماً لما في Firebase
+shopCard = `
+    <div class="shop-card">
+        <img src="${shopData.imgUrl || 'https://via.placeholder.com/150'}" alt="${shopData.name}">
+        <div class="shop-name">${shopData.name}</div>
+        <div class="shop-baladiya">البلدية: ${shopData.baladiya}</div>
+        <div class="shop-baladiya" style="font-size: 0.8em;">الولاية: ${shopData.wilaya}</div>
+    </div>
+`;
+
                               
