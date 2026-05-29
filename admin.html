@@ -3,43 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>ZaLo | لوحة المدير - موثوقة</title>
+    <title>ZaLo | لوحة المدير المتكاملة</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Tajawal', sans-serif; background: #f0f5f2; direction: rtl; padding: 20px; }
-        .container { max-width: 1000px; margin: 0 auto; background: white; border-radius: 32px; box-shadow: 0 8px 24px rgba(0,0,0,0.05); overflow: hidden; }
-        .header { background: #006233; color: white; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
-        .btn { background: white; color: #006233; border: none; padding: 6px 16px; border-radius: 60px; cursor: pointer; font-weight: bold; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 32px; box-shadow: 0 8px 24px rgba(0,0,0,0.05); overflow: hidden; }
+        .header { background: #006233; color: white; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .btn { background: white; color: #006233; border: none; padding: 6px 16px; border-radius: 60px; cursor: pointer; font-weight: bold; transition: 0.2s; }
         .btn-primary { background: #006233; color: white; }
+        .btn-sm { padding: 4px 12px; font-size: 13px; }
+        .btn-danger { background: #b91c1c; color: white; }
         .card { background: #fff; border-radius: 24px; padding: 20px; margin: 20px; border: 1px solid #e9f0ec; }
         .stats { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
         .stat-box { background: #f8faf9; padding: 20px; border-radius: 24px; flex: 1; text-align: center; }
         .stat-number { font-size: 32px; font-weight: 900; color: #006233; }
         table { width: 100%; border-collapse: collapse; }
         th, td { padding: 12px; text-align: right; border-bottom: 1px solid #eef2f0; }
-        th { color: #006233; }
-        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1e2f26; color: white; padding: 8px 16px; border-radius: 40px; opacity: 0; transition: 0.2s; }
+        th { color: #006233; font-weight: 900; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; }
+        .modal-card { background: white; width: 90%; max-width: 500px; border-radius: 28px; padding: 24px; }
+        input, select { width: 100%; padding: 12px; margin-bottom: 12px; border: 1.5px solid #e2e8e4; border-radius: 20px; font-family: inherit; }
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1e2f26; color: white; padding: 8px 16px; border-radius: 40px; opacity: 0; transition: 0.2s; z-index: 1100; }
         .toast.show { opacity: 1; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
-        <h2><i class="fa-solid fa-shield-haltered"></i> ZaLo | لوحة المدير العام</h2>
-        <button id="logoutBtn" class="btn">تسجيل خروج</button>
+        <h2><i class="fa-solid fa-chart-line"></i> ZaLo | لوحة المدير العام</h2>
+        <div><button id="logoutBtn" class="btn">تسجيل خروج</button></div>
     </div>
-    <div id="content" class="card" style="min-height: 300px;">
-        <p>جاري التحقق من الصلاحيات...</p>
+    <div id="content" class="card" style="min-height: 300px;">جاري التحميل...</div>
+</div>
+
+<!-- مودال إضافة/تعديل متجر -->
+<div id="shopModal" class="modal">
+    <div class="modal-card">
+        <h3 id="modalTitle">إضافة متجر جديد</h3>
+        <input type="text" id="shopName" placeholder="اسم المتجر">
+        <input type="text" id="shopWilaya" placeholder="الولاية">
+        <input type="text" id="shopPhone" placeholder="رقم الهاتف">
+        <input type="text" id="shopWhatsapp" placeholder="رابط واتساب (اختياري)">
+        <div class="flex-between">
+            <button id="saveShopBtn" class="btn-primary">حفظ</button>
+            <button onclick="closeModal('shopModal')" class="btn">إلغاء</button>
+        </div>
     </div>
 </div>
+
 <div id="toastMsg" class="toast"></div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, collection, getDocs, addDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBJ3T-jWd_nj3FYCtzewRl-d1yimGtsryc",
@@ -54,79 +74,134 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    let editingShopId = null;
+
     function showToast(msg) {
         const t = document.getElementById('toastMsg');
         t.innerText = msg;
         t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 2500);
     }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    function openShopModal(shop = null) {
+        document.getElementById('modalTitle').innerText = shop ? 'تعديل متجر' : 'إضافة متجر جديد';
+        document.getElementById('shopName').value = shop?.name || '';
+        document.getElementById('shopWilaya').value = shop?.wilaya || '';
+        document.getElementById('shopPhone').value = shop?.phone || '';
+        document.getElementById('shopWhatsapp').value = shop?.whatsapp || '';
+        editingShopId = shop?.id || null;
+        document.getElementById('shopModal').style.display = 'flex';
+    }
 
+    async function renderDashboard() {
+        // جلب البيانات
+        const shopsSnap = await getDocs(collection(db, "shops"));
+        const shops = shopsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const productsSnap = await getDocs(collection(db, "products"));
+        const productsCount = productsSnap.size;
+
+        // بناء جدول المتاجر مع أزرار تعديل وحذف
+        let shopsTable = '<table><thead><tr><th>اسم المتجر</th><th>الولاية</th><th>الهاتف</th><th>واتساب</th><th>الإجراءات</th></tr></thead><tbody>';
+        shops.forEach(shop => {
+            shopsTable += `
+                <tr>
+                    <td>${shop.name || '-'}</td>
+                    <td>${shop.wilaya || '-'}</td>
+                    <td>${shop.phone || '-'}</td>
+                    <td>${shop.whatsapp ? '<i class="fa-brands fa-whatsapp"></i>' : '-'}</td>
+                    <td>
+                        <button class="btn-sm btn-primary" onclick="editShop('${shop.id}')">تعديل</button>
+                        <button class="btn-sm btn-danger" onclick="deleteShopConfirm('${shop.id}')">حذف</button>
+                    </td>
+                </tr>
+            `;
+        });
+        shopsTable += '</tbody><tr>';
+
+        const html = `
+            <div class="stats">
+                <div class="stat-box"><div class="stat-number">${shops.length}</div><div>المتاجر</div></div>
+                <div class="stat-box"><div class="stat-number">${productsCount}</div><div>المنتجات</div></div>
+                <div class="stat-box"><div class="stat-number">-</div><div>الطلبات</div></div>
+            </div>
+            <div class="flex-between">
+                <h3>قائمة المتاجر</h3>
+                <button id="addShopBtn" class="btn-primary">+ إضافة متجر جديد</button>
+            </div>
+            <div style="overflow-x: auto; margin-top: 16px;">
+                ${shopsTable}
+            </div>
+            <div style="margin-top: 24px; text-align: center; color: #666; font-size: 14px;">
+                🔧 يمكنك إدارة المنتجات والمستخدمين من خلال الأزرار أعلاه قريباً.
+            </div>
+        `;
+        document.getElementById('content').innerHTML = html;
+        document.getElementById('addShopBtn')?.addEventListener('click', () => openShopModal());
+    }
+
+    window.editShop = async (id) => {
+        const shopRef = doc(db, "shops", id);
+        const shopSnap = await getDoc(shopRef);
+        if (shopSnap.exists()) {
+            openShopModal({ id, ...shopSnap.data() });
+        } else {
+            showToast("المتجر غير موجود");
+        }
+    };
+    window.deleteShopConfirm = async (id) => {
+        if (confirm("هل أنت متأكد من حذف هذا المتجر؟")) {
+            await deleteDoc(doc(db, "shops", id));
+            showToast("تم حذف المتجر بنجاح");
+            renderDashboard();
+        }
+    };
+    document.getElementById('saveShopBtn').onclick = async () => {
+        const data = {
+            name: document.getElementById('shopName').value,
+            wilaya: document.getElementById('shopWilaya').value,
+            phone: document.getElementById('shopPhone').value,
+            whatsapp: document.getElementById('shopWhatsapp').value,
+            updatedAt: new Date()
+        };
+        if (!data.name) { showToast("اسم المتجر مطلوب"); return; }
+        if (editingShopId) {
+            await updateDoc(doc(db, "shops", editingShopId), data);
+            showToast("تم تحديث المتجر");
+        } else {
+            await addDoc(collection(db, "shops"), { ...data, createdAt: new Date() });
+            showToast("تم إضافة المتجر");
+        }
+        closeModal('shopModal');
+        renderDashboard();
+    };
+
+    // التحقق من صلاحية المدير
     onAuthStateChanged(auth, async (user) => {
         if (!user) {
             window.location.href = './index.html';
             return;
         }
-
-        // نفس الطريقة المستخدمة في index.html لقراءة الدور
-        const userDocRef = doc(db, "users", user.uid);
-        const userDocSnap = await getDoc(userDocRef);
-        let role = "customer";
-        if (userDocSnap.exists()) {
-            role = userDocSnap.data().role || "customer";
-        } else {
-            // إذا لم توجد وثيقة، ننشئها كـ customer
-            await setDoc(userDocRef, { email: user.email, role: "customer" });
-        }
-
-        console.log("الدور من Firestore:", role);
-
-        if (role !== "super_admin" && role !== "supervisor") {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        const role = userDoc.exists() ? userDoc.data().role : 'customer';
+        if (role !== 'super_admin' && role !== 'supervisor') {
             document.getElementById('content').innerHTML = `
                 <div style="color: red; text-align: center; padding: 40px;">
                     <i class="fa-solid fa-ban" style="font-size: 48px;"></i>
                     <h3>غير مصرح بالدخول</h3>
-                    <p>ليس لديك صلاحية للدخول إلى لوحة المدير.</p>
                     <button id="backBtn" class="btn-primary" style="margin-top: 16px;">العودة إلى الرئيسية</button>
                 </div>
             `;
-            document.getElementById('backBtn')?.addEventListener('click', () => {
-                window.location.href = './index.html';
-            });
+            document.getElementById('backBtn')?.addEventListener('click', () => window.location.href = './index.html');
             return;
         }
-
-        // هنا المستخدم مسموح له (مدير أو مشرف) → نعرض لوحة تحكم مبسطة
-        const shopsSnap = await getDocs(collection(db, "shops"));
-        const shopsCount = shopsSnap.size;
-        const productsSnap = await getDocs(collection(db, "products"));
-        const productsCount = productsSnap.size;
-
-        let shopsTable = '<table><thead><tr><th>اسم المتجر</th><th>الولاية</th><th>الهاتف</th></tr></thead><tbody>';
-        shopsSnap.forEach(doc => {
-            const s = doc.data();
-            shopsTable += `<tr><td>${s.name || '-'}</td><td>${s.wilaya || '-'}</td><td>${s.phone || '-'}</td></tr>`;
-        });
-        shopsTable += '</tbody></table>';
-
-        document.getElementById('content').innerHTML = `
-            <div class="stats">
-                <div class="stat-box"><div class="stat-number">${shopsCount}</div><div>المتاجر</div></div>
-                <div class="stat-box"><div class="stat-number">${productsCount}</div><div>المنتجات</div></div>
-            </div>
-            <div class="card">
-                <h3>قائمة المتاجر</h3>
-                ${shopsTable}
-            </div>
-            <div class="card">
-                <p>🔧 يمكنك إضافة متاجر ومنتجات من خلال Firebase Console، أو سأقوم لاحقاً بإضافة واجهة مباشرة.</p>
-            </div>
-        `;
+        await renderDashboard();
     });
 
     document.getElementById('logoutBtn').onclick = async () => {
         await signOut(auth);
         window.location.href = './index.html';
     };
+    window.closeModal = closeModal;
 </script>
 </body>
 </html>
