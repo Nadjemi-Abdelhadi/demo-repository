@@ -69,15 +69,29 @@
     const db = getFirestore(app);
     const storage = getStorage(app);
 
-    const wilayas = ["المنيعة","الجزائر","وهران","قسنطينة","عنابة","سطيف","باتنة","بجاية","بسكرة","تبسة"];
+    const wilayasData = {
+        "أدرار": ["أدرار"], "الشلف": ["الشلف"], "الأغواط": ["الأغواط"], "أم البواقي": ["أم البواقي"],
+        "باتنة": ["باتنة"], "بجاية": ["بجاية"], "بسكرة": ["بسكرة"], "بشار": ["بشار"], "البليدة": ["البليدة"],
+        "البويرة": ["البويرة"], "تمنراست": ["تمنراست"], "تبسة": ["تبسة"], "تلمسان": ["تلمسان"], "تيارت": ["تيارت"],
+        "تيزي وزو": ["تيزي وزو"], "الجزائر": ["الجزائر الوسطى"], "ججل": ["ججل"], "سطيف": ["سطيف"],
+        "سعيدة": ["سعيدة"], "سكيكدة": ["سكيكدة"], "سيدي بلعباس": ["سيدي بلعباس"], "عنابة": ["عنابة"],
+        "قالمة": ["قالمة"], "قسنطينة": ["قسنطينة"], "المدية": ["المدية"], "مستغانم": ["مستغانم"],
+        "المسيلة": ["المسيلة"], "معسكر": ["معسكر"], "وهران": ["وهران"], "البيض": ["البيض"], "بومرداس": ["بومرداس"],
+        "الطارف": ["الطارف"], "تندوف": ["تندوف"], "تيسمسيلت": ["تيسمسيلت"], "الوادي": ["الوادي"],
+        "خنشلة": ["خنشلة"], "سوق أهراس": ["سوق أهراس"], "تيبازة": ["تيبازة"], "ميلة": ["ميلة"],
+        "عين الدفلى": ["عين الدفلى"], "النعامة": ["النعامة"], "عين تموشنت": ["عين تموشنت"], "غرداية": ["غرداية"],
+        "غليزان": ["غليزان"], "المغير": ["المغير"], "المنيعة": ["المنيعة"], "أولاد جلال": ["أولاد جلال"],
+        "برج بوعريريج": ["برج بوعريريج"], "بريدة": ["بريدة"], "اليزي": ["اليزي"], "تيميمون": ["تيميمون"],
+        "قصر الشلالة": ["قصر الشلالة"], "بني عباس": ["بني عباس"], "إن صالح": ["إن صالح"],
+        "إن قزام": ["إن قزام"], "تقرت": ["تقرت"]
+    };
     const wilayaSelect = document.getElementById('wilayaSelect');
     const baladiaSelect = document.getElementById('baladiaSelect');
-    wilayas.forEach(w => { let opt = document.createElement('option'); opt.value = w; opt.textContent = w; wilayaSelect.appendChild(opt); });
+    Object.keys(wilayasData).forEach(w => { let opt = document.createElement('option'); opt.value = w; opt.textContent = w; wilayaSelect.appendChild(opt); });
     wilayaSelect.onchange = () => {
         baladiaSelect.disabled = false;
         baladiaSelect.innerHTML = '<option value="">-- اختر البلدية --</option>';
-        const fakeBaladias = ["المركز", wilayaSelect.value, "حاسي القارة"];
-        fakeBaladias.forEach(b => { let opt = document.createElement('option'); opt.value = b; opt.textContent = b; baladiaSelect.appendChild(opt); });
+        wilayasData[wilayaSelect.value]?.forEach(b => { let opt = document.createElement('option'); opt.value = b; opt.textContent = b; baladiaSelect.appendChild(opt); });
     };
 
     document.getElementById('merchantType').onchange = (e) => {
@@ -145,4 +159,4 @@
     };
 </script>
 </body>
-    </html>
+</html>
