@@ -3,53 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>ZaLo | دليل المتاجر الجزائر</title>
+    <title>ZaLo | السوق الذكي الجزائر</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Tajawal', sans-serif; background: #f5f9f7; direction: rtl; }
         .app-container { max-width: 500px; margin: 0 auto; background: #fff; min-height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
-        /* الهيدر */
-        .main-header { background: white; padding: 12px 16px; border-bottom: 1px solid #eef2f0; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; }
+        .header { background: white; padding: 12px 16px; border-bottom: 1px solid #eef2f0; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; }
         .brand h2 { font-size: 18px; font-weight: 900; color: #006233; }
         .brand p { font-size: 9px; color: #8ba396; }
-        /* شاشة اختيار الولاية */
         .location-card { background: #f8faf9; border-radius: 28px; padding: 20px; margin: 16px; text-align: center; }
         .location-card select, .location-card button { width: 100%; padding: 12px; margin-top: 8px; border-radius: 60px; border: 1px solid #ddd; }
-        /* بطاقة المتجر */
-        .shop-card { background: white; border-radius: 24px; padding: 16px; margin: 0 16px 16px; border: 1px solid #e9f0ec; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+        .shop-card { background: white; border-radius: 24px; padding: 16px; margin: 0 16px 16px; border: 1px solid #e9f0ec; cursor: pointer; transition: 0.2s; }
+        .shop-card:active { transform: scale(0.98); }
         .shop-header { display: flex; gap: 12px; align-items: center; }
         .shop-logo { width: 60px; height: 60px; background: #eef2f0; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 32px; }
         .shop-info h3 { font-size: 16px; }
-        .shop-cat { font-size: 11px; color: #006233; font-weight: 800; margin: 4px 0; }
+        .shop-cat { font-size: 11px; color: #006233; font-weight: 800; }
         .shop-location { font-size: 10px; color: #5a6e62; }
         .shop-social { display: flex; gap: 12px; margin: 12px 0; }
         .shop-social a { color: #006233; font-size: 20px; }
-        .whatsapp-btn { background: #25D366; color: white; padding: 6px 12px; border-radius: 60px; text-decoration: none; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; width: fit-content; }
-        /* السلة العائمة */
-        .cart-fab { position: fixed; bottom: 80px; right: 16px; background: #006233; width: 52px; height: 52px; border-radius: 30px; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 50; cursor: pointer; }
-        .cart-count { position: absolute; top: -5px; right: -5px; background: #b91c1c; color: white; font-size: 10px; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        .toast { position: fixed; bottom: 150px; left: 50%; transform: translateX(-50%); background: #1e2f26; color: white; padding: 8px 16px; border-radius: 40px; opacity: 0; transition: 0.2s; z-index: 100; }
-        .toast.show { opacity: 1; }
+        .btn { background: #006233; color: white; border: none; border-radius: 60px; padding: 8px 16px; font-weight: bold; width: 100%; cursor: pointer; }
+        .btn-outline { background: white; border: 1px solid #006233; color: #006233; }
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 200; }
         .modal-card { background: white; width: 90%; border-radius: 28px; padding: 20px; max-height: 80vh; overflow-y: auto; }
-        .cart-item { display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #eee; }
-        .btn { background: #006233; color: white; border: none; border-radius: 60px; padding: 8px 16px; font-weight: bold; width: 100%; cursor: pointer; }
-        .hide { display: none; }
-        .footer-link { text-align: center; margin: 16px 0 30px; }
-        .footer-link a { display: inline-block; background: #006233; color: white; padding: 10px 20px; border-radius: 60px; text-decoration: none; font-weight: bold; }
+        .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #1e2f26; color: white; padding: 8px 16px; border-radius: 40px; opacity: 0; transition: 0.2s; z-index: 100; }
+        .toast.show { opacity: 1; }
+        .cart-fab { position: fixed; bottom: 80px; right: 16px; background: #006233; width: 52px; height: 52px; border-radius: 30px; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer; }
+        .cart-count { position: absolute; top: -5px; right: -5px; background: #b91c1c; color: white; font-size: 10px; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .product-item { border: 1px solid #eee; border-radius: 16px; padding: 12px; margin-bottom: 12px; }
+        .product-img { font-size: 48px; text-align: center; }
+        .footer-link { text-align: center; margin: 20px 0; }
+        .footer-link a { color: #006233; text-decoration: none; font-weight: bold; margin: 0 8px; }
     </style>
 </head>
 <body>
 <div class="app-container">
-    <div class="main-header">
+    <div class="header">
         <div><i class="fa-solid fa-bars-staggered" style="font-size: 20px; color:#006233;" id="menuBtn"></i></div>
-        <div class="brand"><h2>ZaLo</h2><p>دليل المتاجر الجزائر</p></div>
+        <div class="brand"><h2>ZaLo</h2><p>السوق الذكي الجزائر</p></div>
         <div><i class="fa-regular fa-user" style="font-size: 18px; color:#006233;" id="userIcon"></i></div>
     </div>
 
-    <!-- شاشة اختيار الولاية والبلدية -->
+    <!-- شاشة اختيار الموقع -->
     <div id="locationScreen" class="location-card">
         <i class="fa-solid fa-location-dot" style="font-size: 32px; color: #006233;"></i>
         <h3>اختر موقعك</h3>
@@ -61,16 +58,6 @@
     <!-- قائمة المتاجر -->
     <div id="shopsList" style="display: none; padding: 16px;"></div>
 
-    <!-- نافذة السلة -->
-    <div id="cartModal" class="modal">
-        <div class="modal-card">
-            <h3>سلة الطلبات 🛒</h3>
-            <div id="cartItems"></div>
-            <button id="checkoutBtn" class="btn">إرسال الطلب</button>
-            <button onclick="closeModal('cartModal')">إلغاء</button>
-        </div>
-    </div>
-
     <!-- نافذة منتجات المتجر -->
     <div id="productsModal" class="modal">
         <div class="modal-card">
@@ -79,9 +66,19 @@
         </div>
     </div>
 
-    <!-- رابط تسجيل التاجر (أسفل الصفحة) -->
+    <!-- نافذة السلة -->
+    <div id="cartModal" class="modal">
+        <div class="modal-card">
+            <h3>سلة الطلبات</h3>
+            <div id="cartItems"></div>
+            <button id="checkoutBtn" class="btn">إرسال الطلب</button>
+            <button onclick="closeModal('cartModal')">إلغاء</button>
+        </div>
+    </div>
+
     <div class="footer-link">
-        <a href="./merchant-register.html">➕ تسجيل كتاجر جديد</a>
+        <a href="./merchant-register.html">➕ تسجيل كتاجر جديد</a> | 
+        <a href="./login.html">🔐 تسجيل دخول</a>
     </div>
 </div>
 
@@ -115,7 +112,7 @@
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     function updateCartBadge() { document.getElementById('cartBadge').innerText = cart.length; }
 
-    // قائمة الولايات والبلديات (نموذج، يمكنك إكمال الباقي)
+    // قائمة الولايات (نموذج لـ 5، ستضاف الباقي لاحقاً)
     const wilayasData = {
         "المنيعة": ["المنيعة", "حاسي القارة", "حاسي الفحل"],
         "الجزائر": ["الجزائر الوسطى", "سيدي امحمد", "القبة"],
@@ -142,7 +139,7 @@
         const container = document.getElementById('shopsList');
         if (filtered.length === 0) { container.innerHTML = '<div class="location-card">لا توجد متاجر في هذا الموقع بعد</div>'; return; }
         container.innerHTML = filtered.map(shop => `
-            <div class="shop-card" data-shop-id="${shop.id}">
+            <div class="shop-card" onclick="viewShopProducts('${shop.id}')">
                 <div class="shop-header">
                     <div class="shop-logo">${shop.logoEmoji || '🏪'}</div>
                     <div class="shop-info">
@@ -155,9 +152,7 @@
                     <a href="${shop.whatsapp || '#'}" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
                     <a href="${shop.facebook || '#'}" target="_blank"><i class="fa-brands fa-facebook"></i></a>
                     <a href="${shop.tiktok || '#'}" target="_blank"><i class="fa-brands fa-tiktok"></i></a>
-                    <a href="${shop.website || '#'}" target="_blank"><i class="fa-solid fa-globe"></i></a>
                 </div>
-                <button class="btn" onclick="viewShopProducts('${shop.id}')">عرض المنتجات</button>
             </div>
         `).join('');
     }
@@ -167,8 +162,8 @@
         const allProds = productsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
         const shopProds = allProds.filter(p => p.shopId === shopId);
         const productsHtml = shopProds.map(p => `
-            <div style="border:1px solid #eee; border-radius:16px; padding:12px; margin-bottom:12px;">
-                <div style="font-size:48px;">${p.mediaUrl ? (p.mediaUrl.includes('.mp4')?'🎥':'📷') : '📦'}</div>
+            <div class="product-item">
+                <div class="product-img">${p.mediaUrl ? (p.mediaUrl.includes('.mp4') ? '🎥' : '📷') : '📦'}</div>
                 <div><strong>${p.name}</strong></div>
                 <div>${p.price} دج</div>
                 <button class="btn" style="margin-top:8px;" onclick="addToCart('${p.id}', '${p.name}', ${p.price})">➕ أضف إلى السلة</button>
@@ -193,7 +188,7 @@
             let itemsHtml = '';
             cart.forEach((item, idx) => {
                 total += item.price;
-                itemsHtml += `<div class="cart-item"><span>${item.name}</span><span>${item.price} دج</span><button onclick="removeFromCart(${idx})">❌</button></div>`;
+                itemsHtml += `<div class="cart-item" style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>${item.name}</span><span>${item.price} دج</span><button onclick="removeFromCart(${idx})">❌</button></div>`;
             });
             itemsHtml += `<div><strong>الإجمالي: ${total} دج</strong></div>`;
             cartContainer.innerHTML = itemsHtml;
@@ -204,7 +199,6 @@
     window.checkout = async () => {
         if (!currentUser) { showToast("الرجاء تسجيل الدخول أولاً"); return; }
         if (cart.length === 0) { showToast("السلة فارغة"); return; }
-        // هنا إرسال الطلب إلى Firestore (مجموعة orders)
         for (let item of cart) {
             await addDoc(collection(db, "orders"), {
                 productId: item.id,
@@ -234,8 +228,8 @@
 
     onAuthStateChanged(auth, (user) => { currentUser = user; });
     updateCartBadge();
-    document.getElementById('userIcon').onclick = () => { if(currentUser) showToast("مرحباً "+currentUser.email); else window.location.href='./merchant-register.html'; };
-    document.getElementById('menuBtn').onclick = () => document.querySelector('.footer-link a').click();
+    document.getElementById('userIcon').onclick = () => { if(currentUser) showToast("مرحباً "+currentUser.email); else window.location.href='./login.html'; };
+    document.getElementById('menuBtn').onclick = () => window.location.href='./merchant-register.html';
 </script>
 </body>
-    </html>
+</html>
