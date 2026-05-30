@@ -95,7 +95,7 @@
         allRequests = (await getDocs(collection(db, "merchant_requests"))).docs.map(d => ({ id: d.id, ...d.data() }));
     }
 
-    // ===================== لوحة القيادة =====================
+    // Dashboard
     async function renderDashboard() {
         await loadAll();
         document.getElementById('mainContent').innerHTML = `
@@ -172,7 +172,7 @@
         if (currentTab === 'shops') renderShops();
     }
 
-    // ===================== المتاجر =====================
+    // Shops management
     async function renderShops() {
         await loadAll();
         let rows = '';
@@ -214,7 +214,7 @@
         closeModal('shopModal'); renderShops(); showToast('تم الحفظ');
     };
 
-    // ===================== المنتجات =====================
+    // Products management (simplified)
     async function renderProducts() {
         await loadAll();
         let rows = '';
@@ -254,7 +254,7 @@
         closeModal('productModal'); renderProducts(); showToast('تم الحفظ');
     };
 
-    // ===================== المستخدمون =====================
+    // Users management
     async function renderUsers() {
         await loadAll();
         let rows = '';
@@ -278,7 +278,7 @@
         }
     };
 
-    // ===================== الطلبات =====================
+    // Orders management
     async function renderOrders() {
         await loadAll();
         let rows = '';
@@ -297,7 +297,7 @@
         renderOrders();
     };
 
-    // ===================== طلبات التجار =====================
+    // Merchant requests
     async function renderMerchantRequests() {
         await loadAll();
         let requestsHtml = '';
@@ -352,7 +352,7 @@
         }
     };
 
-    // ===================== التبويبات =====================
+    // Tab handling
     let currentTab = 'dashboard';
     async function renderTab(tab) {
         currentTab = tab;
@@ -366,7 +366,7 @@
     }
     document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => renderTab(tab.getAttribute('data-tab'))));
 
-    // ===================== الصلاحية =====================
+    // Auth
     onAuthStateChanged(auth, async (user) => {
         if (!user) { window.location.href = './index.html'; return; }
         const userDoc = await getDoc(doc(db, "users", user.uid));
@@ -384,3 +384,4 @@
 </script>
 </body>
 </html>
+ 
