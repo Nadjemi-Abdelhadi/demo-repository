@@ -37,6 +37,8 @@
         .cart-item { display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #eee; }
         .btn { background: #006233; color: white; border: none; border-radius: 60px; padding: 8px 16px; font-weight: bold; width: 100%; cursor: pointer; }
         .hide { display: none; }
+        .footer-link { text-align: center; margin: 16px 0 30px; }
+        .footer-link a { display: inline-block; background: #006233; color: white; padding: 10px 20px; border-radius: 60px; text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -76,6 +78,11 @@
             <button onclick="closeModal('productsModal')">إغلاق</button>
         </div>
     </div>
+
+    <!-- رابط تسجيل التاجر (أسفل الصفحة) -->
+    <div class="footer-link">
+        <a href="./merchant-register.html">➕ تسجيل كتاجر جديد</a>
+    </div>
 </div>
 
 <div id="toastMsg" class="toast"></div>
@@ -84,7 +91,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, doc, getDoc, addDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBJ3T-jWd_nj3FYCtzewRl-d1yimGtsryc",
@@ -108,7 +115,7 @@
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     function updateCartBadge() { document.getElementById('cartBadge').innerText = cart.length; }
 
-    // قائمة الولايات والبلديات (مثال لـ 5 ولايات، يمكنك إكمال الباقي)
+    // قائمة الولايات والبلديات (نموذج، يمكنك إكمال الباقي)
     const wilayasData = {
         "المنيعة": ["المنيعة", "حاسي القارة", "حاسي الفحل"],
         "الجزائر": ["الجزائر الوسطى", "سيدي امحمد", "القبة"],
@@ -197,7 +204,17 @@
     window.checkout = async () => {
         if (!currentUser) { showToast("الرجاء تسجيل الدخول أولاً"); return; }
         if (cart.length === 0) { showToast("السلة فارغة"); return; }
-        // هنا يمكن إرسال الطلب إلى Firestore (مجموعة orders)
+        // هنا إرسال الطلب إلى Firestore (مجموعة orders)
+        for (let item of cart) {
+            await addDoc(collection(db, "orders"), {
+                productId: item.id,
+                productName: item.name,
+                customerId: currentUser.uid,
+                customerEmail: currentUser.email,
+                status: "pending",
+                createdAt: new Date()
+            });
+        }
         showToast("تم إرسال طلبك، سيتم التواصل معك قريباً");
         cart = []; localStorage.setItem('zalo_cart', JSON.stringify(cart)); updateCartBadge(); closeModal('cartModal');
     };
@@ -218,7 +235,7 @@
     onAuthStateChanged(auth, (user) => { currentUser = user; });
     updateCartBadge();
     document.getElementById('userIcon').onclick = () => { if(currentUser) showToast("مرحباً "+currentUser.email); else window.location.href='./merchant-register.html'; };
-    document.getElementById('menuBtn').onclick = () => window.location.href='./merchant-register.html';
+    document.getElementById('menuBtn').onclick = () => document.querySelector('.footer-link a').click();
 </script>
 </body>
-</html>
+    </html>
