@@ -33,9 +33,9 @@
     </select>
     <div id="commercialDiv" style="display: none;">
         <input type="file" id="commercialFile" accept=".pdf,.jpg,.png">
-        <p style="font-size: 12px;">ارفع صورة أو PDF للسجل التجاري (يُفضل أن يكون بحجم أقل من 5 ميجا)</p>
+        <p style="font-size: 12px;">ارفع صورة أو PDF للسجل التجاري</p>
     </div>
-    <input type="file" id="idFile" accept=".jpg,.png,.pdf" placeholder="صورة الهوية الوطنية">
+    <input type="file" id="idFile" accept="image/*" placeholder="صورة الهوية الوطنية">
     <input type="file" id="logoFile" accept="image/*" placeholder="شعار المتجر (صورة)">
     <textarea id="address" rows="2" placeholder="العنوان الكامل"></textarea>
     <select id="wilayaSelect"><option value="">اختر الولاية</option></select>
@@ -44,7 +44,7 @@
     <button id="registerBtn" class="btn">تقديم طلب الانضمام</button>
     <div id="errorMsg" class="error-msg"></div>
     <div style="text-align: center; margin-top: 16px;">
-        <a href="./index.html">العودة للرئيسية</a> | <a href="./login.html">تسجيل الدخول (إذا لديك حساب)</a>
+        <a href="./index.html">العودة للرئيسية</a> | <a href="./login.html">تسجيل الدخول</a>
     </div>
 </div>
 <div id="toastMsg" class="toast"></div>
@@ -76,7 +76,7 @@
     wilayaSelect.onchange = () => {
         baladiaSelect.disabled = false;
         baladiaSelect.innerHTML = '<option value="">-- اختر البلدية --</option>';
-        const fakeBaladias = ["المركز", "المنيعة", "حاسي القارة"];
+        const fakeBaladias = ["المركز", wilayaSelect.value, "حاسي القارة"];
         fakeBaladias.forEach(b => { let opt = document.createElement('option'); opt.value = b; opt.textContent = b; baladiaSelect.appendChild(opt); });
     };
 
@@ -117,12 +117,10 @@
             const userCred = await createUserWithEmailAndPassword(auth, email, pass);
             const uid = userCred.user.uid;
 
-            // رفع ملف الهوية
             const idRef = ref(storage, `merchant_docs/${uid}/id_${Date.now()}.jpg`);
             await uploadBytes(idRef, idFile);
             const idUrl = await getDownloadURL(idRef);
 
-            // رفع شعار المتجر
             const logoRef = ref(storage, `merchant_docs/${uid}/logo_${Date.now()}.jpg`);
             await uploadBytes(logoRef, logoFile);
             const logoUrl = await getDownloadURL(logoRef);
