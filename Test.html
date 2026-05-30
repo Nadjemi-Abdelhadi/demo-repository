@@ -1,110 +1,736 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>ZaLo | الدخول المباشر</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Tajawal', sans-serif; background: #f0f5f2; direction: rtl; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .card { background: white; border-radius: 32px; padding: 24px; width: 350px; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.05); }
-        input { width: 100%; padding: 12px; margin: 8px 0; border-radius: 60px; border: 1.5px solid #e2e8e4; }
-        .btn { background: #006233; color: white; border: none; padding: 12px; border-radius: 60px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 12px; }
-        .btn-outline { background: white; border: 1px solid #006233; color: #006233; margin-top: 8px; }
-        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1e2f26; color: white; padding: 8px 16px; border-radius: 40px; opacity: 0; transition: 0.2s; }
-        .toast.show { opacity: 1; }
-    </style>
-</head>
-<body>
-<div class="card" id="loginCard">
-    <i class="fa-solid fa-shop" style="font-size: 48px; color: #006233; margin-bottom: 12px;"></i>
-    <h1>ZaLo الذكي</h1>
-    <p style="color: #006233; margin-bottom: 20px;">منصة جزائرية متكاملة</p>
-    <input type="email" id="email" placeholder="البريد الإلكتروني" value="hadi47hadi58@gmail.com">
-    <input type="password" id="password" placeholder="كلمة المرور">
-    <button class="btn" id="loginBtn">دخول</button>
-    <button class="btn btn-outline" id="registerBtn">إنشاء حساب جديد</button>
-    <div id="message" style="margin-top: 12px; font-size: 14px;"></div>
-</div>
+import { useState } from "react";
 
-<div id="appCard" style="display: none; background: white; border-radius: 32px; padding: 24px; width: 350px; text-align: center;">
-    <h2>مرحباً 👋</h2>
-    <p id="userEmail"></p>
-    <button class="btn" id="logoutBtn">تسجيل خروج</button>
-</div>
+const WILAYAS = [
+  "ط§ظ„ط¬ط²ط§ط¦ط±", "ظˆظ‡ط±ط§ظ†", "ظ‚ط³ظ†ط·ظٹظ†ط©", "ط¹ظ†ط§ط¨ط©", "ط¨ط¬ط§ظٹط©", "طھظٹط²ظٹ ظˆط²ظˆ", "ط³ط·ظٹظپ",
+  "ط§ظ„ظ…ط³ظٹظ„ط©", "ط§ظ„ط¨ظ„ظٹط¯ط©", "طھظ„ظ…ط³ط§ظ†", "ط¨ط³ظƒط±ط©", "ظˆط±ظ‚ظ„ط©", "طھط¨ط³ط©", "ط³ظƒظٹظƒط¯ط©",
+  "ط§ظ„ظ…ظ†ظٹط¹ط©", "طھظ…ظ†ط±ط§ط³طھ", "ط£ط¯ط±ط§ط±", "ط¥ظ„ظٹط²ظٹ", "طھظٹظ†ط¯ظˆظپ", "ط¨ط´ط§ط±"
+];
 
-<div id="toast" class="toast"></div>
+const CATEGORIES = [
+  { icon: "ًں“±", name: "ظ‡ظˆط§طھظپ ط°ظƒظٹط©", count: 234 },
+  { icon: "ًں”§", name: "ظ‚ط·ط¹ ط؛ظٹط§ط±", count: 187 },
+  { icon: "ًں‘•", name: "ظ…ظ„ط§ط¨ط³", count: 412 },
+  { icon: "ًں‘ں", name: "ط£ط­ط°ظٹط©", count: 156 },
+  { icon: "ًں’»", name: "ط¥ظ„ظƒطھط±ظˆظ†ظٹط§طھ", count: 298 },
+  { icon: "ًںڈ ", name: "ط£ط«ط§ط« ظˆظ…ظ†ط²ظ„", count: 203 },
+  { icon: "ًںچ•", name: "ظ…ط£ظƒظˆظ„ط§طھ", count: 89 },
+  { icon: "ًں“ڑ", name: "ظƒطھط¨ ظˆظ…ط³طھظ„ط²ظ…ط§طھ", count: 134 },
+];
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+const STORES = [
+  { id: 1, name: "ظ…طھط¬ط± ط§ظ„ظ†ظˆط± ظ„ظ„ظ‡ظˆط§طھظپ", wilaya: "ط§ظ„ط¬ط²ط§ط¦ط±", category: "ظ‡ظˆط§طھظپ ط°ظƒظٹط©", rating: 4.8, reviews: 124, verified: true, image: "ًں“±", status: "active" },
+  { id: 2, name: "ظ‚ط·ط¹ ط؛ظٹط§ط± ط§ظ„ط´ط±ظ‚", wilaya: "ظ‚ط³ظ†ط·ظٹظ†ط©", category: "ظ‚ط·ط¹ ط؛ظٹط§ط±", rating: 4.5, reviews: 89, verified: true, image: "ًں”§", status: "active" },
+  { id: 3, name: "ط£ط²ظٹط§ط، ط¨ظ„ظ‚ط§ط³ظ…", wilaya: "ظˆظ‡ط±ط§ظ†", category: "ظ…ظ„ط§ط¨ط³", rating: 4.2, reviews: 67, verified: false, image: "ًں‘•", status: "active" },
+  { id: 4, name: "طھظƒ ظ‡ط§ظˆط³", wilaya: "ط¨ط¬ط§ظٹط©", category: "ط¥ظ„ظƒطھط±ظˆظ†ظٹط§طھ", rating: 4.9, reviews: 201, verified: true, image: "ًں’»", status: "active" },
+];
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyBJ3T-jWd_nj3FYCtzewRl-d1yimGtsryc",
-        authDomain: "zalo-smart.firebaseapp.com",
-        projectId: "zalo-smart",
-        storageBucket: "zalo-smart.firebasestorage.app",
-        messagingSenderId: "430326151788",
-        appId: "1:430326151788:web:e4f94437946221429f3649",
-        measurementId: "G-HVX2X346E7"
-    };
+const PRODUCTS = [
+  { id: 1, name: "Samsung Galaxy A54", price: 65000, store: "ظ…طھط¬ط± ط§ظ„ظ†ظˆط±", rating: 4.7, sold: 45, image: "ًں“±" },
+  { id: 2, name: "ط¨ط·ط§ط±ظٹط© iPhone 13", price: 3500, store: "ظ‚ط·ط¹ ط؛ظٹط§ط± ط§ظ„ط´ط±ظ‚", rating: 4.5, sold: 128, image: "ًں”‹" },
+  { id: 3, name: "ظ‚ظ…ظٹطµ طµظٹظپظٹ", price: 2800, store: "ط£ط²ظٹط§ط، ط¨ظ„ظ‚ط§ط³ظ…", rating: 4.3, sold: 67, image: "ًں‘•" },
+  { id: 4, name: "Laptop Lenovo i5", price: 120000, store: "طھظƒ ظ‡ط§ظˆط³", rating: 4.9, sold: 23, image: "ًں’»" },
+  { id: 5, name: "Redmi Note 12", price: 42000, store: "ظ…طھط¬ط± ط§ظ„ظ†ظˆط±", rating: 4.4, sold: 89, image: "ًں“±" },
+  { id: 6, name: "ط´ط§ط´ط© LCD", price: 8500, store: "ظ‚ط·ط¹ ط؛ظٹط§ط± ط§ظ„ط´ط±ظ‚", rating: 4.6, sold: 54, image: "ًں–¥ï¸ڈ" },
+];
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+const ORDERS_DATA = [
+  { id: "#ORD-2401", product: "Samsung Galaxy A54", customer: "ط£ط­ظ…ط¯ ظ…ط­ظ…ط¯", amount: "65,000 ط¯ط¬", status: "pending", date: "2024-01-15" },
+  { id: "#ORD-2400", product: "Laptop Lenovo i5", customer: "ظپط§ط·ظ…ط© ط¹ظ„ظٹ", amount: "120,000 ط¯ط¬", status: "confirmed", date: "2024-01-14" },
+  { id: "#ORD-2399", product: "ط¨ط·ط§ط±ظٹط© iPhone", customer: "ظ…ط­ظ…ط¯ ظٹظˆط³ظپ", amount: "3,500 ط¯ط¬", status: "delivered", date: "2024-01-13" },
+  { id: "#ORD-2398", product: "ظ‚ظ…ظٹطµ طµظٹظپظٹ", customer: "ط³ط§ط±ط© ط®ط§ظ„ط¯", amount: "2,800 ط¯ط¬", status: "cancelled", date: "2024-01-12" },
+];
 
-    function showToast(msg) {
-        const toast = document.getElementById('toast');
-        toast.textContent = msg;
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 2500);
+const MERCHANTS_DATA = [
+  { id: 1, name: "ظ…طھط¬ط± ط§ظ„ظ†ظˆط± ظ„ظ„ظ‡ظˆط§طھظپ", owner: "ظٹظˆط³ظپ ط¨ظ† ط¹ظ„ظٹ", wilaya: "ط§ظ„ط¬ط²ط§ط¦ط±", status: "active", subscription: "ظ…ط¯ظپظˆط¹", joined: "2023-06-01", sales: "1,240,000 ط¯ط¬" },
+  { id: 2, name: "ظ‚ط·ط¹ ط؛ظٹط§ط± ط§ظ„ط´ط±ظ‚", owner: "ط±ط´ظٹط¯ ط­ظ…ط¯ط§ظ†ظٹ", wilaya: "ظ‚ط³ظ†ط·ظٹظ†ط©", status: "pending", subscription: "ظ…ط¹ظ„ظ‚", joined: "2024-01-10", sales: "0 ط¯ط¬" },
+  { id: 3, name: "ط£ط²ظٹط§ط، ط¨ظ„ظ‚ط§ط³ظ…", owner: "ط¨ظ„ظ‚ط§ط³ظ… ط²ط±ظˆظ‚", wilaya: "ظˆظ‡ط±ط§ظ†", status: "suspended", subscription: "ظ…ظ†طھظ‡ظٹ", joined: "2023-03-15", sales: "450,000 ط¯ط¬" },
+  { id: 4, name: "طھظƒ ظ‡ط§ظˆط³", owner: "ط£ظ…ظٹظ† ط¨ظˆط²ظٹط§ظ†", wilaya: "ط¨ط¬ط§ظٹط©", status: "active", subscription: "ظ…ط¯ظپظˆط¹", joined: "2023-09-20", sales: "3,890,000 ط¯ط¬" },
+];
+
+const statusColors = {
+  active: { bg: "#d1fae5", text: "#065f46", label: "ظ†ط´ط·" },
+  pending: { bg: "#fef3c7", text: "#92400e", label: "ظ…ط¹ظ„ظ‚" },
+  suspended: { bg: "#fee2e2", text: "#991b1b", label: "ظ…ظˆظ‚ظˆظپ" },
+  confirmed: { bg: "#dbeafe", text: "#1e40af", label: "ظ…ط¤ظƒط¯" },
+  delivered: { bg: "#d1fae5", text: "#065f46", label: "طھظ… ط§ظ„طھط³ظ„ظٹظ…" },
+  cancelled: { bg: "#fee2e2", text: "#991b1b", label: "ظ…ظ„ط؛ظ‰" },
+};
+
+// =================== COMPONENTS ===================
+
+function Sidebar({ role, activeSection, setActiveSection }) {
+  const menus = {
+    customer: [
+      { icon: "ًںڈ ", label: "ط§ظ„ط±ط¦ظٹط³ظٹط©", id: "home" },
+      { icon: "ًں”چ", label: "ط§ظ„ط¨ط­ط«", id: "search" },
+      { icon: "ًں›’", label: "ط³ظ„ط© ط§ظ„طھط³ظˆظ‚", id: "cart" },
+      { icon: "ًں“¦", label: "ط·ظ„ط¨ط§طھظٹ", id: "orders" },
+      { icon: "â­گ", label: "طھظ‚ظٹظٹظ…ط§طھظٹ", id: "reviews" },
+      { icon: "ًں‘¤", label: "ط­ط³ط§ط¨ظٹ", id: "account" },
+    ],
+    merchant: [
+      { icon: "ًں“ٹ", label: "ظ„ظˆط­ط© ط§ظ„طھط­ظƒظ…", id: "dashboard" },
+      { icon: "ًںڈھ", label: "ظ…طھط¬ط±ظٹ", id: "store" },
+      { icon: "ًں“¦", label: "ط§ظ„ظ…ظ†طھط¬ط§طھ", id: "products" },
+      { icon: "ًں“‹", label: "ط§ظ„ط·ظ„ط¨ط§طھ", id: "orders" },
+      { icon: "ًں’°", label: "ط§ظ„ط£ط±ط¨ط§ط­", id: "earnings" },
+      { icon: "ًں’³", label: "ط§ظ„ط§ط´طھط±ط§ظƒ", id: "subscription" },
+      { icon: "â­گ", label: "ط§ظ„طھظ‚ظٹظٹظ…ط§طھ", id: "reviews" },
+      { icon: "ًں› ï¸ڈ", label: "ط§ظ„ط¯ط¹ظ… ط§ظ„ظپظ†ظٹ", id: "support" },
+    ],
+    admin: [
+      { icon: "ًں“ٹ", label: "ظ„ظˆط­ط© ط§ظ„طھط­ظƒظ…", id: "dashboard" },
+      { icon: "ًںڈھ", label: "ط¥ط¯ط§ط±ط© ط§ظ„طھط¬ط§ط±", id: "merchants" },
+      { icon: "ًں“‹", label: "ظ…ط±ط§ط¬ط¹ط© ط§ظ„ط·ظ„ط¨ط§طھ", id: "requests" },
+      { icon: "ًں’³", label: "ط¥ط¯ط§ط±ط© ط§ظ„ط¯ظپط¹", id: "payments" },
+      { icon: "ًں“پ", label: "ط§ظ„ط£ظ‚ط³ط§ظ…", id: "categories" },
+      { icon: "âڑ ï¸ڈ", label: "ط§ظ„ط´ظƒط§ظˆظ‰", id: "complaints" },
+      { icon: "ًں‘¥", label: "ط§ظ„ظ…ط³طھط®ط¯ظ…ظˆظ†", id: "users" },
+      { icon: "ًں“ˆ", label: "ط§ظ„طھظ‚ط§ط±ظٹط±", id: "reports" },
+      { icon: "âڑ™ï¸ڈ", label: "ط§ظ„ط¥ط¹ط¯ط§ط¯ط§طھ", id: "settings" },
+    ],
+  };
+
+  const roleLabels = { customer: "ط§ظ„ط²ط¨ظˆظ†", merchant: "ط§ظ„طھط§ط¬ط±", admin: "ط§ظ„ظ…ط¯ظٹط±" };
+  const roleColors = { customer: "#2563eb", merchant: "#059669", admin: "#7c3aed" };
+
+  return (
+    <div style={{
+      width: 220, background: "#0f172a", height: "100vh", display: "flex",
+      flexDirection: "column", position: "fixed", right: 0, top: 0, zIndex: 100,
+      boxShadow: "-4px 0 24px rgba(0,0,0,0.4)"
+    }}>
+      {/* Logo */}
+      <div style={{ padding: "24px 20px", borderBottom: "1px solid #1e293b" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+          <div style={{
+            width: 38, height: 38, borderRadius: 10,
+            background: `linear-gradient(135deg, ${roleColors[role]}, ${roleColors[role]}88)`,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 20, fontWeight: 800, color: "white", fontFamily: "serif"
+          }}>Z</div>
+          <span style={{ color: "white", fontWeight: 700, fontSize: 20, fontFamily: "'Cairo', sans-serif" }}>ZaLo</span>
+        </div>
+        <span style={{
+          background: roleColors[role] + "22", color: roleColors[role],
+          padding: "2px 10px", borderRadius: 20, fontSize: 11, fontFamily: "'Cairo', sans-serif"
+        }}>{roleLabels[role]}</span>
+      </div>
+
+      {/* Menu */}
+      <nav style={{ flex: 1, padding: "12px 10px", overflowY: "auto" }}>
+        {menus[role].map(item => (
+          <button key={item.id} onClick={() => setActiveSection(item.id)}
+            style={{
+              width: "100%", display: "flex", alignItems: "center", gap: 10,
+              padding: "10px 12px", borderRadius: 10, border: "none", cursor: "pointer",
+              marginBottom: 4, textAlign: "right", direction: "rtl",
+              background: activeSection === item.id ? roleColors[role] + "22" : "transparent",
+              color: activeSection === item.id ? roleColors[role] : "#94a3b8",
+              fontFamily: "'Cairo', sans-serif", fontSize: 13,
+              transition: "all 0.2s", borderLeft: activeSection === item.id ? `3px solid ${roleColors[role]}` : "3px solid transparent"
+            }}>
+            <span style={{ fontSize: 16 }}>{item.icon}</span>
+            {item.label}
+          </button>
+        ))}
+      </nav>
+
+      {/* User */}
+      <div style={{ padding: "16px 20px", borderTop: "1px solid #1e293b", display: "flex", alignItems: "center", gap: 10 }}>
+        <div style={{
+          width: 34, height: 34, borderRadius: "50%",
+          background: roleColors[role], display: "flex", alignItems: "center",
+          justifyContent: "center", color: "white", fontSize: 14, fontWeight: 700
+        }}>ظ…</div>
+        <div>
+          <div style={{ color: "white", fontSize: 12, fontFamily: "'Cairo', sans-serif", fontWeight: 600 }}>ظ…ط­ظ…ط¯ ط£ظ…ظٹظ†</div>
+          <div style={{ color: "#64748b", fontSize: 10, fontFamily: "'Cairo', sans-serif" }}>{roleLabels[role]}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StatCard({ icon, label, value, change, color }) {
+  return (
+    <div style={{
+      background: "white", borderRadius: 16, padding: "20px 24px",
+      boxShadow: "0 1px 3px rgba(0,0,0,0.08)", border: "1px solid #f1f5f9",
+      flex: 1, minWidth: 180
+    }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
+        <div style={{ fontSize: 28 }}>{icon}</div>
+        {change && <span style={{
+          background: change > 0 ? "#d1fae5" : "#fee2e2",
+          color: change > 0 ? "#065f46" : "#991b1b",
+          padding: "2px 8px", borderRadius: 20, fontSize: 11, fontFamily: "'Cairo', sans-serif"
+        }}>{change > 0 ? "â†‘" : "â†“"} {Math.abs(change)}%</span>}
+      </div>
+      <div style={{ color: "#1e293b", fontSize: 22, fontWeight: 800, fontFamily: "'Cairo', sans-serif", marginBottom: 4 }}>{value}</div>
+      <div style={{ color: "#94a3b8", fontSize: 12, fontFamily: "'Cairo', sans-serif" }}>{label}</div>
+    </div>
+  );
+}
+
+// =================== VIEWS ===================
+
+function CustomerHome({ setView, cart, setCart }) {
+  const [selectedWilaya, setSelectedWilaya] = useState("");
+  const [search, setSearch] = useState("");
+
+  const addToCart = (product) => setCart(prev => {
+    const exists = prev.find(i => i.id === product.id);
+    if (exists) return prev.map(i => i.id === product.id ? { ...i, qty: i.qty + 1 } : i);
+    return [...prev, { ...product, qty: 1 }];
+  });
+
+  return (
+    <div style={{ fontFamily: "'Cairo', sans-serif", direction: "rtl" }}>
+      {/* Hero */}
+      <div style={{
+        background: "linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #06b6d4 100%)",
+        borderRadius: 20, padding: "40px 32px", marginBottom: 32, position: "relative", overflow: "hidden"
+      }}>
+        <div style={{ position: "absolute", top: -40, left: -40, width: 200, height: 200, background: "rgba(255,255,255,0.05)", borderRadius: "50%" }} />
+        <div style={{ position: "absolute", bottom: -60, right: -30, width: 250, height: 250, background: "rgba(255,255,255,0.05)", borderRadius: "50%" }} />
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <h1 style={{ color: "white", fontSize: 28, fontWeight: 800, margin: "0 0 8px" }}>ظ…ط±ط­ط¨ظ‹ط§ ظپظٹ ZaLo ًں›چï¸ڈ</h1>
+          <p style={{ color: "rgba(255,255,255,0.8)", margin: "0 0 24px", fontSize: 14 }}>طھط³ظˆظ‚ ظ…ظ† ط£ظپط¶ظ„ ط§ظ„ظ…ط­ظ„ط§طھ ظپظٹ ظƒظ„ ظˆظ„ط§ظٹط§طھ ط§ظ„ط¬ط²ط§ط¦ط±</p>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+            <input value={search} onChange={e => setSearch(e.target.value)}
+              placeholder="ط§ط¨ط­ط« ط¹ظ† ظ…ظ†طھط¬ ط£ظˆ ظ…طھط¬ط±..."
+              style={{
+                flex: 1, minWidth: 200, padding: "12px 16px", borderRadius: 12, border: "none",
+                fontSize: 14, outline: "none", fontFamily: "'Cairo', sans-serif"
+              }} />
+            <select value={selectedWilaya} onChange={e => setSelectedWilaya(e.target.value)}
+              style={{
+                padding: "12px 16px", borderRadius: 12, border: "none", fontSize: 13,
+                fontFamily: "'Cairo', sans-serif", background: "rgba(255,255,255,0.2)",
+                color: "white", outline: "none", minWidth: 140
+              }}>
+              <option value="">ظƒظ„ ط§ظ„ظˆظ„ط§ظٹط§طھ</option>
+              {WILAYAS.map(w => <option key={w} value={w}>{w}</option>)}
+            </select>
+            <button style={{
+              padding: "12px 24px", background: "#f59e0b", color: "white",
+              border: "none", borderRadius: 12, fontFamily: "'Cairo', sans-serif",
+              fontWeight: 700, cursor: "pointer", fontSize: 14
+            }}>ًں”چ ط¨ط­ط«</button>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Bar */}
+      <div style={{ display: "flex", gap: 16, marginBottom: 32, flexWrap: "wrap" }}>
+        {[
+          { icon: "ًںڈھ", value: "2,847", label: "ظ…طھط¬ط± ظ†ط´ط·" },
+          { icon: "ًں“¦", value: "48,320", label: "ظ…ظ†طھط¬ ظ…طھط§ط­" },
+          { icon: "ًں“چ", value: "58", label: "ظˆظ„ط§ظٹط© ظ…ط´ظ…ظˆظ„ط©" },
+          { icon: "â­گ", value: "4.7", label: "ظ…طھظˆط³ط· ط§ظ„طھظ‚ظٹظٹظ…" },
+        ].map((s, i) => (
+          <div key={i} style={{
+            flex: 1, minWidth: 120, background: "white", borderRadius: 14, padding: "16px",
+            textAlign: "center", boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9"
+          }}>
+            <div style={{ fontSize: 24, marginBottom: 4 }}>{s.icon}</div>
+            <div style={{ fontSize: 18, fontWeight: 800, color: "#1e293b" }}>{s.value}</div>
+            <div style={{ fontSize: 11, color: "#94a3b8" }}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Categories */}
+      <h2 style={{ fontSize: 18, fontWeight: 700, color: "#1e293b", marginBottom: 16 }}>ط§ظ„ط£ظ‚ط³ط§ظ… ًں“پ</h2>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))", gap: 12, marginBottom: 32 }}>
+        {CATEGORIES.map((cat, i) => (
+          <div key={i} style={{
+            background: "white", borderRadius: 14, padding: "16px 12px", textAlign: "center",
+            cursor: "pointer", boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9",
+            transition: "all 0.2s"
+          }}
+            onMouseEnter={e => e.currentTarget.style.transform = "translateY(-2px)"}
+            onMouseLeave={e => e.currentTarget.style.transform = "translateY(0)"}>
+            <div style={{ fontSize: 28, marginBottom: 6 }}>{cat.icon}</div>
+            <div style={{ fontSize: 12, fontWeight: 600, color: "#1e293b", marginBottom: 2 }}>{cat.name}</div>
+            <div style={{ fontSize: 10, color: "#94a3b8" }}>{cat.count} ظ…ظ†طھط¬</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Featured Stores */}
+      <h2 style={{ fontSize: 18, fontWeight: 700, color: "#1e293b", marginBottom: 16 }}>ظ…ط­ظ„ط§طھ ظ…ظ…ظٹط²ط© â­گ</h2>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16, marginBottom: 32 }}>
+        {STORES.map(store => (
+          <div key={store.id} style={{
+            background: "white", borderRadius: 16, padding: 16,
+            boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9",
+            cursor: "pointer", transition: "all 0.2s"
+          }}
+            onMouseEnter={e => e.currentTarget.style.boxShadow = "0 4px 20px rgba(0,0,0,0.1)"}
+            onMouseLeave={e => e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.06)"}>
+            <div style={{ display: "flex", gap: 12, marginBottom: 12 }}>
+              <div style={{
+                width: 50, height: 50, borderRadius: 12,
+                background: "#eff6ff", display: "flex", alignItems: "center",
+                justifyContent: "center", fontSize: 24
+              }}>{store.image}</div>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: 13, color: "#1e293b", marginBottom: 2 }}>{store.name}</div>
+                <div style={{ fontSize: 11, color: "#64748b" }}>ًں“چ {store.wilaya} â€¢ {store.category}</div>
+              </div>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span style={{ fontSize: 12, color: "#f59e0b" }}>{"â­گ".repeat(Math.round(store.rating))} {store.rating}</span>
+              {store.verified && <span style={{ background: "#d1fae5", color: "#065f46", padding: "2px 8px", borderRadius: 20, fontSize: 10 }}>âœ… ظ…ط¹طھظ…ط¯</span>}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Products Grid */}
+      <h2 style={{ fontSize: 18, fontWeight: 700, color: "#1e293b", marginBottom: 16 }}>ظ…ظ†طھط¬ط§طھ ظ…ظ…ظٹط²ط© ًں”¥</h2>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 16 }}>
+        {PRODUCTS.filter(p => !search || p.name.includes(search)).map(product => (
+          <div key={product.id} style={{
+            background: "white", borderRadius: 16, overflow: "hidden",
+            boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9",
+            transition: "all 0.2s"
+          }}
+            onMouseEnter={e => e.currentTarget.style.transform = "translateY(-3px)"}
+            onMouseLeave={e => e.currentTarget.style.transform = "translateY(0)"}>
+            <div style={{
+              height: 120, background: "linear-gradient(135deg, #eff6ff, #dbeafe)",
+              display: "flex", alignItems: "center", justifyContent: "center", fontSize: 48
+            }}>{product.image}</div>
+            <div style={{ padding: "14px 12px" }}>
+              <div style={{ fontWeight: 600, fontSize: 13, color: "#1e293b", marginBottom: 4 }}>{product.name}</div>
+              <div style={{ fontSize: 11, color: "#94a3b8", marginBottom: 8 }}>ًںڈھ {product.store}</div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                <span style={{ fontWeight: 800, fontSize: 14, color: "#1e40af" }}>{product.price.toLocaleString()} ط¯ط¬</span>
+                <span style={{ fontSize: 10, color: "#94a3b8" }}>â­گ {product.rating}</span>
+              </div>
+              <button onClick={() => addToCart(product)} style={{
+                width: "100%", padding: "8px", background: "#2563eb", color: "white",
+                border: "none", borderRadius: 10, fontFamily: "'Cairo', sans-serif",
+                fontSize: 12, fontWeight: 600, cursor: "pointer", transition: "background 0.2s"
+              }}
+                onMouseEnter={e => e.currentTarget.style.background = "#1d4ed8"}
+                onMouseLeave={e => e.currentTarget.style.background = "#2563eb"}>
+                ًں›’ ط£ط¶ظپ ظ„ظ„ط³ظ„ط©
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function CartView({ cart, setCart }) {
+  const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+  const [payMethod, setPayMethod] = useState("cod");
+  const [ordered, setOrdered] = useState(false);
+
+  const updateQty = (id, delta) => setCart(prev =>
+    prev.map(i => i.id === id ? { ...i, qty: Math.max(1, i.qty + delta) } : i)
+  );
+  const remove = (id) => setCart(prev => prev.filter(i => i.id !== id));
+
+  if (            padding: "16px 12px", background: "white", border: `2px solid ${a.color}22`,
+            borderRadius: 14, cursor: "pointer", textAlign: "center",
+            fontFamily: "'Cairo', sans-serif", transition: "all 0.2s"
+          }}
+            onMouseEnter={e => { e.currentTarget.style.background = a.color + "11"; e.currentTarget.style.borderColor = a.color; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = a.color + "22"; }}>
+            <div style={{ fontSize: 24, marginBottom: 6 }}>{a.icon}</div>
+            <div style={{ fontSize: 12, fontWeight: 600, color: "#1e293b" }}>{a.label}</div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function AdminDashboard() {
+  const [tab, setTab] = useState("overview");
+
+  return (
+    <div style={{ fontFamily: "'Cairo', sans-serif", direction: "rtl" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+        <div>
+          <h1 style={{ fontSize: 22, fontWeight: 800, color: "#1e293b", margin: 0 }}>ظ„ظˆط­ط© ط§ظ„ط¥ط¯ط§ط±ط© ط§ظ„ط¹ط§ظ…ط© ًں›،ï¸ڈ</h1>
+          <p style={{ color: "#94a3b8", margin: "4px 0 0", fontSize: 13 }}>ظ†ط¸ط±ط© ط´ط§ظ…ظ„ط© ط¹ظ„ظ‰ ظ…ظ†طµط© ZaLo</p>
+        </div>
+        <div style={{ display: "flex", gap: 8 }}>
+          <div style={{ background: "#fef3c7", color: "#92400e", padding: "6px 14px", borderRadius: 20, fontSize: 12 }}>âڑ ï¸ڈ 3 ط·ظ„ط¨ط§طھ ظ…ط¹ظ„ظ‚ط©</div>
+          <div style={{ background: "#fee2e2", color: "#991b1b", padding: "6px 14px", borderRadius: 20, fontSize: 12 }}>ًںڑ¨ 2 ط´ظƒط§ظˆظ‰ ط¬ط¯ظٹط¯ط©</div>
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div style={{ display: "flex", gap: 16, marginBottom: 28, flexWrap: "wrap" }}>
+        <StatCard icon="ًںڈھ" label="ط§ظ„طھط¬ط§ط± ط§ظ„ظ†ط´ط·ظٹظ†" value="2,847" change={8} />
+        <StatCard icon="ًں‘¥" label="ط§ظ„ط²ط¨ط§ط¦ظ† ط§ظ„ظ…ط³ط¬ظ„ظٹظ†" value="45,320" change={15} />
+        <StatCard icon="ًں’°" label="ط¥ظٹط±ط§ط¯ط§طھ ط§ظ„ط§ط´طھط±ط§ظƒط§طھ" value="8,450,000 ط¯ط¬" change={22} />
+        <StatCard icon="ًں“¦" label="ط·ظ„ط¨ط§طھ ط§ظ„ظٹظˆظ…" value="1,240" change={-3} />
+      </div>
+
+      {/* Tabs */}
+      <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
+        {[
+          { id: "overview", label: "ظ†ط¸ط±ط© ط¹ط§ظ…ط©" },
+          { id: "merchants", label: "ط¥ط¯ط§ط±ط© ط§ظ„طھط¬ط§ط±" },
+          { id: "payments", label: "ط§ظ„ط¯ظپط¹ ظˆط§ظ„ط§ط´طھط±ط§ظƒط§طھ" },
+        ].map(t => (
+          <button key={t.id} onClick={() => setTab(t.id)} style={{
+            padding: "8px 20px", borderRadius: 10, border: "none", cursor: "pointer",
+            fontFamily: "'Cairo', sans-serif", fontWeight: 600, fontSize: 13,
+            background: tab === t.id ? "#7c3aed" : "#f1f5f9",
+            color: tab === t.id ? "white" : "#64748b"
+          }}>{t.label}</button>
+        ))}
+      </div>
+
+      {tab === "overview" && (
+        <>
+          {/* Region Map Placeholder */}
+          <div style={{ background: "white", borderRadius: 16, padding: 20, marginBottom: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9" }}>
+            <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 16, color: "#1e293b" }}>ًں“چ ط§ظ„طھط¬ط§ط± ط­ط³ط¨ ط§ظ„ظˆظ„ط§ظٹط©</h3>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              {WILAYAS.slice(0, 15).map((w, i) => (
+                <div key={w} style={{
+                  padding: "6px 14px", borderRadius: 20, fontSize: 12,
+                  background: `hsl(${220 + i * 8}, 70%, ${90 - i * 2}%)`,
+                  color: `hsl(${220 + i * 8}, 70%, 30%)`
+                }}>{w} ({Math.floor(Math.random() * 200 + 50)})</div>
+              ))}
+            </div>
+          </div>
+          {/* Alerts */}
+          <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 12, color: "#1e293b" }}>ًں”” طھظ†ط¨ظٹظ‡ط§طھ ط§ظ„ظ†ط¸ط§ظ…</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {[
+              { icon: "ًں†•", msg: "ط·ظ„ط¨ طھط³ط¬ظٹظ„ ط¬ط¯ظٹط¯: ظ…طھط¬ط± ط§ظ„ظ…ط³طھظ‚ط¨ظ„ ظ„ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹط§طھ - ظˆظ‡ط±ط§ظ†", type: "info" },
+              { icon: "ًں’³", msg: "طھظ… ط±ظپط¹ ظˆطµظ„ ط¯ظپط¹ ط¬ط¯ظٹط¯ ظ…ظ† طھط§ط¬ط±: ظ‚ط·ط¹ ط؛ظٹط§ط± ط§ظ„ط´ط±ظ‚", type: "warning" },
+              { icon: "âڑ ï¸ڈ", msg: "ط´ظƒظˆظ‰ ط¬ط¯ظٹط¯ط© ظ…ظ† ط²ط¨ظˆظ† ط¶ط¯ ظ…طھط¬ط± ط£ط²ظٹط§ط، ط¨ظ„ظ‚ط§ط³ظ…", type: "error" },
+            ].map((a, i) => (
+              <div key={i} style={{
+                background: a.type === "error" ? "#fff5f5" : a.type === "warning" ? "#fffbeb" : "#eff6ff",
+                border: `1px solid ${a.type === "error" ? "#fecaca" : a.type === "warning" ? "#fde68a" : "#bfdbfe"}`,
+                borderRadius: 12, padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center"
+              }}>
+                <span style={{ fontSize: 13, color: "#1e293b" }}>{a.icon} {a.msg}</span>
+                <button style={{ padding: "4px 14px", background: "#7c3aed", color: "white", border: "none", borderRadius: 8, fontSize: 12, cursor: "pointer", fontFamily: "'Cairo', sans-serif" }}>ظ…ط±ط§ط¬ط¹ط©</button>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      {tab === "merchants" && (
+        <div style={{ background: "white", borderRadius: 16, overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr style={{ background: "#f8fafc" }}>
+                {["ط§ظ„ظ…طھط¬ط±", "طµط§ط­ط¨ظ‡", "ط§ظ„ظˆظ„ط§ظٹط©", "ط§ظ„ط­ط§ظ„ط©", "ط§ظ„ط§ط´طھط±ط§ظƒ", "ط§ظ„ظ…ط¨ظٹط¹ط§طھ", "ط¥ط¬ط±ط§ط،ط§طھ"].map(h => (
+                  <th key={h} style={{ padding: "12px 16px", textAlign: "right", fontSize: 12, color: "#64748b", fontWeight: 600, borderBottom: "1px solid #f1f5f9" }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {MERCHANTS_DATA.map(m => (
+                <tr key={m.id} style={{ borderBottom: "1px solid #f8fafc" }}>
+                  <td style={{ padding: "12px 16px", fontSize: 13, fontWeight: 600, color: "#1e293b" }}>{m.name}</td>
+                  <td style={{ padding: "12px 16px", fontSize: 13, color: "#64748b" }}>{m.owner}</td>
+                  <td style={{ padding: "12px 16px", fontSize: 13, color: "#64748b" }}>ًں“چ {m.wilaya}</td>
+                  <td style={{ padding: "12px 16px" }}>
+                    <span style={{
+                      background: statusColors[m.status]?.bg, color: statusColors[m.status]?.text,
+                      padding: "3px 10px", borderRadius: 20, fontSize: 11
+                    }}>{statusColors[m.status]?.label}</span>
+                  </td>
+                  <td style={{ padding: "12px 16px", fontSize: 12, color: m.subscription === "ظ…ط¯ظپظˆط¹" ? "#065f46" : "#92400e" }}>{m.subscription}</td>
+                  <td style={{ padding: "12px 16px", fontSize: 13, fontWeight: 700 }}>{m.sales}</td>
+                  <td style={{ padding: "12px 16px" }}>
+                    <div style={{ display: "flex", gap: 6 }}>
+                      <button style={{ padding: "4px 10px", background: "#eff6ff", color: "#2563eb", border: "none", borderRadius: 8, fontSize: 11, cursor: "pointer" }}>ط¹ط±ط¶</button>
+                      {m.status === "pending" && <button style={{ padding: "4px 10px", background: "#d1fae5", color: "#065f46", border: "none", borderRadius: 8, fontSize: 11, cursor: "pointer" }}>ظ‚ط¨ظˆظ„</button>}
+                      {m.status === "active" && <button style={{ padding: "4px 10px", background: "#fee2e2", color: "#991b1b", border: "none", borderRadius: 8, fontSize: 11, cursor: "pointer" }}>ط¥ظٹظ‚ط§ظپ</button>}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+             {tab === "payments" && (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+          <div style={{ background: "white", borderRadius: 16, padding: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9" }}>
+            <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 16, color: "#1e293b" }}>ًں’³ ظˆطµظˆظ„ط§طھ CCP ط§ظ„ظ…ط¹ظ„ظ‚ط©</h3>
+            {[
+              { merchant: "ظ‚ط·ط¹ ط؛ظٹط§ط± ط§ظ„ط´ط±ظ‚", amount: "5,000 ط¯ط¬", date: "2024-01-15" },
+              { merchant: "طھظٹظƒ ط³طھظˆط±", amount: "5,000 ط¯ط¬", date: "2024-01-14" },
+            ].map((p, i) => (
+              <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #f8fafc" }}>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "#1e293b" }}>{p.merchant}</div>
+                  <div style={{ fontSize: 11, color: "#94a3b8" }}>{p.date} â€¢ {p.amount}</div>
+                </div>
+                <div style={{ display: "flex", gap: 6 }}>
+                  <button style={{ padding: "4px 12px", background: "#d1fae5", color: "#065f46", border: "none", borderRadius: 8, fontSize: 11, cursor: "pointer", fontFamily: "'Cairo', sans-serif" }}>âœ… طھط£ظƒظٹط¯</button>
+                  <button style={{ padding: "4px 12px", background: "#fee2e2", color: "#991b1b", border: "none", borderRadius: 8, fontSize: 11, cursor: "pointer", fontFamily: "'Cairo', sans-serif" }}>â‌Œ ط±ظپط¶</button>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div style={{ background: "white", borderRadius: 16, padding: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9" }}>
+            <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 16, color: "#1e293b" }}>ًں“ٹ ط¥ط­طµط§ط¦ظٹط§طھ ط§ظ„ط§ط´طھط±ط§ظƒط§طھ</h3>
+            {[
+              { label: "ط§ط´طھط±ط§ظƒط§طھ ظ†ط´ط·ط©", value: "2,341", color: "#059669" },
+              { label: "ط§ط´طھط±ط§ظƒط§طھ ظ…ظ†طھظ‡ظٹط©", value: "506", color: "#f59e0b" },
+              { label: "ط¥ط¬ظ…ط§ظ„ظٹ ط§ظ„ط¥ظٹط±ط§ط¯ط§طھ", value: "12,705,000 ط¯ط¬", color: "#2563eb" },
+            ].map((s, i) => (
+              <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: "1px solid #f8fafc" }}>
+                <span style={{ fontSize: 13, color: "#64748b" }}>{s.label}</span>
+                <span style={{ fontSize: 14, fontWeight: 800, color: s.color }}>{s.value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MerchantRegister() {
+  const [step, setStep] = useState(1);
+  const [form, setForm] = useState({ storeName: "", ownerName: "", wilaya: "", phone: "", email: "" });
+
+  const steps = ["ظ…ط¹ظ„ظˆظ…ط§طھ ط£ط³ط§ط³ظٹط©", "ط§ظ„ظ…ظˆظ‚ط¹ ظˆط§ظ„طھظˆط§طµظ„", "ط§ظ„ظˆط«ط§ط¦ظ‚", "ط§ظ„ظ…ط±ط§ط¬ط¹ط©"];
+
+  return (
+    <div style={{ fontFamily: "'Cairo', sans-serif", direction: "rtl", maxWidth: 600, margin: "0 auto" }}>
+      <div style={{ textAlign: "center", marginBottom: 32 }}>
+        <div style={{ fontSize: 40, marginBottom: 8 }}>ًںڈھ</div>
+        <h1 style={{ fontSize: 22, fontWeight: 800, color: "#1e293b" }}>طھط³ط¬ظٹظ„ ظ…طھط¬ط± ط¬ط¯ظٹط¯</h1>
+        <p style={{ color: "#94a3b8", fontSize: 13 }}>ط§ظ†ط¶ظ… ط¥ظ„ظ‰ ط¢ظ„ط§ظپ ط§ظ„طھط¬ط§ط± ط¹ظ„ظ‰ ظ…ظ†طµط© ZaLo</p>
+      </div>
+      {/* Progress */}
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 32, position: "relative" }}>
+        <div style={{ position: "absolute", top: 16, right: "10%", left: "10%", height: 2, background: "#f1f5f9", zIndex: 0 }} />
+        <div style={{ position: "absolute", top: 16, right: "10%", width: `${(step - 1) / 3 * 80}%`, height: 2, background: "#2563eb", zIndex: 0, transition: "width 0.4s" }} />
+        {steps.map((s, i) => (
+          <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", zIndex: 1 }}>
+            <div style={{
+              width: 32, height: 32, borderRadius: "50%", display: "flex", alignItems: "center",
+              justifyContent: "center", fontSize: 13, fontWeight: 700, marginBottom: 6,
+              background: i + 1 <= step ? "#2563eb" : "white",
+              color: i + 1 <= step ? "white" : "#94a3b8",
+              border: `2px solid ${i + 1 <= step ? "#2563eb" : "#e2e8f0"}`
+            }}>{i + 1 < step ? "âœ“" : i + 1}</div>
+            <span style={{ fontSize: 10, color: i + 1 <= step ? "#2563eb" : "#94a3b8", fontWeight: 600 }}>{s}</span>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ background: "white", borderRadius: 20, padding: 28, boxShadow: "0 1px 3px rgba(0,0,0,0.08)", border: "1px solid #f1f5f9" }}>
+        {step === 1 && (
+          <div>
+            <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 20, color: "#1e293b" }}>ًں“‹ ط§ظ„ظ…ط¹ظ„ظˆظ…ط§طھ ط§ظ„ط£ط³ط§ط³ظٹط©</h3>
+            {[
+              { label: "ط§ط³ظ… ط§ظ„ظ…طھط¬ط± *", key: "storeName", placeholder: "ظ…ط«ط§ظ„: ظ…طھط¬ط± ط§ظ„ظ†ظˆط± ظ„ظ„ظ‡ظˆط§طھظپ" },
+              { label: "ط§ط³ظ… طµط§ط­ط¨ ط§ظ„ظ…طھط¬ط± *", key: "ownerName", placeholder: "ط§ظ„ط§ط³ظ… ط§ظ„ظƒط§ظ…ظ„" },
+              { label: "ط±ظ‚ظ… ط§ظ„ط³ط¬ظ„ ط§ظ„طھط¬ط§ط±ظٹ *", key: "rc", placeholder: "00-12345678" },
+            ].map(f => (
+              <div key={f.key} style={{ marginBottom: 16 }}>
+                <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 6 }}>{f.label}</label>
+                <input placeholder={f.placeholder} value={form[f.key] || ""}
+                  onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))}
+                  style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, fontFamily: "'Cairo', sans-serif", outline: "none", boxSizing: "border-box" }} />
+              </div>
+            ))}
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 6 }}>ظ†ظˆط¹ ط§ظ„ظ…طھط¬ط± *</label>
+              <div style={{ display: "flex", gap: 12 }}>
+                {["ط­ط±", "ظ…ط¹طھظ…ط¯"].map(type => (
+                  <label key={type} style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 20px", borderRadius: 10, border: "2px solid #e2e8f0", cursor: "pointer", flex: 1, justifyContent: "center", fontSize: 13 }}>
+                    <input type="radio" name="storeType" value={type} /> {type}
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+        {step === 2 && (
+          <div>
+            <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 20, color: "#1e293b" }}>ًں“چ ط§ظ„ظ…ظˆظ‚ط¹ ظˆط§ظ„طھظˆط§طµظ„</h3>
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 6 }}>ط§ظ„ظˆظ„ط§ظٹط© *</label>
+              <select style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, fontFamily: "'Cairo', sans-serif", outline: "none" }}>
+                <option value="">ط§ط®طھط± ط§ظ„ظˆظ„ط§ظٹط©...</option>
+                {WILAYAS.map(w => <option key={w}>{w}</option>)}
+              </select>
+            </div>
+            {[
+              { label: "ط±ظ‚ظ… ط§ظ„ظ‡ط§طھظپ *", placeholder: "06XXXXXXXX" },
+              { label: "ط±ظ‚ظ… ط§ظ„ظˆط§طھط³ط§ط¨ *", placeholder: "06XXXXXXXX" },
+              { label: "ط§ظ„ط¨ط±ظٹط¯ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ *", placeholder: "store@example.com" },
+              { label: "ط§ظ„ط¹ظ†ظˆط§ظ† ط§ظ„طھظپطµظٹظ„ظٹ *", placeholder: "ط§ظ„ط´ط§ط±ط¹طŒ ط§ظ„ط­ظٹطŒ ط§ظ„ظ…ط¯ظٹظ†ط©" },
+            ].map((f, i) => (
+              <div key={i} style={{ marginBottom: 16 }}>
+                <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 6 }}>{f.label}</label>
+                <input placeholder={f.placeholder} style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, fontFamily: "'Cairo', sans-serif", outline: "none", boxSizing: "border-box" }} />
+              </div>
+            ))}
+          </div>
+        )}
+        {step === 3 && (
+          <div>
+            <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 20, color: "#1e293b" }}>ًں“‚ ط±ظپط¹ ط§ظ„ظˆط«ط§ط¦ظ‚</h3>
+            {[
+              { label: "طµظˆط±ط© ط§ظ„ط³ط¬ظ„ ط§ظ„طھط¬ط§ط±ظٹ *", icon: "ًں“„", accept: "PDF/طµظˆط±ط©" },
+              { label: "طµظˆط±ط© ط§ظ„ظ‡ظˆظٹط© ط§ظ„ظˆط·ظ†ظٹط© *", icon: "ًںھھ", accept: "طµظˆط±ط©" },
+              { label: "ط´ط¹ط§ط± ط§ظ„ظ…طھط¬ط± *", icon: "ًں–¼ï¸ڈ", accept: "طµظˆط±ط© PNG/JPG" },
+              { label: "طµظˆط±ط© ظˆط§ط¬ظ‡ط© ط§ظ„ظ…طھط¬ط± (ط§ط®طھظٹط§ط±ظٹ)", icon: "ًں“¸", accept: "طµظˆط±ط©" },
+            ].map((doc, i) => (
+              <div key={i} style={{ marginBottom: 14 }}>
+                <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 6 }}>{doc.label}</label>
+                <div style={{
+                  border: "2px dashed #e2e8f0", borderRadius: 12, padding: "20px", textAlign: "center",
+                  cursor: "pointer", background: "#fafafa"
+                }}>
+                  <div style={{ fontSize: 28, marginBottom: 6 }}>{doc.icon}</div>
+                  <div style={{ fontSize: 12, color: "#94a3b8" }}>ط§ط³ط­ط¨ ط§ظ„ظ…ظ„ظپ ظ‡ظ†ط§ ط£ظˆ ط§ظ†ظ‚ط± ظ„ظ„ط±ظپط¹</div>
+                  <div style={{ fontSize: 11, color: "#cbd5e1", marginTop: 4 }}>{doc.accept}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        {step === 4 && (
+          <div style={{ textAlign: "center", padding: "20px 0" }}>
+            <div style={{ fontSize: 64, marginBottom: 16 }}>ًںژ‰</div>
+            <h3 style={{ fontSize: 18, fontWeight: 800, color: "#1e293b", marginBottom: 8 }}>طھظ… طھظ‚ط¯ظٹظ… ط·ظ„ط¨ظƒ!</h3>
+            <p style={{ color: "#64748b", fontSize: 13, marginBottom: 20 }}>ط³ظٹطھظ… ظ…ط±ط§ط¬ط¹ط© ط·ظ„ط¨ظƒ ظ…ظ† ظ‚ط¨ظ„ ظپط±ظٹظ‚ ط§ظ„ط¥ط¯ط§ط±ط© ط®ظ„ط§ظ„ 24-48 ط³ط§ط¹ط©. ط³طھطµظ„ظƒ ط±ط³ط§ظ„ط© ط¹ظ„ظ‰ ط¨ط±ظٹط¯ظƒ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ.</p>
+            <div style={{ background: "#fef3c7", borderRadius: 12, padding: "14px 20px", display: "inline-block" }}>
+              <div style={{ fontSize: 12, color: "#92400e" }}>âڈ³ ط±ظ‚ظ… ط§ظ„ط·ظ„ط¨: <strong>REG-2024-0847</strong></div>
+            </div>
+          </div>
+        )}
+
+        <div style={{ display: "flex", justifyContent: "space-between", marginTop: 24, gap: 12 }}>
+          {step > 1 && step < 4 && (
+            <button onClick={() => setStep(s => s - 1)} style={{
+              padding: "12px 28px", background: "#f1f5f9", color: "#64748b",
+              border: "none", borderRadius: 12, fontFamily: "'Cairo', sans-serif", fontWeight: 600, fontSize: 14, cursor: "pointer"
+            }}>â†گ ط±ط¬ظˆط¹</button>
+          )}
+          {step < 3 && (
+            <button onClick={() => setStep(s => s + 1)} style={{
+              padding: "12px 28px", background: "#2563eb", color: "white",
+              border: "none", borderRadius: 12, fontFamily: "'Cairo', sans-serif", fontWeight: 700, fontSize: 14, cursor: "pointer", marginRight: "auto"
+            }}>ط§ظ„طھط§ظ„ظٹ â†گ</button>
+          )}
+          {step === 3 && (
+            <button onClick={() => setStep(4)} style={{
+              padding: "12px 28px", background: "linear-gradient(135deg, #059669, #10b981)", color: "white",
+              border: "none", borderRadius: 12, fontFamily: "'Cairo', sans-serif", fontWeight: 700, fontSize: 14, cursor: "pointer", marginRight: "auto"
+            }}>âœ… ط¥ط±ط³ط§ظ„ ط§ظ„ط·ظ„ط¨</button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// =================== MAIN APP ===================
+
+export default function ZaLoApp() {
+  const [role, setRole] = useState("customer");
+  const [section, setSection] = useState("home");
+  const [cart, setCart] = useState([]);
+
+  const renderContent = () => {
+    if (role === "customer") {
+      if (section === "home") return <CustomerHome cart={cart} setCart={setCart} />;
+      if (section === "cart") return <CartView cart={cart} setCart={setCart} />;
     }
+    if (role === "merchant") {
+      if (section === "dashboard") return <MerchantDashboard />;
+      if (section === "store") return <MerchantRegister />;
+    }
+    if (role === "admin") {
+      if (section === "dashboard") return <AdminDashboard />;
+      if (section === "merchants") { setSection("dashboard"); return <AdminDashboard />; }
+    }
+    return (
+      <div style={{ textAlign: "center", padding: 60, fontFamily: "'Cairo', sans-serif", color: "#94a3b8" }}>
+        <div style={{ fontSize: 48, marginBottom: 16 }}>ًںڑ§</div>
+        <h3 style={{ fontSize: 16, fontWeight: 600 }}>ظ‡ط°ظ‡ ط§ظ„طµظپط­ط© ظ‚ظٹط¯ ط§ظ„طھط·ظˆظٹط±</h3>
+      </div>
+    );
+  };
 
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            document.getElementById('loginCard').style.display = 'none';
-            document.getElementById('appCard').style.display = 'block';
-            document.getElementById('userEmail').textContent = user.email;
-            console.log("✅ مستخدم مسجل دخول:", user.email);
-        } else {
-            document.getElementById('loginCard').style.display = 'block';
-            document.getElementById('appCard').style.display = 'none';
+  const roleColors = { customer: "#2563eb", merchant: "#059669", admin: "#7c3aed" };
+
+  return (
+    <div style={{ background: "#f8fafc", minHeight: "100vh", direction: "rtl" }}>
+      {/* Top Role Switcher */}
+      <div style={{
+        position: "fixed", top: 0, right: 220, left: 0, zIndex: 99,
+        background: "white", borderBottom: "1px solid #f1f5f9",
+        padding: "10px 24px", display: "flex", alignItems: "center", justifyContent: "space-between"
+      }}>
+        <div style={{ display: "flex", gap: 8 }}>
+          {[
+            { id: "customer", label: "ًں‘¤ ط²ط¨ظˆظ†", section: "home" },
+            { id: "merchant", label: "ًںڈھ طھط§ط¬ط±", section: "dashboard" },
+            { id: "admin", label: "ًں›،ï¸ڈ ظ…ط¯ظٹط±", section: "dashboard" },
+          ].map(r => (
+            <button key={r.id} onClick={() => { setRole(r.id); setSection(r.section); }}
+              style={{
+                padding: "6px 18px", borderRadius: 20, border: "none", cursor: "pointer",
+                fontFamily: "'Cairo', sans-serif", fontWeight: 600, fontSize: 12,
+                background: role === r.id ? roleColors[r.id] : "#f1f5f9",
+                color: role === r.id ? "white" : "#64748b"
+              }}>{r.label}</button>
+          ))}
+        </div>
+        {role === "customer" && (
+          <button onClick={() => setSection("cart")} style={{
+            background: cart.length > 0 ? "#2563eb" : "#f1f5f9",
+            color: cart.length > 0 ? "white" : "#94a3b8",
+            border: "none", borderRadius: 20, padding: "6px 16px",
+            fontFamily: "'Cairo', sans-serif", fontSize: 13, cursor: "pointer", fontWeight: 600
+          }}>
+            ًں›’ ط§ظ„ط³ظ„ط© {cart.length > 0 && `(${cart.length})`}
+          </button>
+        )}
+        {role === "customer" && (
+          <button onClick={() => setSection("register")} style={{
+            background: "#f59e0b", color: "white", border: "none", borderRadius: 20,
+            padding: "6px 16px", fontFamily: "'Cairo', sans-serif", fontSize: 12, cursor: "pointer", fontWeight: 600
+          }} onMouseEnter={() => {}}>ًںڈھ ط³ط¬ظ‘ظ„ ظ…طھط¬ط±ظƒ</button>
+        )}
+      </div>
+
+      {/* Sidebar */}
+      <Sidebar role={role} activeSection={section} setActiveSection={(s) => {
+        setSection(s);
+        if (role === "customer" && s === "store") { setRole("merchant"); setSection("store"); }
+      }} />
+
+      {/* Main Content */}
+      <div style={{ marginRight: 220, marginTop: 57, padding: "28px 28px 40px", minHeight: "calc(100vh - 57px)" }}>
+        {section === "register" && role === "customer"
+          ? <MerchantRegister />
+          : renderContent()
         }
-    });
-
-    document.getElementById('loginBtn').onclick = async () => {
-        const email = document.getElementById('email').value;
-        const pass = document.getElementById('password').value;
-        if (!email || !pass) { showToast("أدخل البريد وكلمة المرور"); return; }
-        try {
-            await signInWithEmailAndPassword(auth, email, pass);
-            showToast("✅ تم الدخول بنجاح");
-        } catch (e) {
-            let msg = e.message;
-            if (msg.includes('user-not-found')) msg = "المستخدم غير موجود";
-            else if (msg.includes('wrong-password')) msg = "كلمة مرور خاطئة";
-            else if (msg.includes('invalid-email')) msg = "بريد إلكتروني غير صالح";
-            showToast("❌ " + msg);
-        }
-    };
-
-    document.getElementById('registerBtn').onclick = async () => {
-        const email = document.getElementById('email').value;
-        const pass = document.getElementById('password').value;
-        if (!email || !pass || pass.length < 6) { showToast("كلمة المرور يجب أن تكون 6 أحرف على الأقل"); return; }
-        try {
-            await createUserWithEmailAndPassword(auth, email, pass);
-            showToast("✅ تم إنشاء الحساب وتسجيل الدخول");
-        } catch (e) {
-            showToast("❌ " + e.message);
-        }
-    };
-
-    document.getElementById('logoutBtn').onclick = async () => {
-        await signOut(auth);
-        showToast("تم تسجيل الخروج");
-    };
-</script>
-</body>
-</html>
+      </div>
+    </div>
+  );
+}
+              
