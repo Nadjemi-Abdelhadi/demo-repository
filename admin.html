@@ -111,8 +111,71 @@
                 <div class="stat-card"><div class="stat-number">${allOrders.length}</div><div>الطلبات</div></div>
                 <div class="stat-card"><div class="stat-number">${allRequests.length}</div><div>طلبات التجار</div></div>
             </div>
-            <div class="stat-card"><h3>مرحباً مدير عام</h3><p>استخدم التبويبات لإدارة المنصة بالكامل.</p></div>
+            <div class="stat-card" style="margin-bottom:16px;"><h3>مرحباً مدير عام</h3><p>استخدم التبويبات لإدارة المنصة بالكامل.</p></div>
+            <div class="flex-between" style="gap: 12px; flex-wrap: wrap;">
+                <button id="generateAllShopsBtn" class="btn">🏪 إنشاء متاجر لجميع الولايات (58 ولاية)</button>
+                <button id="generateOneShopBtn" class="btn btn-outline">🏷️ إنشاء متجر لولاية محددة</button>
+            </div>
         `;
+        document.getElementById('generateAllShopsBtn')?.addEventListener('click', () => generateAllWilayasShops());
+        document.getElementById('generateOneShopBtn')?.addEventListener('click', () => generateShopForSpecificWilaya());
+    }
+
+    // قائمة الولايات الجزائرية (58 ولاية)
+    const algerianWilayas = [
+        "أدرار", "الشلف", "الأغواط", "أم البواقي", "باتنة", "بجاية", "بسكرة", "بشار", "البليدة", "البويرة",
+        "تمنراست", "تبسة", "تلمسان", "تيارت", "تيزي وزو", "الجزائر", "ججل", "سطيف", "سعيدة", "سكيكدة",
+        "سيدي بلعباس", "عنابة", "قالمة", "قسنطينة", "المدية", "مستغانم", "المسيلة", "معسكر", "وهران", "بيض",
+        "بومرداس", "الطارف", "تندوف", "تيسمسيلت", "الوادي", "خنشلة", "سوق أهراس", "تيبازة", "ميلة", "عين الدفلى",
+        "النعامة", "عين تموشنت", "غرداية", "غليزان", "المغير", "المنيعة", "أولاد جلال", "برج بوعريريج", "بريدة",
+        "البيض", "اليزي", "أولاد ميمون", "تميمون", "قصر الشلالة", "بني عباس", "تيميمون", "إن صالح", "إن قزام", "تقرت"
+    ];
+
+    async function generateAllWilayasShops() {
+        if (!confirm(`سيتم إنشاء متاجر لـ ${algerianWilayas.length} ولاية (الولايات غير الموجودة فقط). هل تريد المتابعة؟`)) return;
+        let count = 0;
+        for (const wilaya of algerianWilayas) {
+            const existing = allShops.find(s => s.wilaya === wilaya);
+            if (existing) continue;
+            await addDoc(collection(db, "shops"), {
+                name: `متجر ${wilaya}`,
+                wilaya: wilaya,
+                baladia: wilaya,
+                whatsapp: "+213550000000",
+                logoEmoji: "🏪",
+                category: "متجر عام",
+                phone: "0550000000",
+                verified: true,
+                createdAt: new Date()
+            });
+            count++;
+        }
+        showToast(`✅ تم إنشاء ${count} متجر جديد لجميع الولايات`);
+        await loadAll();
+        renderDashboard();
+        if (currentTab === 'shops') renderShops();
+    }
+
+    async function generateShopForSpecificWilaya() {
+        const wilaya = prompt("أدخل اسم الولاية (مثال: المنيعة):");
+        if (!wilaya) return;
+        const existing = allShops.find(s => s.wilaya === wilaya);
+        if (existing) { showToast(`يوجد بالفعل متجر في ولاية ${wilaya}`); return; }
+        await addDoc(collection(db, "shops"), {
+            name: `متجر ${wilaya}`,
+            wilaya: wilaya,
+            baladia: wilaya,
+            whatsapp: "+213550000000",
+            logoEmoji: "🏪",
+            category: "متجر عام",
+            phone: "0550000000",
+            verified: true,
+            createdAt: new Date()
+        });
+        showToast(`✅ تم إنشاء متجر في ولاية ${wilaya}`);
+        await loadAll();
+        renderDashboard();
+        if (currentTab === 'shops') renderShops();
     }
 
     // ===================== المتاجر =====================
@@ -124,7 +187,7 @@
         });
         document.getElementById('mainContent').innerHTML = `
             <div class="flex-between"><h3>إدارة المتاجر</h3><button id="addShopBtn" class="btn">+ إضافة متجر</button></div>
-            <div style="overflow-x:auto;"><table><thead><tr><th>الاسم</th><th>الولاية</th><th>البلدية</th><th>الهاتف</th><th>إجراءات</th></tr></thead><tbody>${rows || '<tr><td colspan="5">لا توجد متاجر</td></tr>'}</tbody></table></div>
+            <div style="overflow-x:auto;"><table><thead><tr><th>الاسم</th><th>الولاية</th><th>البلدية</th><th>الهاتف</th><th>إجراءات</th></tr></thead><tbody>${rows || '<tr><td colspan="5">لا توجد متاجر</td>'}</tbody></table></div>
         `;
         document.getElementById('addShopBtn')?.addEventListener('click', () => openShopModal());
     }
@@ -163,11 +226,11 @@
         let rows = '';
         allProducts.forEach(prod => {
             const shopName = allShops.find(s => s.id === prod.shopId)?.name || '-';
-            rows += `<tr><td>${prod.name || '-'}</td><td>${prod.price || 0} دج</td><td>${shopName}</td><td><button class="btn-sm btn-outline" onclick="editProduct('${prod.id}')">تعديل</button> <button class="btn-sm btn-danger" onclick="deleteProduct('${prod.id}')">حذف</button></td></tr>`;
+            rows += `<tr><td>${prod.name || '-'}</td><td>${prod.price || 0} دج</td><td>${shopName}</td><td><button class="btn-sm btn-outline" onclick="editProduct('${prod.id}')">تعديل</button> <button class="btn-sm btn-danger" onclick="deleteProduct('${prod.id}')">حذف</button></tr>`;
         });
         document.getElementById('mainContent').innerHTML = `
             <div class="flex-between"><h3>إدارة المنتجات</h3><button id="addProductBtn" class="btn">+ إضافة منتج</button></div>
-            <div style="overflow-x:auto;"><table><thead><tr><th>الاسم</th><th>السعر</th><th>المتجر</th><th>إجراءات</th></tr></thead><tbody>${rows || '<tr><td colspan="4">لا توجد منتجات</td></tr>'}</tbody></table></div>
+            <div style="overflow-x:auto;"><table><thead><tr><th>الاسم</th><th>السعر</th><th>المتجر</th><th>إجراءات</th></tr></thead><tbody>${rows || '<tr><td colspan="4">لا توجد منتجات</td>'}</tbody></table></div>
         `;
         document.getElementById('addProductBtn')?.addEventListener('click', () => openProductModal());
     }
@@ -202,9 +265,9 @@
         await loadAll();
         let rows = '';
         allUsers.forEach(u => {
-            rows += `<tr><td>${u.email}</td><td>${u.role || 'customer'}</td><td><button class="btn-sm btn-outline" onclick="openUserModal('${u.id}', '${u.email}', '${u.role || 'customer'}')">تغيير الدور</button></td></tr>`;
+            rows += `<tr><td>${u.email}</td><td>${u.role || 'customer'}</td><td><button class="btn-sm btn-outline" onclick="openUserModal('${u.id}', '${u.email}', '${u.role || 'customer'}')">تغيير الدور</button></tr>`;
         });
-        document.getElementById('mainContent').innerHTML = `<h3>إدارة المستخدمين</h3><div style="overflow-x:auto;"><table><thead><tr><th>البريد</th><th>الدور</th><th>إجراءات</th></tr></thead><tbody>${rows || '<tr><td colspan="3">لا يوجد مستخدمون</td></tr>'}</tbody></table></div>`;
+        document.getElementById('mainContent').innerHTML = `<h3>إدارة المستخدمين</h3><div style="overflow-x:auto;"><table><thead><tr><th>البريد</th><th>الدور</th><th>إجراءات</th></tr></thead><tbody>${rows || '<td><td colspan="3">لا يوجد مستخدمون</td>'}</tbody></tr></div>`;
     }
     window.openUserModal = (id, email, role) => {
         document.getElementById('userEmailSpan').innerText = email;
@@ -230,9 +293,9 @@
             const productName = product?.name || 'منتج محذوف';
             const shop = allShops.find(s => s.id === product?.shopId);
             const shopName = shop?.name || '-';
-            rows += `<tr><td>${productName}</td><td>${o.customerEmail || '-'}</td><td>${shopName}</td><td>${o.status || 'pending'}</td><td><select onchange="updateOrderStatus('${o.id}', this.value)"><option value="pending" ${o.status === 'pending' ? 'selected' : ''}>قيد المراجعة</option><option value="confirmed" ${o.status === 'confirmed' ? 'selected' : ''}>مؤكد</option><option value="shipped" ${o.status === 'shipped' ? 'selected' : ''}>تم الشحن</option><option value="delivered" ${o.status === 'delivered' ? 'selected' : ''}>تم التوصيل</option></select></td></tr>`;
+            rows += `<tr><td>${productName}</td><td>${o.customerEmail || '-'}</td><td>${shopName}</td><td>${o.status || 'pending'}</td><td><select onchange="updateOrderStatus('${o.id}', this.value)"><option value="pending" ${o.status === 'pending' ? 'selected' : ''}>قيد المراجعة</option><option value="confirmed" ${o.status === 'confirmed' ? 'selected' : ''}>مؤكد</option><option value="shipped" ${o.status === 'shipped' ? 'selected' : ''}>تم الشحن</option><option value="delivered" ${o.status === 'delivered' ? 'selected' : ''}>تم التوصيل</option></select></tr>`;
         }
-        document.getElementById('mainContent').innerHTML = `<h3>إدارة الطلبات</h3><div style="overflow-x:auto;"><table><thead><tr><th>المنتج</th><th>العميل</th><th>المتجر</th><th>الحالة</th><th>تحديث</th></tr></thead><tbody>${rows || '<tr><td colspan="5">لا توجد طلبات</td></tr>'}</tbody></table></div>`;
+        document.getElementById('mainContent').innerHTML = `<h3>إدارة الطلبات</h3><div style="overflow-x:auto;"><table><thead><tr><th>المنتج</th><th>العميل</th><th>المتجر</th><th>الحالة</th><th>تحديث</th></tr></thead><tbody>${rows || '<td><td colspan="5">لا توجد طلبات</td>'}</tbody></table></div>`;
     }
     window.updateOrderStatus = async (orderId, newStatus) => {
         await updateDoc(doc(db, "orders", orderId), { status: newStatus, updatedAt: new Date() });
@@ -285,7 +348,7 @@
         }
     };
 
-        // ===================== التبويبات =====================
+    // ===================== التبويبات =====================
     let currentTab = 'dashboard';
     async function renderTab(tab) {
         currentTab = tab;
