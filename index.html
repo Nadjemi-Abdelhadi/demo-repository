@@ -36,7 +36,6 @@
         .product-item { border: 1px solid #eee; border-radius: 16px; padding: 12px; margin-bottom: 12px; }
         .footer-link { text-align: center; margin: 20px 0; padding-bottom: 20px; }
         .footer-link a { color: #006233; text-decoration: none; font-weight: bold; margin: 0 8px; }
-        .review-stars { color: #f59e0b; }
     </style>
 </head>
 <body>
@@ -123,7 +122,6 @@
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     function updateCartBadge() { document.getElementById('cartBadge').innerText = cart.length; }
 
-    // قائمة الولايات والبلديات الكاملة (58 ولاية مع بلدياتها الرئيسية)
     const wilayasData = {
         "أدرار": ["أدرار", "تيميمون", "رقان"], "الشلف": ["الشلف", "تنس", "بني حواء"], "الأغواط": ["الأغواط", "قصر الحيران", "عين ماضي"],
         "أم البواقي": ["أم البواقي", "عين البيضاء", "فكيرينة"], "باتنة": ["باتنة", "بريكة", "مروانة"], "بجاية": ["بجاية", "القصر", "أميزور"],
@@ -261,5 +259,5 @@
     document.getElementById('userIcon').onclick = () => { if(currentUser) showToast("مرحباً "+currentUser.email); else window.location.href='./login.html'; };
     document.getElementById('menuBtn').onclick = () => window.location.href='./merchant-register.html';
 </script>
-</body>  
+</body>
 </html>
