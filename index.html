@@ -10,7 +10,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Tajawal', sans-serif; background: #f5f9f7; direction: rtl; }
         .app-container { max-width: 500px; margin: 0 auto; background: #fff; min-height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
-        .header { background: white; padding: 12px 16px; border-bottom: 1px solid #eef2f0; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; }
+        .header { background: white; padding: 12px 16px; border-bottom: 1px solid #eef2f0; display: flex; justify-content: space-between; align-items: center; }
         .brand h2 { font-size: 20px; font-weight: 900; color: #006233; line-height: 1.2; }
         .brand p { font-size: 9px; color: #8ba396; margin-top: -2px; }
         .hero-logo { text-align: center; margin: 20px 16px; }
@@ -122,6 +122,7 @@
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     function updateCartBadge() { document.getElementById('cartBadge').innerText = cart.length; }
 
+    // قائمة الولايات والبلديات (58 ولاية مع بلدياتها الرئيسية)
     const wilayasData = {
         "أدرار": ["أدرار", "تيميمون", "رقان"], "الشلف": ["الشلف", "تنس", "بني حواء"], "الأغواط": ["الأغواط", "قصر الحيران", "عين ماضي"],
         "أم البواقي": ["أم البواقي", "عين البيضاء", "فكيرينة"], "باتنة": ["باتنة", "بريكة", "مروانة"], "بجاية": ["بجاية", "القصر", "أميزور"],
@@ -259,5 +260,5 @@
     document.getElementById('userIcon').onclick = () => { if(currentUser) showToast("مرحباً "+currentUser.email); else window.location.href='./login.html'; };
     document.getElementById('menuBtn').onclick = () => window.location.href='./merchant-register.html';
 </script>
-</body>
+</body>   
 </html>
