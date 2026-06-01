@@ -1,0 +1,897 @@
+import { useState } from "react";
+
+const WILAYAS = [
+  "الجزائر", "وهران", "قسنطينة", "عنابة", "بجاية", "تيزي وزو", "سطيف",
+  "المسيلة", "البليدة", "تلمسان", "بسكرة", "ورقلة", "تبسة", "سكيكدة",
+  "المنيعة", "تمنراست", "أدرار", "إليزي", "تيندوف", "بشار"
+];
+
+const CATEGORIES = [
+  { icon: "📱", name: "هواتف ذكية", count: 234 },
+  { icon: "🔧", name: "قطع غيار", count: 187 },
+  { icon: "👕", name: "ملابس", count: 412 },
+  { icon: "👟", name: "أحذية", count: 156 },
+  { icon: "💻", name: "إلكترونيات", count: 298 },
+  { icon: "🏠", name: "أثاث ومنزل", count: 203 },
+  { icon: "🍕", name: "مأكولات", count: 89 },
+  { icon: "📚", name: "كتب ومستلزمات", count: 134 },
+];
+
+const STORES = [
+  { id: 1, name: "متجر النور للهواتف", wilaya: "الجزائر", category: "هواتف ذكية", rating: 4.8, reviews: 124, verified: true, image: "📱", status: "active" },
+  { id: 2, name: "قطع غيار الشرق", wilaya: "قسنطينة", category: "قطع غيار", rating: 4.5, reviews: 89, verified: true, image: "🔧", status: "active" },
+  { id: 3, name: "أزياء بلقاسم", wilaya: "وهران", category: "ملابس", rating: 4.2, reviews: 67, verified: false, image: "👕", status: "active" },
+  { id: 4, name: "تك هاوس", wilaya: "بجاية", category: "إلكترونيات", rating: 4.9, reviews: 201, verified: true, image: "💻", status: "active" },
+];
+
+const PRODUCTS = [
+  { id: 1, name: "Samsung Galaxy A54", price: 65000, store: "متجر النور", rating: 4.7, sold: 45, image: "📱" },
+  { id: 2, name: "بطارية iPhone 13", price: 3500, store: "قطع غيار الشرق", rating: 4.5, sold: 128, image: "🔋" },
+  { id: 3, name: "قميص صيفي", price: 2800, store: "أزياء بلقاسم", rating: 4.3, sold: 67, image: "👕" },
+  { id: 4, name: "Laptop Lenovo i5", price: 120000, store: "تك هاوس", rating: 4.9, sold: 23, image: "💻" },
+  { id: 5, name: "Redmi Note 12", price: 42000, store: "متجر النور", rating: 4.4, sold: 89, image: "📱" },
+  { id: 6, name: "شاشة LCD", price: 8500, store: "قطع غيار الشرق", rating: 4.6, sold: 54, image: "🖥️" },
+];
+
+const ORDERS_DATA = [
+  { id: "#ORD-2401", product: "Samsung Galaxy A54", customer: "أحمد محمد", amount: "65,000 دج", status: "pending", date: "2024-01-15" },
+  { id: "#ORD-2400", product: "Laptop Lenovo i5", customer: "فاطمة علي", amount: "120,000 دج", status: "confirmed", date: "2024-01-14" },
+  { id: "#ORD-2399", product: "بطارية iPhone", customer: "محمد يوسف", amount: "3,500 دج", status: "delivered", date: "2024-01-13" },
+  { id: "#ORD-2398", product: "قميص صيفي", customer: "سارة خالد", amount: "2,800 دج", status: "cancelled", date: "2024-01-12" },
+];
+
+const MERCHANTS_DATA = [
+  { id: 1, name: "متجر النور للهواتف", owner: "يوسف بن علي", wilaya: "الجزائر", status: "active", subscription: "مدفوع", joined: "2023-06-01", sales: "1,240,000 دج" },
+  { id: 2, name: "قطع غيار الشرق", owner: "رشيد حمداني", wilaya: "قسنطينة", status: "pending", subscription: "معلق", joined: "2024-01-10", sales: "0 دج" },
+  { id: 3, name: "أزياء بلقاسم", owner: "بلقاسم زروق", wilaya: "وهران", status: "suspended", subscription: "منتهي", joined: "2023-03-15", sales: "450,000 دج" },
+  { id: 4, name: "تك هاوس", owner: "أمين بوزيان", wilaya: "بجاية", status: "active", subscription: "مدفوع", joined: "2023-09-20", sales: "3,890,000 دج" },
+];
+
+const statusColors = {
+  active: { bg: "#d1fae5", text: "#065f46", label: "نشط" },
+  pending: { bg: "#fef3c7", text: "#92400e", label: "معلق" },
+  suspended: { bg: "#fee2e2", text: "#991b1b", label: "موقوف" },
+  confirmed: { bg: "#dbeafe", text: "#1e40af", label: "مؤكد" },
+  delivered: { bg: "#d1fae5", text: "#065f46", label: "تم التسليم" },
+  cancelled: { bg: "#fee2e2", text: "#991b1b", label: "ملغى" },
+};
+
+// =================== COMPONENTS ===================
+
+function Sidebar({ role, activeSection, setActiveSection }) {
+  const menus = {
+    customer: [
+      { icon: "🏠", label: "الرئيسية", id: "home" },
+      { icon: "🔍", label: "البحث", id: "search" },
+      { icon: "🛒", label: "سلة التسوق", id: "cart" },
+      { icon: "📦", label: "طلباتي", id: "orders" },
+      { icon: "⭐", label: "تقييماتي", id: "reviews" },
+      { icon: "👤", label: "حسابي", id: "account" },
+    ],
+    merchant: [
+      { icon: "📊", label: "لوحة التحكم", id: "dashboard" },
+      { icon: "🏪", label: "متجري", id: "store" },
+      { icon: "📦", label: "المنتجات", id: "products" },
+      { icon: "📋", label: "الطلبات", id: "orders" },
+      { icon: "💰", label: "الأرباح", id: "earnings" },
+      { icon: "💳", label: "الاشتراك", id: "subscription" },
+      { icon: "⭐", label: "التقييمات", id: "reviews" },
+      { icon: "🛠️", label: "الدعم الفني", id: "support" },
+    ],
+    admin: [
+      { icon: "📊", label: "لوحة التحكم", id: "dashboard" },
+      { icon: "🏪", label: "إدارة التجار", id: "merchants" },
+      { icon: "📋", label: "مراجعة الطلبات", id: "requests" },
+      { icon: "💳", label: "إدارة الدفع", id: "payments" },
+      { icon: "📁", label: "الأقسام", id: "categories" },
+      { icon: "⚠️", label: "الشكاوى", id: "complaints" },
+      { icon: "👥", label: "المستخدمون", id: "users" },
+      { icon: "📈", label: "التقارير", id: "reports" },
+      { icon: "⚙️", label: "الإعدادات", id: "settings" },
+    ],
+  };
+
+  const roleLabels = { customer: "الزبون", merchant: "التاجر", admin: "المدير" };
+  const roleColors = { customer: "#2563eb", merchant: "#059669", admin: "#7c3aed" };
+
+  return (
+    <div style={{
+      width: 220, background: "#0f172a", height: "100vh", display: "flex",
+      flexDirection: "column", position: "fixed", right: 0, top: 0, zIndex: 100,
+      boxShadow: "-4px 0 24px rgba(0,0,0,0.4)"
+    }}>
+      {/* Logo */}
+      <div style={{ padding: "24px 20px", borderBottom: "1px solid #1e293b" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+          <div style={{
+            width: 38, height: 38, borderRadius: 10,
+            background: `linear-gradient(135deg, ${roleColors[role]}, ${roleColors[role]}88)`,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 20, fontWeight: 800, color: "white", fontFamily: "serif"
+          }}>Z</div>
+          <span style={{ color: "white", fontWeight: 700, fontSize: 20, fontFamily: "'Cairo', sans-serif" }}>ZaLo</span>
+        </div>
+        <span style={{
+          background: roleColors[role] + "22", color: roleColors[role],
+          padding: "2px 10px", borderRadius: 20, fontSize: 11, fontFamily: "'Cairo', sans-serif"
+        }}>{roleLabels[role]}</span>
+      </div>
+
+      {/* Menu */}
+      <nav style={{ flex: 1, padding: "12px 10px", overflowY: "auto" }}>
+        {menus[role].map(item => (
+          <button key={item.id} onClick={() => setActiveSection(item.id)}
+            style={{
+              width: "100%", display: "flex", alignItems: "center", gap: 10,
+              padding: "10px 12px", borderRadius: 10, border: "none", cursor: "pointer",
+              marginBottom: 4, textAlign: "right", direction: "rtl",
+              background: activeSection === item.id ? roleColors[role] + "22" : "transparent",
+              color: activeSection === item.id ? roleColors[role] : "#94a3b8",
+              fontFamily: "'Cairo', sans-serif", fontSize: 13,
+              transition: "all 0.2s", borderLeft: activeSection === item.id ? `3px solid ${roleColors[role]}` : "3px solid transparent"
+            }}>
+            <span style={{ fontSize: 16 }}>{item.icon}</span>
+            {item.label}
+          </button>
+        ))}
+      </nav>
+
+      {/* User */}
+      <div style={{ padding: "16px 20px", borderTop: "1px solid #1e293b", display: "flex", alignItems: "center", gap: 10 }}>
+        <div style={{
+          width: 34, height: 34, borderRadius: "50%",
+          background: roleColors[role], display: "flex", alignItems: "center",
+          justifyContent: "center", color: "white", fontSize: 14, fontWeight: 700
+        }}>م</div>
+        <div>
+          <div style={{ color: "white", fontSize: 12, fontFamily: "'Cairo', sans-serif", fontWeight: 600 }}>محمد أمين</div>
+          <div style={{ color: "#64748b", fontSize: 10, fontFamily: "'Cairo', sans-serif" }}>{roleLabels[role]}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StatCard({ icon, label, value, change, color }) {
+  return (
+    <div style={{
+      background: "white", borderRadius: 16, padding: "20px 24px",
+      boxShadow: "0 1px 3px rgba(0,0,0,0.08)", border: "1px solid #f1f5f9",
+      flex: 1, minWidth: 180
+    }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
+        <div style={{ fontSize: 28 }}>{icon}</div>
+        {change && <span style={{
+          background: change > 0 ? "#d1fae5" : "#fee2e2",
+          color: change > 0 ? "#065f46" : "#991b1b",
+          padding: "2px 8px", borderRadius: 20, fontSize: 11, fontFamily: "'Cairo', sans-serif"
+        }}>{change > 0 ? "↑" : "↓"} {Math.abs(change)}%</span>}
+      </div>
+      <div style={{ color: "#1e293b", fontSize: 22, fontWeight: 800, fontFamily: "'Cairo', sans-serif", marginBottom: 4 }}>{value}</div>
+      <div style={{ color: "#94a3b8", fontSize: 12, fontFamily: "'Cairo', sans-serif" }}>{label}</div>
+    </div>
+  );
+}
+
+// =================== VIEWS ===================
+
+function CustomerHome({ setView, cart, setCart }) {
+  const [selectedWilaya, setSelectedWilaya] = useState("");
+  const [search, setSearch] = useState("");
+
+  const addToCart = (product) => setCart(prev => {
+    const exists = prev.find(i => i.id === product.id);
+    if (exists) return prev.map(i => i.id === product.id ? { ...i, qty: i.qty + 1 } : i);
+    return [...prev, { ...product, qty: 1 }];
+  });
+
+  return (
+    <div style={{ fontFamily: "'Cairo', sans-serif", direction: "rtl" }}>
+      {/* Hero */}
+      <div style={{
+        background: "linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #06b6d4 100%)",
+        borderRadius: 20, padding: "40px 32px", marginBottom: 32, position: "relative", overflow: "hidden"
+      }}>
+        <div style={{ position: "absolute", top: -40, left: -40, width: 200, height: 200, background: "rgba(255,255,255,0.05)", borderRadius: "50%" }} />
+        <div style={{ position: "absolute", bottom: -60, right: -30, width: 250, height: 250, background: "rgba(255,255,255,0.05)", borderRadius: "50%" }} />
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <h1 style={{ color: "white", fontSize: 28, fontWeight: 800, margin: "0 0 8px" }}>مرحبًا في ZaLo 🛍️</h1>
+          <p style={{ color: "rgba(255,255,255,0.8)", margin: "0 0 24px", fontSize: 14 }}>تسوق من أفضل المحلات في كل ولايات الجزائر</p>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+            <input value={search} onChange={e => setSearch(e.target.value)}
+              placeholder="ابحث عن منتج أو متجر..."
+              style={{
+                flex: 1, minWidth: 200, padding: "12px 16px", borderRadius: 12, border: "none",
+                fontSize: 14, outline: "none", fontFamily: "'Cairo', sans-serif"
+              }} />
+            <select value={selectedWilaya} onChange={e => setSelectedWilaya(e.target.value)}
+              style={{
+                padding: "12px 16px", borderRadius: 12, border: "none", fontSize: 13,
+                fontFamily: "'Cairo', sans-serif", background: "rgba(255,255,255,0.2)",
+                color: "white", outline: "none", minWidth: 140
+              }}>
+              <option value="">كل الولايات</option>
+              {WILAYAS.map(w => <option key={w} value={w}>{w}</option>)}
+            </select>
+            <button style={{
+              padding: "12px 24px", background: "#f59e0b", color: "white",
+              border: "none", borderRadius: 12, fontFamily: "'Cairo', sans-serif",
+              fontWeight: 700, cursor: "pointer", fontSize: 14
+            }}>🔍 بحث</button>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Bar */}
+      <div style={{ display: "flex", gap: 16, marginBottom: 32, flexWrap: "wrap" }}>
+        {[
+          { icon: "🏪", value: "2,847", label: "متجر نشط" },
+          { icon: "📦", value: "48,320", label: "منتج متاح" },
+          { icon: "📍", value: "58", label: "ولاية مشمولة" },
+          { icon: "⭐", value: "4.7", label: "متوسط التقييم" },
+        ].map((s, i) => (
+          <div key={i} style={{
+            flex: 1, minWidth: 120, background: "white", borderRadius: 14, padding: "16px",
+            textAlign: "center", boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9"
+          }}>
+            <div style={{ fontSize: 24, marginBottom: 4 }}>{s.icon}</div>
+            <div style={{ fontSize: 18, fontWeight: 800, color: "#1e293b" }}>{s.value}</div>
+            <div style={{ fontSize: 11, color: "#94a3b8" }}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Categories */}
+      <h2 style={{ fontSize: 18, fontWeight: 700, color: "#1e293b", marginBottom: 16 }}>الأقسام 📁</h2>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))", gap: 12, marginBottom: 32 }}>
+        {CATEGORIES.map((cat, i) => (
+          <div key={i} style={{
+            background: "white", borderRadius: 14, padding: "16px 12px", textAlign: "center",
+            cursor: "pointer", boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9",
+            transition: "all 0.2s"
+          }}
+            onMouseEnter={e => e.currentTarget.style.transform = "translateY(-2px)"}
+            onMouseLeave={e => e.currentTarget.style.transform = "translateY(0)"}>
+            <div style={{ fontSize: 28, marginBottom: 6 }}>{cat.icon}</div>
+            <div style={{ fontSize: 12, fontWeight: 600, color: "#1e293b", marginBottom: 2 }}>{cat.name}</div>
+            <div style={{ fontSize: 10, color: "#94a3b8" }}>{cat.count} منتج</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Featured Stores */}
+      <h2 style={{ fontSize: 18, fontWeight: 700, color: "#1e293b", marginBottom: 16 }}>محلات مميزة ⭐</h2>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16, marginBottom: 32 }}>
+        {STORES.map(store => (
+          <div key={store.id} style={{
+            background: "white", borderRadius: 16, padding: 16,
+            boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9",
+            cursor: "pointer", transition: "all 0.2s"
+          }}
+            onMouseEnter={e => e.currentTarget.style.boxShadow = "0 4px 20px rgba(0,0,0,0.1)"}
+            onMouseLeave={e => e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.06)"}>
+            <div style={{ display: "flex", gap: 12, marginBottom: 12 }}>
+              <div style={{
+                width: 50, height: 50, borderRadius: 12,
+                background: "#eff6ff", display: "flex", alignItems: "center",
+                justifyContent: "center", fontSize: 24
+              }}>{store.image}</div>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: 13, color: "#1e293b", marginBottom: 2 }}>{store.name}</div>
+                <div style={{ fontSize: 11, color: "#64748b" }}>📍 {store.wilaya} • {store.category}</div>
+              </div>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span style={{ fontSize: 12, color: "#f59e0b" }}>{"⭐".repeat(Math.round(store.rating))} {store.rating}</span>
+              {store.verified && <span style={{ background: "#d1fae5", color: "#065f46", padding: "2px 8px", borderRadius: 20, fontSize: 10 }}>✅ معتمد</span>}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Products Grid */}
+      <h2 style={{ fontSize: 18, fontWeight: 700, color: "#1e293b", marginBottom: 16 }}>منتجات مميزة 🔥</h2>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 16 }}>
+        {PRODUCTS.filter(p => !search || p.name.includes(search)).map(product => (
+          <div key={product.id} style={{
+            background: "white", borderRadius: 16, overflow: "hidden",
+            boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9",
+            transition: "all 0.2s"
+          }}
+            onMouseEnter={e => e.currentTarget.style.transform = "translateY(-3px)"}
+            onMouseLeave={e => e.currentTarget.style.transform = "translateY(0)"}>
+            <div style={{
+              height: 120, background: "linear-gradient(135deg, #eff6ff, #dbeafe)",
+              display: "flex", alignItems: "center", justifyContent: "center", fontSize: 48
+            }}>{product.image}</div>
+            <div style={{ padding: "14px 12px" }}>
+              <div style={{ fontWeight: 600, fontSize: 13, color: "#1e293b", marginBottom: 4 }}>{product.name}</div>
+              <div style={{ fontSize: 11, color: "#94a3b8", marginBottom: 8 }}>🏪 {product.store}</div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                <span style={{ fontWeight: 800, fontSize: 14, color: "#1e40af" }}>{product.price.toLocaleString()} دج</span>
+                <span style={{ fontSize: 10, color: "#94a3b8" }}>⭐ {product.rating}</span>
+              </div>
+              <button onClick={() => addToCart(product)} style={{
+                width: "100%", padding: "8px", background: "#2563eb", color: "white",
+                border: "none", borderRadius: 10, fontFamily: "'Cairo', sans-serif",
+                fontSize: 12, fontWeight: 600, cursor: "pointer", transition: "background 0.2s"
+              }}
+                onMouseEnter={e => e.currentTarget.style.background = "#1d4ed8"}
+                onMouseLeave={e => e.currentTarget.style.background = "#2563eb"}>
+                🛒 أضف للسلة
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function CartView({ cart, setCart }) {
+  const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+  const [payMethod, setPayMethod] = useState("cod");
+  const [ordered, setOrdered] = useState(false);
+
+  const updateQty = (id, delta) => setCart(prev =>
+    prev.map(i => i.id === id ? { ...i, qty: Math.max(1, i.qty + delta) } : i)
+  );
+  const remove = (id) => setCart(prev => prev.filter(i => i.id !== id));
+
+  if (ordered) return (
+    <div style={{ textAlign: "center", padding: 60, fontFamily: "'Cairo', sans-serif" }}>
+      <div style={{ fontSize: 80, marginBottom: 20 }}>✅</div>
+      <h2 style={{ fontSize: 24, fontWeight: 800, color: "#065f46", marginBottom: 8 }}>تم تأكيد طلبك!</h2>
+      <p style={{ color: "#64748b", marginBottom: 24 }}>رقم الطلب: #ORD-2405</p>
+      <button onClick={() => { setOrdered(false); setCart([]); }}
+        style={{ padding: "12px 32px", background: "#2563eb", color: "white", border: "none", borderRadius: 12, fontFamily: "'Cairo', sans-serif", fontWeight: 700, cursor: "pointer" }}>
+        متابعة التسوق
+      </button>
+    </div>
+  );
+
+  if (cart.length === 0) return (
+    <div style={{ textAlign: "center", padding: 60, fontFamily: "'Cairo', sans-serif" }}>
+      <div style={{ fontSize: 64, marginBottom: 16 }}>🛒</div>
+      <h2 style={{ color: "#94a3b8", fontWeight: 600 }}>السلة فارغة</h2>
+    </div>
+  );
+
+  return (
+    <div style={{ fontFamily: "'Cairo', sans-serif", direction: "rtl" }}>
+      <h2 style={{ fontSize: 20, fontWeight: 800, marginBottom: 24, color: "#1e293b" }}>🛒 سلة التسوق ({cart.length})</h2>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 24 }}>
+        <div>
+          {cart.map(item => (
+            <div key={item.id} style={{
+              background: "white", borderRadius: 14, padding: 16, marginBottom: 12,
+              display: "flex", gap: 16, alignItems: "center",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9"
+            }}>
+              <div style={{ width: 60, height: 60, background: "#eff6ff", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 30 }}>{item.image}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 600, color: "#1e293b", marginBottom: 4 }}>{item.name}</div>
+                <div style={{ fontSize: 12, color: "#64748b" }}>{item.price.toLocaleString()} دج × {item.qty}</div>
+              </div>
+              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                <button onClick={() => updateQty(item.id, -1)} style={{ width: 28, height: 28, borderRadius: 8, border: "1px solid #e2e8f0", background: "white", cursor: "pointer", fontSize: 16 }}>−</button>
+                <span style={{ fontWeight: 700, minWidth: 20, textAlign: "center" }}>{item.qty}</span>
+                <button onClick={() => updateQty(item.id, 1)} style={{ width: 28, height: 28, borderRadius: 8, border: "1px solid #e2e8f0", background: "white", cursor: "pointer", fontSize: 16 }}>+</button>
+              </div>
+              <div style={{ fontWeight: 800, color: "#1e40af", minWidth: 90, textAlign: "center" }}>{(item.price * item.qty).toLocaleString()} دج</div>
+              <button onClick={() => remove(item.id)} style={{ background: "#fee2e2", color: "#991b1b", border: "none", borderRadius: 8, padding: "6px 10px", cursor: "pointer" }}>🗑️</button>
+            </div>
+          ))}
+        </div>
+        <div>
+          <div style={{ background: "white", borderRadius: 16, padding: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9" }}>
+            <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>ملخص الطلب</h3>
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, color: "#64748b", fontSize: 13 }}>
+                <span>المجموع الفرعي</span><span>{total.toLocaleString()} دج</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, color: "#64748b", fontSize: 13 }}>
+                <span>رسوم التوصيل</span><span>مجاني</span>
+              </div>
+              <div style={{ borderTop: "1px solid #f1f5f9", paddingTop: 12, display: "flex", justifyContent: "space-between", fontWeight: 800, color: "#1e293b" }}>
+                <span>المجموع الكلي</span><span>{total.toLocaleString()} دج</span>
+              </div>
+            </div>
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 10, color: "#1e293b" }}>طريقة الدفع:</div>
+              {[
+                { id: "cod", icon: "💵", label: "الدفع عند الاستلام (COD)" },
+                { id: "baridimob", icon: "📱", label: "بريدي موب" },
+              ].map(method => (
+                <label key={method.id} style={{
+                  display: "flex", alignItems: "center", gap: 10, padding: "10px 12px",
+                  borderRadius: 10, border: `2px solid ${payMethod === method.id ? "#2563eb" : "#f1f5f9"}`,
+                  marginBottom: 8, cursor: "pointer", background: payMethod === method.id ? "#eff6ff" : "white",
+                  fontSize: 13
+                }}>
+                  <input type="radio" value={method.id} checked={payMethod === method.id}
+                    onChange={() => setPayMethod(method.id)} />
+                  {method.icon} {method.label}
+                </label>
+              ))}
+            </div>
+            <button onClick={() => setOrdered(true)} style={{
+              width: "100%", padding: "14px", background: "linear-gradient(135deg, #2563eb, #3b82f6)",
+              color: "white", border: "none", borderRadius: 12,
+              fontFamily: "'Cairo', sans-serif", fontWeight: 700, fontSize: 15, cursor: "pointer"
+            }}>تأكيد الطلب ✅</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MerchantDashboard() {
+  const [activeTab, setActiveTab] = useState("overview");
+
+  return (
+    <div style={{ fontFamily: "'Cairo', sans-serif", direction: "rtl" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+        <div>
+          <h1 style={{ fontSize: 22, fontWeight: 800, color: "#1e293b", margin: 0 }}>لوحة التحكم 📊</h1>
+          <p style={{ color: "#94a3b8", margin: "4px 0 0", fontSize: 13 }}>مرحبًا يوسف! إليك ملخص متجرك اليوم.</p>
+        </div>
+        <div style={{ background: "#d1fae5", color: "#065f46", padding: "6px 16px", borderRadius: 20, fontSize: 12, fontWeight: 600 }}>
+          ✅ الاشتراك نشط حتى 30/06/2024
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div style={{ display: "flex", gap: 16, marginBottom: 28, flexWrap: "wrap" }}>
+        <StatCard icon="💰" label="إجمالي المبيعات" value="1,240,000 دج" change={12} />
+        <StatCard icon="📦" label="طلبات اليوم" value="23" change={5} />
+        <StatCard icon="⭐" label="متوسط التقييم" value="4.8" change={2} />
+        <StatCard icon="🛍️" label="المنتجات النشطة" value="47" />
+      </div>
+
+      {/* Recent Orders */}
+      <h2 style={{ fontSize: 16, fontWeight: 700, color: "#1e293b", marginBottom: 14 }}>آخر الطلبات 📋</h2>
+      <div style={{ background: "white", borderRadius: 16, overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9", marginBottom: 24 }}>
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <thead>
+            <tr style={{ background: "#f8fafc" }}>
+              {["رقم الطلب", "المنتج", "الزبون", "المبلغ", "الحالة", "التاريخ", "إجراء"].map(h => (
+                <th key={h} style={{ padding: "12px 16px", textAlign: "right", fontSize: 12, color: "#64748b", fontWeight: 600, borderBottom: "1px solid #f1f5f9" }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {ORDERS_DATA.map(order => (
+              <tr key={order.id} style={{ borderBottom: "1px solid #f8fafc" }}>
+                <td style={{ padding: "12px 16px", fontSize: 13, fontWeight: 600, color: "#2563eb" }}>{order.id}</td>
+                <td style={{ padding: "12px 16px", fontSize: 13, color: "#1e293b" }}>{order.product}</td>
+                <td style={{ padding: "12px 16px", fontSize: 13, color: "#64748b" }}>{order.customer}</td>
+                <td style={{ padding: "12px 16px", fontSize: 13, fontWeight: 700, color: "#1e293b" }}>{order.amount}</td>
+                <td style={{ padding: "12px 16px" }}>
+                  <span style={{
+                    background: statusColors[order.status]?.bg, color: statusColors[order.status]?.text,
+                    padding: "3px 10px", borderRadius: 20, fontSize: 11, fontWeight: 600
+                  }}>{statusColors[order.status]?.label}</span>
+                </td>
+                <td style={{ padding: "12px 16px", fontSize: 12, color: "#94a3b8" }}>{order.date}</td>
+                <td style={{ padding: "12px 16px" }}>
+                  {order.status === "pending" && (
+                    <div style={{ display: "flex", gap: 6 }}>
+                      <button style={{ padding: "4px 10px", background: "#d1fae5", color: "#065f46", border: "none", borderRadius: 8, fontSize: 11, cursor: "pointer" }}>قبول</button>
+                      <button style={{ padding: "4px 10px", background: "#fee2e2", color: "#991b1b", border: "none", borderRadius: 8, fontSize: 11, cursor: "pointer" }}>رفض</button>
+                    </div>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Quick Actions */}
+      <h2 style={{ fontSize: 16, fontWeight: 700, color: "#1e293b", marginBottom: 14 }}>إجراءات سريعة ⚡</h2>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 12 }}>
+        {[
+          { icon: "➕", label: "إضافة منتج", color: "#2563eb" },
+          { icon: "📸", label: "رفع صورة وصل", color: "#059669" },
+          { icon: "💬", label: "الرد على تقييم", color: "#f59e0b" },
+          { icon: "📊", label: "عرض التقرير", color: "#7c3aed" },
+        ].map((a, i) => (
+          <button key={i} style={{
+            padding: "16px 12px", background: "white", border: `2px solid ${a.color}22`,
+            borderRadius: 14, cursor: "pointer", textAlign: "center",
+            fontFamily: "'Cairo', sans-serif", transition: "all 0.2s"
+          }}
+            onMouseEnter={e => { e.currentTarget.style.background = a.color + "11"; e.currentTarget.style.borderColor = a.color; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "white"; e.currentTarget.style.borderColor = a.color + "22"; }}>
+            <div style={{ fontSize: 24, marginBottom: 6 }}>{a.icon}</div>
+            <div style={{ fontSize: 12, fontWeight: 600, color: "#1e293b" }}>{a.label}</div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function AdminDashboard() {
+  const [tab, setTab] = useState("overview");
+
+  return (
+    <div style={{ fontFamily: "'Cairo', sans-serif", direction: "rtl" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+        <div>
+          <h1 style={{ fontSize: 22, fontWeight: 800, color: "#1e293b", margin: 0 }}>لوحة الإدارة العامة 🛡️</h1>
+          <p style={{ color: "#94a3b8", margin: "4px 0 0", fontSize: 13 }}>نظرة شاملة على منصة ZaLo</p>
+        </div>
+        <div style={{ display: "flex", gap: 8 }}>
+          <div style={{ background: "#fef3c7", color: "#92400e", padding: "6px 14px", borderRadius: 20, fontSize: 12 }}>⚠️ 3 طلبات معلقة</div>
+          <div style={{ background: "#fee2e2", color: "#991b1b", padding: "6px 14px", borderRadius: 20, fontSize: 12 }}>🚨 2 شكاوى جديدة</div>
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div style={{ display: "flex", gap: 16, marginBottom: 28, flexWrap: "wrap" }}>
+        <StatCard icon="🏪" label="التجار النشطين" value="2,847" change={8} />
+        <StatCard icon="👥" label="الزبائن المسجلين" value="45,320" change={15} />
+        <StatCard icon="💰" label="إيرادات الاشتراكات" value="8,450,000 دج" change={22} />
+        <StatCard icon="📦" label="طلبات اليوم" value="1,240" change={-3} />
+      </div>
+
+      {/* Tabs */}
+      <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
+        {[
+          { id: "overview", label: "نظرة عامة" },
+          { id: "merchants", label: "إدارة التجار" },
+          { id: "payments", label: "الدفع والاشتراكات" },
+        ].map(t => (
+          <button key={t.id} onClick={() => setTab(t.id)} style={{
+            padding: "8px 20px", borderRadius: 10, border: "none", cursor: "pointer",
+            fontFamily: "'Cairo', sans-serif", fontWeight: 600, fontSize: 13,
+            background: tab === t.id ? "#7c3aed" : "#f1f5f9",
+            color: tab === t.id ? "white" : "#64748b"
+          }}>{t.label}</button>
+        ))}
+      </div>
+
+      {tab === "overview" && (
+        <>
+          {/* Region Map Placeholder */}
+          <div style={{ background: "white", borderRadius: 16, padding: 20, marginBottom: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9" }}>
+            <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 16, color: "#1e293b" }}>📍 التجار حسب الولاية</h3>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              {WILAYAS.slice(0, 15).map((w, i) => (
+                <div key={w} style={{
+                  padding: "6px 14px", borderRadius: 20, fontSize: 12,
+                  background: `hsl(${220 + i * 8}, 70%, ${90 - i * 2}%)`,
+                  color: `hsl(${220 + i * 8}, 70%, 30%)`
+                }}>{w} ({Math.floor(Math.random() * 200 + 50)})</div>
+              ))}
+            </div>
+          </div>
+          {/* Alerts */}
+          <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 12, color: "#1e293b" }}>🔔 تنبيهات النظام</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {[
+              { icon: "🆕", msg: "طلب تسجيل جديد: متجر المستقبل للإلكترونيات - وهران", type: "info" },
+              { icon: "💳", msg: "تم رفع وصل دفع جديد من تاجر: قطع غيار الشرق", type: "warning" },
+              { icon: "⚠️", msg: "شكوى جديدة من زبون ضد متجر أزياء بلقاسم", type: "error" },
+            ].map((a, i) => (
+              <div key={i} style={{
+                background: a.type === "error" ? "#fff5f5" : a.type === "warning" ? "#fffbeb" : "#eff6ff",
+                border: `1px solid ${a.type === "error" ? "#fecaca" : a.type === "warning" ? "#fde68a" : "#bfdbfe"}`,
+                borderRadius: 12, padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center"
+              }}>
+                <span style={{ fontSize: 13, color: "#1e293b" }}>{a.icon} {a.msg}</span>
+                <button style={{ padding: "4px 14px", background: "#7c3aed", color: "white", border: "none", borderRadius: 8, fontSize: 12, cursor: "pointer", fontFamily: "'Cairo', sans-serif" }}>مراجعة</button>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      {tab === "merchants" && (
+        <div style={{ background: "white", borderRadius: 16, overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr style={{ background: "#f8fafc" }}>
+                {["المتجر", "صاحبه", "الولاية", "الحالة", "الاشتراك", "المبيعات", "إجراءات"].map(h => (
+                  <th key={h} style={{ padding: "12px 16px", textAlign: "right", fontSize: 12, color: "#64748b", fontWeight: 600, borderBottom: "1px solid #f1f5f9" }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {MERCHANTS_DATA.map(m => (
+                <tr key={m.id} style={{ borderBottom: "1px solid #f8fafc" }}>
+                  <td style={{ padding: "12px 16px", fontSize: 13, fontWeight: 600, color: "#1e293b" }}>{m.name}</td>
+                  <td style={{ padding: "12px 16px", fontSize: 13, color: "#64748b" }}>{m.owner}</td>
+                  <td style={{ padding: "12px 16px", fontSize: 13, color: "#64748b" }}>📍 {m.wilaya}</td>
+                  <td style={{ padding: "12px 16px" }}>
+                    <span style={{
+                      background: statusColors[m.status]?.bg, color: statusColors[m.status]?.text,
+                      padding: "3px 10px", borderRadius: 20, fontSize: 11
+                    }}>{statusColors[m.status]?.label}</span>
+                  </td>
+                  <td style={{ padding: "12px 16px", fontSize: 12, color: m.subscription === "مدفوع" ? "#065f46" : "#92400e" }}>{m.subscription}</td>
+                  <td style={{ padding: "12px 16px", fontSize: 13, fontWeight: 700 }}>{m.sales}</td>
+                  <td style={{ padding: "12px 16px" }}>
+                    <div style={{ display: "flex", gap: 6 }}>
+                      <button style={{ padding: "4px 10px", background: "#eff6ff", color: "#2563eb", border: "none", borderRadius: 8, fontSize: 11, cursor: "pointer" }}>عرض</button>
+                      {m.status === "pending" && <button style={{ padding: "4px 10px", background: "#d1fae5", color: "#065f46", border: "none", borderRadius: 8, fontSize: 11, cursor: "pointer" }}>قبول</button>}
+                      {m.status === "active" && <button style={{ padding: "4px 10px", background: "#fee2e2", color: "#991b1b", border: "none", borderRadius: 8, fontSize: 11, cursor: "pointer" }}>إيقاف</button>}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {tab === "payments" && (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+          <div style={{ background: "white", borderRadius: 16, padding: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9" }}>
+            <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 16, color: "#1e293b" }}>💳 وصولات CCP المعلقة</h3>
+            {[
+              { merchant: "قطع غيار الشرق", amount: "5,000 دج", date: "2024-01-15" },
+              { merchant: "تيك ستور", amount: "5,000 دج", date: "2024-01-14" },
+            ].map((p, i) => (
+              <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: "1px solid #f8fafc" }}>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "#1e293b" }}>{p.merchant}</div>
+                  <div style={{ fontSize: 11, color: "#94a3b8" }}>{p.date} • {p.amount}</div>
+                </div>
+                <div style={{ display: "flex", gap: 6 }}>
+                  <button style={{ padding: "4px 12px", background: "#d1fae5", color: "#065f46", border: "none", borderRadius: 8, fontSize: 11, cursor: "pointer", fontFamily: "'Cairo', sans-serif" }}>✅ تأكيد</button>
+                  <button style={{ padding: "4px 12px", background: "#fee2e2", color: "#991b1b", border: "none", borderRadius: 8, fontSize: 11, cursor: "pointer", fontFamily: "'Cairo', sans-serif" }}>❌ رفض</button>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div style={{ background: "white", borderRadius: 16, padding: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9" }}>
+            <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 16, color: "#1e293b" }}>📊 إحصائيات الاشتراكات</h3>
+            {[
+              { label: "اشتراكات نشطة", value: "2,341", color: "#059669" },
+              { label: "اشتراكات منتهية", value: "506", color: "#f59e0b" },
+              { label: "إجمالي الإيرادات", value: "12,705,000 دج", color: "#2563eb" },
+            ].map((s, i) => (
+              <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: "1px solid #f8fafc" }}>
+                <span style={{ fontSize: 13, color: "#64748b" }}>{s.label}</span>
+                <span style={{ fontSize: 14, fontWeight: 800, color: s.color }}>{s.value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MerchantRegister() {
+  const [step, setStep] = useState(1);
+  const [form, setForm] = useState({ storeName: "", ownerName: "", wilaya: "", phone: "", email: "" });
+
+  const steps = ["معلومات أساسية", "الموقع والتواصل", "الوثائق", "المراجعة"];
+
+  return (
+    <div style={{ fontFamily: "'Cairo', sans-serif", direction: "rtl", maxWidth: 600, margin: "0 auto" }}>
+      <div style={{ textAlign: "center", marginBottom: 32 }}>
+        <div style={{ fontSize: 40, marginBottom: 8 }}>🏪</div>
+        <h1 style={{ fontSize: 22, fontWeight: 800, color: "#1e293b" }}>تسجيل متجر جديد</h1>
+        <p style={{ color: "#94a3b8", fontSize: 13 }}>انضم إلى آلاف التجار على منصة ZaLo</p>
+      </div>
+      {/* Progress */}
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 32, position: "relative" }}>
+        <div style={{ position: "absolute", top: 16, right: "10%", left: "10%", height: 2, background: "#f1f5f9", zIndex: 0 }} />
+        <div style={{ position: "absolute", top: 16, right: "10%", width: `${(step - 1) / 3 * 80}%`, height: 2, background: "#2563eb", zIndex: 0, transition: "width 0.4s" }} />
+        {steps.map((s, i) => (
+          <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", zIndex: 1 }}>
+            <div style={{
+              width: 32, height: 32, borderRadius: "50%", display: "flex", alignItems: "center",
+              justifyContent: "center", fontSize: 13, fontWeight: 700, marginBottom: 6,
+              background: i + 1 <= step ? "#2563eb" : "white",
+              color: i + 1 <= step ? "white" : "#94a3b8",
+              border: `2px solid ${i + 1 <= step ? "#2563eb" : "#e2e8f0"}`
+            }}>{i + 1 < step ? "✓" : i + 1}</div>
+            <span style={{ fontSize: 10, color: i + 1 <= step ? "#2563eb" : "#94a3b8", fontWeight: 600 }}>{s}</span>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ background: "white", borderRadius: 20, padding: 28, boxShadow: "0 1px 3px rgba(0,0,0,0.08)", border: "1px solid #f1f5f9" }}>
+        {step === 1 && (
+          <div>
+            <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 20, color: "#1e293b" }}>📋 المعلومات الأساسية</h3>
+            {[
+              { label: "اسم المتجر *", key: "storeName", placeholder: "مثال: متجر النور للهواتف" },
+              { label: "اسم صاحب المتجر *", key: "ownerName", placeholder: "الاسم الكامل" },
+              { label: "رقم السجل التجاري *", key: "rc", placeholder: "00-12345678" },
+            ].map(f => (
+              <div key={f.key} style={{ marginBottom: 16 }}>
+                <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 6 }}>{f.label}</label>
+                <input placeholder={f.placeholder} value={form[f.key] || ""}
+                  onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))}
+                  style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, fontFamily: "'Cairo', sans-serif", outline: "none", boxSizing: "border-box" }} />
+              </div>
+            ))}
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 6 }}>نوع المتجر *</label>
+              <div style={{ display: "flex", gap: 12 }}>
+                {["حر", "معتمد"].map(type => (
+                  <label key={type} style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 20px", borderRadius: 10, border: "2px solid #e2e8f0", cursor: "pointer", flex: 1, justifyContent: "center", fontSize: 13 }}>
+                    <input type="radio" name="storeType" value={type} /> {type}
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+        {step === 2 && (
+          <div>
+            <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 20, color: "#1e293b" }}>📍 الموقع والتواصل</h3>
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 6 }}>الولاية *</label>
+              <select style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, fontFamily: "'Cairo', sans-serif", outline: "none" }}>
+                <option value="">اختر الولاية...</option>
+                {WILAYAS.map(w => <option key={w}>{w}</option>)}
+              </select>
+            </div>
+            {[
+              { label: "رقم الهاتف *", placeholder: "06XXXXXXXX" },
+              { label: "رقم الواتساب *", placeholder: "06XXXXXXXX" },
+              { label: "البريد الإلكتروني *", placeholder: "store@example.com" },
+              { label: "العنوان التفصيلي *", placeholder: "الشارع، الحي، المدينة" },
+            ].map((f, i) => (
+              <div key={i} style={{ marginBottom: 16 }}>
+                <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 6 }}>{f.label}</label>
+                <input placeholder={f.placeholder} style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: "1.5px solid #e2e8f0", fontSize: 13, fontFamily: "'Cairo', sans-serif", outline: "none", boxSizing: "border-box" }} />
+              </div>
+            ))}
+          </div>
+        )}
+        {step === 3 && (
+          <div>
+            <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 20, color: "#1e293b" }}>📂 رفع الوثائق</h3>
+            {[
+              { label: "صورة السجل التجاري *", icon: "📄", accept: "PDF/صورة" },
+              { label: "صورة الهوية الوطنية *", icon: "🪪", accept: "صورة" },
+              { label: "شعار المتجر *", icon: "🖼️", accept: "صورة PNG/JPG" },
+              { label: "صورة واجهة المتجر (اختياري)", icon: "📸", accept: "صورة" },
+            ].map((doc, i) => (
+              <div key={i} style={{ marginBottom: 14 }}>
+                <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 6 }}>{doc.label}</label>
+                <div style={{
+                  border: "2px dashed #e2e8f0", borderRadius: 12, padding: "20px", textAlign: "center",
+                  cursor: "pointer", background: "#fafafa"
+                }}>
+                  <div style={{ fontSize: 28, marginBottom: 6 }}>{doc.icon}</div>
+                  <div style={{ fontSize: 12, color: "#94a3b8" }}>اسحب الملف هنا أو انقر للرفع</div>
+                  <div style={{ fontSize: 11, color: "#cbd5e1", marginTop: 4 }}>{doc.accept}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        {step === 4 && (
+          <div style={{ textAlign: "center", padding: "20px 0" }}>
+            <div style={{ fontSize: 64, marginBottom: 16 }}>🎉</div>
+            <h3 style={{ fontSize: 18, fontWeight: 800, color: "#1e293b", marginBottom: 8 }}>تم تقديم طلبك!</h3>
+            <p style={{ color: "#64748b", fontSize: 13, marginBottom: 20 }}>سيتم مراجعة طلبك من قبل فريق الإدارة خلال 24-48 ساعة. ستصلك رسالة على بريدك الإلكتروني.</p>
+            <div style={{ background: "#fef3c7", borderRadius: 12, padding: "14px 20px", display: "inline-block" }}>
+              <div style={{ fontSize: 12, color: "#92400e" }}>⏳ رقم الطلب: <strong>REG-2024-0847</strong></div>
+            </div>
+          </div>
+        )}
+
+        <div style={{ display: "flex", justifyContent: "space-between", marginTop: 24, gap: 12 }}>
+          {step > 1 && step < 4 && (
+            <button onClick={() => setStep(s => s - 1)} style={{
+              padding: "12px 28px", background: "#f1f5f9", color: "#64748b",
+              border: "none", borderRadius: 12, fontFamily: "'Cairo', sans-serif", fontWeight: 600, fontSize: 14, cursor: "pointer"
+            }}>← رجوع</button>
+          )}
+          {step < 3 && (
+            <button onClick={() => setStep(s => s + 1)} style={{
+              padding: "12px 28px", background: "#2563eb", color: "white",
+              border: "none", borderRadius: 12, fontFamily: "'Cairo', sans-serif", fontWeight: 700, fontSize: 14, cursor: "pointer", marginRight: "auto"
+            }}>التالي ←</button>
+          )}
+          {step === 3 && (
+            <button onClick={() => setStep(4)} style={{
+              padding: "12px 28px", background: "linear-gradient(135deg, #059669, #10b981)", color: "white",
+              border: "none", borderRadius: 12, fontFamily: "'Cairo', sans-serif", fontWeight: 700, fontSize: 14, cursor: "pointer", marginRight: "auto"
+            }}>✅ إرسال الطلب</button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// =================== MAIN APP ===================
+
+export default function ZaLoApp() {
+  const [role, setRole] = useState("customer");
+  const [section, setSection] = useState("home");
+  const [cart, setCart] = useState([]);
+
+  const renderContent = () => {
+    if (role === "customer") {
+      if (section === "home") return <CustomerHome cart={cart} setCart={setCart} />;
+      if (section === "cart") return <CartView cart={cart} setCart={setCart} />;
+    }
+    if (role === "merchant") {
+      if (section === "dashboard") return <MerchantDashboard />;
+      if (section === "store") return <MerchantRegister />;
+    }
+    if (role === "admin") {
+      if (section === "dashboard") return <AdminDashboard />;
+      if (section === "merchants") { setSection("dashboard"); return <AdminDashboard />; }
+    }
+    return (
+      <div style={{ textAlign: "center", padding: 60, fontFamily: "'Cairo', sans-serif", color: "#94a3b8" }}>
+        <div style={{ fontSize: 48, marginBottom: 16 }}>🚧</div>
+        <h3 style={{ fontSize: 16, fontWeight: 600 }}>هذه الصفحة قيد التطوير</h3>
+      </div>
+    );
+  };
+
+  const roleColors = { customer: "#2563eb", merchant: "#059669", admin: "#7c3aed" };
+
+  return (
+    <div style={{ background: "#f8fafc", minHeight: "100vh", direction: "rtl" }}>
+      {/* Top Role Switcher */}
+      <div style={{
+        position: "fixed", top: 0, right: 220, left: 0, zIndex: 99,
+        background: "white", borderBottom: "1px solid #f1f5f9",
+        padding: "10px 24px", display: "flex", alignItems: "center", justifyContent: "space-between"
+      }}>
+        <div style={{ display: "flex", gap: 8 }}>
+          {[
+            { id: "customer", label: "👤 زبون", section: "home" },
+            { id: "merchant", label: "🏪 تاجر", section: "dashboard" },
+            { id: "admin", label: "🛡️ مدير", section: "dashboard" },
+          ].map(r => (
+            <button key={r.id} onClick={() => { setRole(r.id); setSection(r.section); }}
+              style={{
+                padding: "6px 18px", borderRadius: 20, border: "none", cursor: "pointer",
+                fontFamily: "'Cairo', sans-serif", fontWeight: 600, fontSize: 12,
+                background: role === r.id ? roleColors[r.id] : "#f1f5f9",
+                color: role === r.id ? "white" : "#64748b"
+              }}>{r.label}</button>
+          ))}
+        </div>
+        {role === "customer" && (
+          <button onClick={() => setSection("cart")} style={{
+            background: cart.length > 0 ? "#2563eb" : "#f1f5f9",
+            color: cart.length > 0 ? "white" : "#94a3b8",
+            border: "none", borderRadius: 20, padding: "6px 16px",
+            fontFamily: "'Cairo', sans-serif", fontSize: 13, cursor: "pointer", fontWeight: 600
+          }}>
+            🛒 السلة {cart.length > 0 && `(${cart.length})`}
+          </button>
+        )}
+        {role === "customer" && (
+          <button onClick={() => setSection("register")} style={{
+            background: "#f59e0b", color: "white", border: "none", borderRadius: 20,
+            padding: "6px 16px", fontFamily: "'Cairo', sans-serif", fontSize: 12, cursor: "pointer", fontWeight: 600
+          }} onMouseEnter={() => {}}>🏪 سجّل متجرك</button>
+        )}
+      </div>
+
+      {/* Sidebar */}
+      <Sidebar role={role} activeSection={section} setActiveSection={(s) => {
+        setSection(s);
+        if (role === "customer" && s === "store") { setRole("merchant"); setSection("store"); }
+      }} />
+
+      {/* Main Content */}
+      <div style={{ marginRight: 220, marginTop: 57, padding: "28px 28px 40px", minHeight: "calc(100vh - 57px)" }}>
+        {section === "register" && role === "customer"
+          ? <MerchantRegister />
+          : renderContent()
+        }
+      </div>
+    </div>
+  );
+}
